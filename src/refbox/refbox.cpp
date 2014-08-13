@@ -293,20 +293,7 @@ LLSFRefBox::setup_protobuf_comm()
       proto_dirs = config_->get_strings("/llsfrb/comm/protobuf-dirs");
       if (proto_dirs.size() > 0) {
 	for (size_t i = 0; i < proto_dirs.size(); ++i) {
-	  std::string::size_type pos;
-	  if ((pos = proto_dirs[i].find("@BASEDIR@")) != std::string::npos) {
-	    proto_dirs[i].replace(pos, 9, BASEDIR);
-	  }
-	  if ((pos = proto_dirs[i].find("@RESDIR@")) != std::string::npos) {
-	    proto_dirs[i].replace(pos, 8, RESDIR);
-	  }
-	  if ((pos = proto_dirs[i].find("@CONFDIR@")) != std::string::npos) {
-	    proto_dirs[i].replace(pos, 9, CONFDIR);
-	  }
-	
-	  if (proto_dirs[i][proto_dirs.size()-1] != '/') {
-	    proto_dirs[i] += "/";
-	  }
+	  proto_dirs[i] = modify_directory_path(proto_dirs[i]);
 	  //logger_->log_warn("RefBox", "DIR: %s", proto_dirs[i].c_str());
 	}
       }
@@ -1021,6 +1008,37 @@ LLSFRefBox::run()
   start_timer();
   io_service_.run();
   return 0;
+}
+
+
+/** Modify the path of a directory.
+ * The method replace the variables @BASEDIR@, @RESDIR@, @CONFDIR@ by the
+ * associated locations which have been defined at compile time. Additionally,
+ * if missing, a slash is appended.
+ *
+ * @param dir The raw input directory.
+ * @return The parsed directory.
+ */
+std::string
+LLSFRefBox::modify_directory_path(std::string dir)
+{
+  std::string::size_type pos;
+
+  if ((pos = dir.find("@BASEDIR@")) != std::string::npos) {
+    dir.replace(pos, 9, BASEDIR);
+  }
+  if ((pos = dir.find("@RESDIR@")) != std::string::npos) {
+    dir.replace(pos, 8, RESDIR);
+  }
+  if ((pos = dir.find("@CONFDIR@")) != std::string::npos) {
+    dir.replace(pos, 9, CONFDIR);
+  }
+
+  if (dir[dir.size()-1] != '/') {
+    dir += "/";
+  }
+
+  return dir;
 }
 
 } // end of namespace llsfrb
