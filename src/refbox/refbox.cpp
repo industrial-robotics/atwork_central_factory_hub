@@ -101,8 +101,6 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
   config_ = new YamlConfiguration(CONFDIR);
   config_->load("config.yaml");
 
-  cfg_clips_dir_ = std::string(SRCDIR) + "/clips/";
-
   try {
     cfg_timer_interval_ = config_->get_uint("/llsfrb/clips/timer-interval");
   } catch (fawkes::Exception &e) {
@@ -132,6 +130,14 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
   } catch (fawkes::Exception &e) {} // ignored, use default
   logger_ = mlogger;
 
+  try {
+    cfg_clips_dir_ = config_->get_string("/llsfrb/clips/dir");
+    cfg_clips_dir_ = modify_directory_path(cfg_clips_dir_);
+  } catch (fawkes::Exception &e) {
+    // when the configuration is not set, default to a hard-coded directory
+    cfg_clips_dir_ = std::string(SRCDIR) + "/clips/";
+  };
+  logger_->log_info("RefBox", "Using CLIPS rules from: %s", cfg_clips_dir_.c_str());
 
   cfg_machine_assignment_ = ASSIGNMENT_2014;
   try {

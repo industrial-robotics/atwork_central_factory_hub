@@ -24,6 +24,7 @@ llsfrb:
     test-lights: true
 
   clips:
+    dir: "@BASEDIR@/src/refbox/clips"
     # Timer interval, in milliseconds
     timer-interval: 40
 
