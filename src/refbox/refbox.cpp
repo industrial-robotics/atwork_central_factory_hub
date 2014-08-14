@@ -1040,7 +1040,7 @@ LLSFRefBox::modify_directory_path(std::string dir)
     dir.replace(pos, 9, CONFDIR);
   }
 
-  if (dir[dir.size()-1] != '/') {
+  if (!dir.empty() && dir[dir.size()-1] != '/') {
     dir += "/";
   }
 
