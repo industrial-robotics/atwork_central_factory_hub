@@ -31,7 +31,6 @@
 #include <core/threading/mutex_locker.h>
 #include <core/exception.h>
 #include <logging/liblogger.h>
-#include <utils/system/fam_thread.h>
 #include <config/config.h>
 #include <utils/system/dynamic_module/module_manager.h>
 
@@ -90,7 +89,6 @@ PluginManager::PluginManager(ThreadCollector *thread_collector,
 			     const char *meta_plugin_prefix,
 			     Module::ModuleFlags module_flags,
 			     bool init_cache)
-  : ConfigurationChangeHandler(meta_plugin_prefix)
 {
   __mutex = new Mutex();
   this->thread_collector = thread_collector;
@@ -103,32 +101,12 @@ PluginManager::PluginManager(ThreadCollector *thread_collector,
   if (init_cache) {
     init_pinfo_cache();
   }
-
-  __config->add_change_handler(this);
-
-  __fam_thread = new FamThread();
-#ifdef HAVE_INOTIFY
-  RefPtr<FileAlterationMonitor> fam = __fam_thread->get_fam();
-  fam->add_filter("^[^.].*\\."SOEXT"$");
-  fam->add_listener(this);
-  fam->watch_dir(PLUGINDIR);
-  __fam_thread->start();
-#else
-  LibLogger::log_warn("PluginManager", "File alteration monitoring not available, "
-					"cannot detect changed plugins on disk.");
-#endif
 }
 
 
 /** Destructor. */
 PluginManager::~PluginManager()
 {
-#ifdef HAVE_INOTIFY
-  __fam_thread->cancel();
-  __fam_thread->join();
-#endif
-  delete __fam_thread;
-  __config->rem_change_handler(this);
   __pinfo_cache.lock();
   __pinfo_cache.clear();
   __pinfo_cache.unlock();
@@ -436,117 +414,6 @@ PluginManager::unload(const char *plugin_name)
     }
   }
 }
-
-
-void
-PluginManager::config_tag_changed(const char *new_tag)
-{
-}
-
-void
-PluginManager::config_value_changed(const Configuration::ValueIterator *v)
-{
-  if (v->is_string()) {
-    __pinfo_cache.lock();
-    std::string p = std::string(v->path()).substr(__meta_plugin_prefix.length());
-    std::string s = std::string("Meta: ") + v->get_string();
-    std::list<std::pair<std::string, std::string> >::iterator i;
-    bool found = false;
-    for (i = __pinfo_cache.begin(); i != __pinfo_cache.end(); ++i) {
-      if (p == i->first) {
-	i->second = s;
-	found = true;
-	break;
-      }
-    }
-    if (! found) {
-      __pinfo_cache.push_back(make_pair(p, s));
-    }
-    __pinfo_cache.unlock();
-  }
-}
-
-void
-PluginManager::config_comment_changed(const Configuration::ValueIterator *v)
-{
-}
-
-void
-PluginManager::config_value_erased(const char *path)
-{
-  __pinfo_cache.lock();
-  std::string p = std::string(path).substr(__meta_plugin_prefix.length());
-  std::list<std::pair<std::string, std::string> >::iterator i;
-  for (i = __pinfo_cache.begin(); i != __pinfo_cache.end(); ++i) {
-    if (p == i->first) {
-      __pinfo_cache.erase(i);
-      break;
-    }
-  }
-  __pinfo_cache.unlock();
-}
-
-
-void
-PluginManager::fam_event(const char *filename, unsigned int mask)
-{
-  const char *file_ext = "."SOEXT;
-
-  const char *pos = strstr(filename, file_ext);
-  std::string p = std::string(filename).substr(0, strlen(filename) - strlen(file_ext));
-  if (NULL != pos) {
-    __pinfo_cache.lock();
-    bool found = false;
-    std::list<std::pair<std::string, std::string> >::iterator i;
-    for (i = __pinfo_cache.begin(); i != __pinfo_cache.end(); ++i) {
-      if (p == i->first) {
-	found = true;
-	if ((mask & FAM_DELETE) || (mask & FAM_MOVED_FROM)) {
-	  __pinfo_cache.erase(i);
-	} else {
-	  try {
-	    i->second = plugin_loader->get_description(p.c_str());
-	  } catch (Exception &e) {
-	    LibLogger::log_warn("PluginManager", "Could not get possibly modified "
-				"description of plugin %s, exception follows",
-				p.c_str());
-	    LibLogger::log_warn("PluginManager", e);
-	  }
-	}
-	break;
-      }
-    }
-    if (! found &&
-	!(mask & FAM_ISDIR) &&
-	((mask & FAM_MODIFY) || (mask & FAM_MOVED_TO) || (mask & FAM_CREATE))) {
-#ifndef HAVE_LIBELF
-      if (plugin_loader->is_loaded(p.c_str())) {
-	LibLogger::log_info("PluginManager", "Plugin %s changed on disk, but is "
-			    "loaded, no new info can be loaded, keeping old.",
-			    p.c_str());
-      }
-#endif
-      try {
-	std::string s = plugin_loader->get_description(p.c_str());
-	LibLogger::log_info("PluginManager", "Reloaded meta-data of %s on file change",
-			    p.c_str());
-	__pinfo_cache.push_back(make_pair(p, s));
-      } catch (Exception &e) {
-	// ignore, all it means is that the file has not been finished writing
-	/*
-	LibLogger::log_warn("PluginManager", "Could not get possibly modified "
-			    "description of plugin %s, exception follows",
-			    p.c_str());
-	LibLogger::log_warn("PluginManager", e);
-	*/
-      }
-    }
-
-    __pinfo_cache.sort();
-    __pinfo_cache.unlock();
-  }
-}
-
 
 /** Add listener.
  * Listeners are notified of plugin load and unloda events.

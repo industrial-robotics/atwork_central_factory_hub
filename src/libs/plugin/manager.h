@@ -24,11 +24,8 @@
 #ifndef __PLUGIN_MANAGER_H_
 #define __PLUGIN_MANAGER_H_
 
-#include <netcomm/fawkes/handler.h>
 #include <core/utils/lock_list.h>
 #include <core/utils/lock_map.h>
-#include <config/change_handler.h>
-#include <utils/system/fam.h>
 #include <utils/system/dynamic_module/module.h>
 
 #include <string>
@@ -50,12 +47,9 @@ class Plugin;
 class PluginLoader;
 class Mutex;
 class PluginListMessage;
-class FamThread;
 class PluginManagerListener;
 
 class PluginManager
-: public fawkes::ConfigurationChangeHandler,
-  public FamListener
 {
  public:
   PluginManager(ThreadCollector *thread_collector,
@@ -67,15 +61,6 @@ class PluginManager
 
   void set_module_flags(Module::ModuleFlags flags);
   void init_pinfo_cache();
-
-  // for ConfigurationChangeHandler
-  virtual void config_tag_changed(const char *new_location);
-  virtual void config_value_changed(const Configuration::ValueIterator *v);
-  virtual void config_comment_changed(const Configuration::ValueIterator *v);
-  virtual void config_value_erased(const char *path);
-
-  // for FamListener
-  virtual void fam_event(const char *filename, unsigned int mask);
 
   void load(const char *plugin_list);
   void unload(const char *plugin_name);
@@ -120,8 +105,6 @@ class PluginManager
 
   Configuration *__config;
   std::string __meta_plugin_prefix;
-
-  FamThread *__fam_thread;
 };
 
 } // end namespace fawkes
