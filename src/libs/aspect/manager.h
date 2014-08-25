@@ -44,18 +44,7 @@ namespace fawkes {
 }
 #endif
 
-class BlackBoard;
-class Clock;
-class FawkesNetworkHub;
-class PluginManager;
 class Thread;
-class ThreadCollector;
-class NetworkNameResolver;
-class ServicePublisher;
-class ServiceBrowser;
-class LoggerEmployer;
-class BlockedTimingExecutor;
-class MainLoopEmployer;
 class AspectIniFin;
 
 namespace tf {
@@ -76,20 +65,8 @@ class AspectManager : public ThreadInitializer, public ThreadFinalizer
 
   bool has_threads_for_aspect(const char *aspect_name);
 
-  void register_default_inifins(BlackBoard *blackboard,
-				ThreadCollector *collector,
-				Configuration *config,
-				Logger *logger,
-				Clock *clock,
-				FawkesNetworkHub *fnethub,
-				MainLoopEmployer *mloop_employer,
-				LoggerEmployer *logger_employer,
-				BlockedTimingExecutor *btexec,
-				NetworkNameResolver *nnresolver,
-				ServicePublisher *service_publisher,
-				ServiceBrowser *service_browser,
-				PluginManager *pmanager,
-				tf::Transformer *tf_listener);
+  void register_default_inifins(Configuration *config,
+				Logger *logger);
 
  private:
   std::map<std::string, AspectIniFin *> __inifins;
