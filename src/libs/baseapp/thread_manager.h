@@ -87,8 +87,6 @@ class ThreadManager
   virtual void wait_for_timed_threads();
   virtual void interrupt_timed_thread_wait();
 
-  ThreadCollector *  aspect_collector() const;
-
  private:
   void internal_add_thread(Thread *t);
   void internal_remove_thread(Thread *t);
@@ -96,24 +94,6 @@ class ThreadManager
   void add_maybelocked(Thread *t, bool lock);
   void remove_maybelocked(ThreadList &tl, bool lock);
   void remove_maybelocked(Thread *t, bool lock);
-
-  class ThreadManagerAspectCollector : public ThreadCollector
-  {
-   public:
-    ThreadManagerAspectCollector(ThreadManager *parent_manager);
-
-    virtual void add(ThreadList &tl);
-    virtual void add(Thread *t);
-
-    virtual void remove(ThreadList &tl);
-    virtual void remove(Thread *t);
-
-    virtual void force_remove(ThreadList &tl);
-    virtual void force_remove(Thread *t);
-
-   private:
-    ThreadManager *__parent_manager;
-  };
 
  private:
   ThreadInitializer *__initializer;
@@ -125,7 +105,6 @@ class ThreadManager
   ThreadList     __untimed_threads;
   WaitCondition *__waitcond_timedthreads;
 
-  ThreadManagerAspectCollector *__aspect_collector;
   bool __interrupt_timed_thread_wait;
 
 };

@@ -55,84 +55,6 @@ namespace fawkes {
  */
 
 /** Constructor.
- * @param parent_manager parent thread manager
- */
-ThreadManager::ThreadManagerAspectCollector::ThreadManagerAspectCollector(ThreadManager *parent_manager)
-{
-  __parent_manager = parent_manager;
-}
-
-
-void
-ThreadManager::ThreadManagerAspectCollector::add(ThreadList &tl)
-{
-  BlockedTimingAspect *timed_thread;
-
-  for (ThreadList::iterator i = tl.begin(); i != tl.end(); ++i) {
-    if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(*i)) != NULL ) {
-      throw IllegalArgumentException("ThreadProducerAspect may not add threads with BlockedTimingAspect");
-    }
-  }
-
-  __parent_manager->add_maybelocked(tl, /* lock */ false);
-}
-
-
-void
-ThreadManager::ThreadManagerAspectCollector::add(Thread *t)
-{
-  BlockedTimingAspect *timed_thread;
-
-  if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(t)) != NULL ) {
-    throw IllegalArgumentException("ThreadProducerAspect may not add threads with BlockedTimingAspect");
-  }
-
-  __parent_manager->add_maybelocked(t, /* lock */ false);
-}
-
-
-void
-ThreadManager::ThreadManagerAspectCollector::remove(ThreadList &tl)
-{
-  BlockedTimingAspect *timed_thread;
-
-  for (ThreadList::iterator i = tl.begin(); i != tl.end(); ++i) {
-    if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(*i)) != NULL ) {
-      throw IllegalArgumentException("ThreadProducerAspect may not remove threads with BlockedTimingAspect");
-    }
-  }
-
-  __parent_manager->remove_maybelocked(tl, /* lock */ false);
-}
-
-
-void
-ThreadManager::ThreadManagerAspectCollector::remove(Thread *t)
-{
-  BlockedTimingAspect *timed_thread;
-
-  if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(t)) != NULL ) {
-    throw IllegalArgumentException("ThreadProducerAspect may not remove threads with BlockedTimingAspect");
-  }
-
-  __parent_manager->remove_maybelocked(t, /* lock */ false);
-}
-
-
-void
-ThreadManager::ThreadManagerAspectCollector::force_remove(fawkes::ThreadList &tl)
-{
-  throw AccessViolationException("ThreadManagerAspect threads may not force removal of threads");
-}
-
-void
-ThreadManager::ThreadManagerAspectCollector::force_remove(fawkes::Thread *t)
-{
-  throw AccessViolationException("ThreadManagerAspect threads may not force removal of threads");
-}
-
-
-/** Constructor.
  * When using this constructor you need to make sure to call set_inifin()
  * before any thread is added.
  */
@@ -143,7 +65,6 @@ ThreadManager::ThreadManager()
   __threads.clear();
   __waitcond_timedthreads = new WaitCondition();
   __interrupt_timed_thread_wait = false;
-  __aspect_collector = new ThreadManagerAspectCollector(this);
 }
 
 /** Constructor.
@@ -160,7 +81,6 @@ ThreadManager::ThreadManager(ThreadInitializer *initializer,
   __threads.clear();
   __waitcond_timedthreads = new WaitCondition();
   __interrupt_timed_thread_wait = false;
-  __aspect_collector = new ThreadManagerAspectCollector(this);
   set_inifin(initializer, finalizer);
 }
 
@@ -181,7 +101,6 @@ ThreadManager::~ThreadManager()
   __threads.clear();
 
   delete __waitcond_timedthreads;
-  delete __aspect_collector;
 }
 
 
@@ -623,17 +542,6 @@ ThreadManager::interrupt_timed_thread_wait()
 {
   __interrupt_timed_thread_wait = true;
   __waitcond_timedthreads->wake_all();
-}
-
-
-
-/** Get a thread collector to be used for an aspect initializer.
- * @return thread collector instance to use for ThreadProducerAspect.
- */
-ThreadCollector *
-ThreadManager::aspect_collector() const
-{
-  return __aspect_collector;
 }
 
 } // end namespace fawkes
