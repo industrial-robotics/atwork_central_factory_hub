@@ -15,7 +15,6 @@
 
 BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
-include $(LIBSRCDIR)/utils/utils.mk
 
 ifneq ($(wildcard $(SYSROOT)/usr/include/libelf.h),)
   HAVE_LIBELF=1
@@ -24,22 +23,22 @@ else
   ERROR_TARGETS += error_libelf
 endif
 
-LIBS_libfawkesplugin = stdc++ elf fawkescore fawkesutils fawkesconfig fawkesnetcomm \
-			fawkeslogging $(if $(filter Linux,$(OS)),dl)
-OBJS_libfawkesplugin =	$(patsubst %.cpp,%.o,$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/*/*.cpp)))))
-HDRS_libfawkesplugin = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h $(SRCDIR)/*/*.h))
+LIBS_libllsfrbplugin = stdc++ elf llsfrbcore llsfrbutils llsfrbconfig \
+			llsfrblogging $(if $(filter Linux,$(OS)),dl)
+OBJS_libllsfrbplugin =	$(patsubst %.cpp,%.o,$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/*/*.cpp)))))
+HDRS_libllsfrbplugin = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h $(SRCDIR)/*/*.h))
 
-OBJS_all = $(OBJS_libfawkesplugin)
+OBJS_all = $(OBJS_libllsfrbplugin)
 
 ifeq ($(HAVE_LIBELF),1)
-  LIBS_all  = $(LIBDIR)/libfawkesplugin.so
+  LIBS_all  = $(LIBDIR)/libllsfrbplugin.so
 endif
 
 ifeq ($(OBJSSUBMAKE),1)
 all: $(ERROR_TARGETS)
 .PHONY: error_libelf
 error_libelf:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Fawkes plugin library cannot be built$(TNORMAL) (libelf not found)"
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)LLSFRB plugin library cannot be built$(TNORMAL) (libelf not found)"
 	$(SILENT)exit 1
 endif
 
