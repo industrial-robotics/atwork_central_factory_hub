@@ -15,37 +15,15 @@
 
 BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
-include $(BUILDCONFDIR)/tf/tf.mk
 
-CFLAGS  += $(CFLAGS_LIBDAEMON) $(CFLAGS_TF)
-LDFLAGS += $(LDFLAGS_LIBDAEMON) $(LDFLAGS_TF)
+LIBS_libllsfrbbaseapp = stdc++ llsfrbcore llsfrbutils llsfrbconfig \
+			llsfrbplugin llsfrbaspects llsfrblogging
 
-LIBS_libfawkesbaseapp = stdc++ fawkescore fawkesutils fawkesconfig \
-			fawkesblackboard fawkesplugin fawkesnetcomm \
-			fawkesaspects fawkeslogging
+OBJS_libllsfrbbaseapp =	$(patsubst %.cpp,%.o,$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp)))))
+HDRS_libllsfrbbaseapp = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h))
 
-ifeq ($(HAVE_TF),1)
-  LIBS_libfawkesbaseapp += fawkestf
-else
-  WARN_TARGETS += warning_tf
-endif
-
-OBJS_libfawkesbaseapp =	$(patsubst %.cpp,%.o,$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp)))))
-HDRS_libfawkesbaseapp = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h))
-
-OBJS_all = $(OBJS_libfawkesbaseapp)
-LIBS_all  = $(LIBDIR)/libfawkesbaseapp.so
-
-ifeq ($(OBJSSUBMAKE),1)
-  ifneq ($(WARN_TARGETS),)
-all: $(WARN_TARGETS)
-  endif
-.PHONY: warning_libdaemon warning_tf
-warning_libdaemon:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TYELLOW)Building without daemonizing support$(TNORMAL) (libdaemon[-devel] not installed)"
-warning_tf:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TYELLOW)Building without TF support$(TNORMAL) (tf framework not available)"
-endif
+OBJS_all = $(OBJS_libllsfrbbaseapp)
+LIBS_all  = $(LIBDIR)/libllsfrbbaseapp.so
 
 include $(BUILDSYSDIR)/base.mk
 
