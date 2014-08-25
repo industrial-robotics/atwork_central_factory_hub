@@ -30,8 +30,6 @@
 #include <core/exceptions/software.h>
 #include <core/exceptions/system.h>
 
-#include <aspect/blocked_timing.h>
-
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
@@ -62,7 +60,6 @@ ThreadManager::ThreadManager()
 {
   __initializer = NULL;
   __finalizer   = NULL;
-  __threads.clear();
   __waitcond_timedthreads = new WaitCondition();
   __interrupt_timed_thread_wait = false;
 }
@@ -78,7 +75,6 @@ ThreadManager::ThreadManager(ThreadInitializer *initializer,
 {
   __initializer = NULL;
   __finalizer   = NULL;
-  __threads.clear();
   __waitcond_timedthreads = new WaitCondition();
   __interrupt_timed_thread_wait = false;
   set_inifin(initializer, finalizer);
@@ -88,17 +84,9 @@ ThreadManager::ThreadManager(ThreadInitializer *initializer,
 /** Destructor. */
 ThreadManager::~ThreadManager()
 {
-  // stop all threads, we call finalize, and we run through it as long as there are
-  // still running threads, after that, we force the thread's death.
-  for (__tit = __threads.begin(); __tit != __threads.end(); ++__tit) {
-    try {
-      __tit->second.force_stop(__finalizer);
-    } catch (Exception &e) {} // ignore
-  }
   try {
     __untimed_threads.force_stop(__finalizer);
   } catch (Exception &e) {} // ignore
-  __threads.clear();
 
   delete __waitcond_timedthreads;
 }
@@ -127,18 +115,7 @@ ThreadManager::set_inifin(ThreadInitializer *initializer, ThreadFinalizer *final
 void
 ThreadManager::internal_remove_thread(Thread *t)
 {
-  BlockedTimingAspect *timed_thread;
-
-  if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(t)) != NULL ) {
-    // find thread and remove
-    BlockedTimingAspect::WakeupHook hook = timed_thread->blockedTimingAspectHook();
-    if ( __threads.find(hook) != __threads.end() ) {
-      __threads[hook].remove_locked(t);
-      if (__threads[hook].empty())  __threads.erase(hook);
-    }
-  } else {
-    __untimed_threads.remove_locked(t);
-  }
+  __untimed_threads.remove_locked(t);
 }
 
 
@@ -152,20 +129,7 @@ ThreadManager::internal_remove_thread(Thread *t)
 void
 ThreadManager::internal_add_thread(Thread *t)
 {
-  BlockedTimingAspect *timed_thread;
-  if ( (timed_thread = dynamic_cast<BlockedTimingAspect *>(t)) != NULL ) {
-    BlockedTimingAspect::WakeupHook hook = timed_thread->blockedTimingAspectHook();
-
-    if ( __threads.find(hook) == __threads.end() ) {
-      __threads[hook].set_name("ThreadManagerList Hook %i", hook);
-      __threads[hook].set_maintain_barrier(true);
-    }
-    __threads[hook].push_back_locked(t);
-
-    __waitcond_timedthreads->wake_all();
-  } else {
-    __untimed_threads.push_back_locked(t);
-  }
+  __untimed_threads.push_back_locked(t);
 }
 
 
@@ -206,7 +170,6 @@ ThreadManager::add_maybelocked(ThreadList &tl, bool lock)
   tl.start();
 
   // All thread initialized, now add threads to internal structure
-  MutexLocker locker(__threads.mutex(), lock);
   for (ThreadList::iterator i = tl.begin(); i != tl.end(); ++i) {
     internal_add_thread(*i);
   }
@@ -272,7 +235,6 @@ ThreadManager::add_maybelocked(Thread *thread, bool lock)
   }
 
   thread->start();
-  MutexLocker locker(__threads.mutex(), lock);
   internal_add_thread(thread);
 }
 
@@ -306,7 +268,6 @@ ThreadManager::remove_maybelocked(ThreadList &tl, bool lock)
   }
 
   tl.lock();
-  MutexLocker locker(__threads.mutex(), lock);
 
   try {
     if ( ! tl.prepare_finalize(__finalizer) ) {
@@ -361,7 +322,6 @@ ThreadManager::remove_maybelocked(Thread *thread, bool lock)
     throw NullPointerException("ThreadManager: initializer/finalizer not set");
   }
 
-  MutexLocker locker(__threads.mutex(), lock);
   try {
     if ( ! thread->prepare_finalize() ) {
       thread->cancel_finalize();
@@ -409,7 +369,6 @@ ThreadManager::force_remove(ThreadList &tl)
   }
 
   tl.lock();
-  __threads.mutex()->stopby();
   bool caught_exception = false;
   Exception exc("Forced removal of thread list %s failed", tl.name());
   try {
@@ -450,7 +409,6 @@ ThreadManager::force_remove(ThreadList &tl)
 void
 ThreadManager::force_remove(fawkes::Thread *thread)
 {
-  MutexLocker lock(__threads.mutex());
   try {
     thread->prepare_finalize();
   } catch (Exception &e) {
@@ -463,80 +421,6 @@ ThreadManager::force_remove(fawkes::Thread *thread)
   thread->finalize();
 
   internal_remove_thread(thread);
-}
-
-
-void
-ThreadManager::wakeup_and_wait(BlockedTimingAspect::WakeupHook hook,
-                               unsigned int timeout_usec)
-{
-  MutexLocker lock(__threads.mutex());
-
-  unsigned int timeout_sec = 0;
-  if (timeout_usec >= 1000000) {
-    timeout_sec   = timeout_usec / 1000000;
-    timeout_usec -= timeout_sec  * 1000000;
-  }
-
-  // Note that the following lines might throw an exception, we just pass it on
-  if ( __threads.find(hook) != __threads.end() ) {
-    __threads[hook].wakeup_and_wait(timeout_sec, timeout_usec * 1000);
-  }
-}
-
-
-void
-ThreadManager::wakeup(BlockedTimingAspect::WakeupHook hook, Barrier *barrier)
-{
-  MutexLocker lock(__threads.mutex());
-
-  if ( __threads.find(hook) != __threads.end() ) {
-    if ( barrier ) {
-      __threads[hook].wakeup(barrier);
-    } else {
-      __threads[hook].wakeup();
-    }
-    if ( __threads[hook].size() == 0 ) {
-      __threads.erase(hook);
-    }
-  }
-}
-
-
-void
-ThreadManager::try_recover(std::list<std::string> &recovered_threads)
-{
-  __threads.lock();
-  for (__tit = __threads.begin(); __tit != __threads.end(); ++__tit) {
-    __tit->second.try_recover(recovered_threads);
-  }
-  __threads.unlock();
-}
-
-
-bool
-ThreadManager::timed_threads_exist()
-{
-  return (__threads.size() > 0);
-}
-
-
-void
-ThreadManager::wait_for_timed_threads()
-{
-  __interrupt_timed_thread_wait = false;
-  __waitcond_timedthreads->wait();
-  if ( __interrupt_timed_thread_wait ) {
-    __interrupt_timed_thread_wait = false;
-    throw InterruptedException("Waiting for timed threads was interrupted");
-  }
-}
-
-void
-ThreadManager::interrupt_timed_thread_wait()
-{
-  __interrupt_timed_thread_wait = true;
-  __waitcond_timedthreads->wake_all();
 }
 
 } // end namespace fawkes

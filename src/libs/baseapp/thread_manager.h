@@ -27,8 +27,6 @@
 #include <core/threading/thread_list.h>
 #include <core/threading/thread_collector.h>
 #include <core/exception.h>
-#include <aspect/blocked_timing.h>
-#include <aspect/blocked_timing/executor.h>
 
 #include <core/utils/lock_map.h>
 #include <list>
@@ -43,8 +41,7 @@ class ThreadInitializer;
 class ThreadFinalizer;
 
 class ThreadManager
-: public ThreadCollector,
-  public BlockedTimingExecutor
+: public ThreadCollector
 {
  public:
   ThreadManager();
@@ -77,16 +74,6 @@ class ThreadManager
   virtual void force_remove(ThreadList &tl);
   virtual void force_remove(Thread *t);
 
-  virtual void wakeup_and_wait(BlockedTimingAspect::WakeupHook hook,
-			       unsigned int timeout_usec = 0);
-  virtual void wakeup(BlockedTimingAspect::WakeupHook hook,
-		      Barrier *barrier = 0);
-  virtual void try_recover(std::list<std::string> &recovered_threads);
-
-  virtual bool timed_threads_exist();
-  virtual void wait_for_timed_threads();
-  virtual void interrupt_timed_thread_wait();
-
  private:
   void internal_add_thread(Thread *t);
   void internal_remove_thread(Thread *t);
@@ -98,9 +85,6 @@ class ThreadManager
  private:
   ThreadInitializer *__initializer;
   ThreadFinalizer   *__finalizer;
-
-  LockMap< BlockedTimingAspect::WakeupHook, ThreadList > __threads;
-  LockMap< BlockedTimingAspect::WakeupHook, ThreadList >::iterator __tit;
 
   ThreadList     __untimed_threads;
   WaitCondition *__waitcond_timedthreads;
