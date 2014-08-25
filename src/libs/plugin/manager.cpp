@@ -43,6 +43,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+using llsfrb::ConfigEntryNotFoundException;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }

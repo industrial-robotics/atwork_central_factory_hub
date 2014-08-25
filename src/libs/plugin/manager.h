@@ -34,6 +34,12 @@
 #include <string>
 #include <utility>
 
+namespace llsfrb {
+  class Configuration;
+}
+
+using llsfrb::Configuration;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
@@ -44,7 +50,6 @@ class Plugin;
 class PluginLoader;
 class Mutex;
 class PluginListMessage;
-class Configuration;
 class FamThread;
 class PluginManagerListener;
 

@@ -29,13 +29,18 @@
 
 #include <string>
 
+namespace llsfrb {
+  class Configuration;
+}
+
+using llsfrb::Configuration;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
 #endif
 
 class Module;
-class Configuration;
 class ModuleManager;
 
 class PluginLoadException : public Exception
