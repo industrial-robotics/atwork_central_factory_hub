@@ -30,7 +30,6 @@
 #include <core/threading/thread_initializer.h>
 #include <core/threading/mutex_locker.h>
 #include <core/exception.h>
-#include <logging/liblogger.h>
 #include <config/config.h>
 #include <utils/system/dynamic_module/module_manager.h>
 
@@ -162,9 +161,9 @@ PluginManager::init_pinfo_cache()
 	__pinfo_cache.push_back(make_pair(plugin_name,
 					  plugin_loader->get_description(plugin_name.c_str())));
       } catch (Exception &e) {
-	LibLogger::log_warn("PluginManager", "Could not get description of plugin %s, "
-			    "exception follows", plugin_name.c_str());
-	LibLogger::log_warn("PluginManager", e);
+//	LibLogger::log_warn("PluginManager", "Could not get description of plugin %s, "
+//			    "exception follows", plugin_name.c_str());
+//	LibLogger::log_warn("PluginManager", e);
       }
     }
   }
@@ -301,8 +300,8 @@ PluginManager::load(const char *plugin_list)
 	__meta_plugins[*i] = pset;
 	__meta_plugins.unlock();
 	try {
-	  LibLogger::log_info("PluginManager", "Loading plugins %s for meta plugin %s",
-	                      pset.c_str(), i->c_str());
+//	  LibLogger::log_info("PluginManager", "Loading plugins %s for meta plugin %s",
+//	                      pset.c_str(), i->c_str());
 	  load(pset.c_str());
 	  notify_loaded(i->c_str());
 	} catch (Exception &e) {
@@ -394,7 +393,7 @@ PluginManager::unload(const char *plugin_name)
       __meta_plugins.unlock();
 
     } catch (Exception &e) {
-      LibLogger::log_error("PluginManager", "Could not finalize one or more threads of plugin %s, NOT unloading plugin", plugin_name);
+//      LibLogger::log_error("PluginManager", "Could not finalize one or more threads of plugin %s, NOT unloading plugin", plugin_name);
       throw;
     }
   } else if (__meta_plugins.find(plugin_name) != __meta_plugins.end()) {
@@ -408,8 +407,8 @@ PluginManager::unload(const char *plugin_name)
       }
 
       __meta_plugins.erase_locked(*i);
-      LibLogger::log_info("PluginManager", "UNloading plugin %s for meta plugin %s",
-			  i->c_str(), plugin_name);
+//      LibLogger::log_info("PluginManager", "UNloading plugin %s for meta plugin %s",
+//			  i->c_str(), plugin_name);
       unload(i->c_str());
     }
   }
@@ -446,9 +445,9 @@ PluginManager::notify_loaded(const char *plugin_name)
     try {
       (*__lit)->plugin_loaded(plugin_name);
     } catch (Exception &e) {
-      LibLogger::log_warn("PluginManager", "PluginManagerListener threw exception "
-			  "during notification of plugin loaded, exception follows.");
-      LibLogger::log_warn("PluginManager", e);
+//      LibLogger::log_warn("PluginManager", "PluginManagerListener threw exception "
+//			  "during notification of plugin loaded, exception follows.");
+//      LibLogger::log_warn("PluginManager", e);
     }
   }
   __listeners.unlock();
@@ -462,9 +461,9 @@ PluginManager::notify_unloaded(const char *plugin_name)
     try {
       (*__lit)->plugin_unloaded(plugin_name);
     } catch (Exception &e) {
-      LibLogger::log_warn("PluginManager", "PluginManagerListener threw exception "
-			  "during notification of plugin unloaded, exception follows.");
-      LibLogger::log_warn("PluginManager", e);
+//      LibLogger::log_warn("PluginManager", "PluginManagerListener threw exception "
+//			  "during notification of plugin unloaded, exception follows.");
+//      LibLogger::log_warn("PluginManager", e);
     }
   }
   __listeners.unlock();
