@@ -239,7 +239,6 @@ ThreadManager::add_maybelocked(Thread *thread, bool lock)
   try {
     __initializer->init(thread);
   } catch (CannotInitializeThreadException &e) {
-    thread->notify_of_failed_init();
     e.append("Adding thread in ThreadManager failed");
     throw;
   }
@@ -250,25 +249,21 @@ ThreadManager::add_maybelocked(Thread *thread, bool lock)
   try {
     thread->init();
   } catch (CannotInitializeThreadException &e) {
-    thread->notify_of_failed_init();
     __finalizer->finalize(thread);
     throw;
   } catch (Exception &e) {
-    thread->notify_of_failed_init();
     CannotInitializeThreadException
       cite("Could not initialize thread '%s'", thread->name());
     cite.append(e);
     __finalizer->finalize(thread);
     throw cite;
   } catch (std::exception &e) {
-    thread->notify_of_failed_init();
     CannotInitializeThreadException
       cite("Could not initialize thread '%s'", thread->name());
     cite.append("Caught std::exception or derivative: %s", e.what());
     __finalizer->finalize(thread);
     throw cite;
   } catch (...) {
-    thread->notify_of_failed_init();
     CannotInitializeThreadException
       cite("Could not initialize thread '%s'", thread->name());
     cite.append("Unknown exception caught");
