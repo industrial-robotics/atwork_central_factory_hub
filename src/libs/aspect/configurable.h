@@ -27,6 +27,8 @@
 #include <aspect/aspect.h>
 #include <config/config.h>
 
+using llsfrb::Configuration;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }

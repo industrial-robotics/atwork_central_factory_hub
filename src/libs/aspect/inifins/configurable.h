@@ -26,12 +26,16 @@
 
 #include <aspect/inifins/inifin.h>
 
+namespace llsfrb {
+  class Configuration;
+}
+
+using llsfrb::Configuration;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
 #endif
-
-class Configuration;
 
 class ConfigurableAspectIniFin : public AspectIniFin
 {

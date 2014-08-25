@@ -31,13 +31,18 @@
 #include <list>
 #include <string>
 
+namespace llsfrb {
+  class Configuration;
+}
+
+using llsfrb::Configuration;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
 #endif
 
 class BlackBoard;
-class Configuration;
 class Logger;
 class Clock;
 class FawkesNetworkHub;
