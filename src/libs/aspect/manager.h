@@ -33,9 +33,11 @@
 
 namespace llsfrb {
   class Configuration;
+  class Logger;
 }
 
 using llsfrb::Configuration;
+using llsfrb::Logger;
 
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
@@ -43,7 +45,6 @@ namespace fawkes {
 #endif
 
 class BlackBoard;
-class Logger;
 class Clock;
 class FawkesNetworkHub;
 class PluginManager;

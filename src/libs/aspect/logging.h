@@ -27,6 +27,8 @@
 #include <aspect/aspect.h>
 #include <logging/logger.h>
 
+using llsfrb::Logger;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }

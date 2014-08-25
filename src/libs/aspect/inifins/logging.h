@@ -26,12 +26,16 @@
 
 #include <aspect/inifins/inifin.h>
 
+namespace llsfrb {
+  class Logger;
+}
+
+using llsfrb::Logger;
+
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
 #endif
-
-class Logger;
 
 class LoggingAspectIniFin : public AspectIniFin
 {
