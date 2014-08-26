@@ -16,14 +16,13 @@
 BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
 
-LIBS_libfawkesaspects = fawkescore fawkesutils fawkesconfig fawkeslogging
+LIBS_libllsfrbaspects = llsfrbcore llsfrbutils llsfrbconfig llsfrblogging
 
-OBJS_libfawkesaspects = $(patsubst %.cpp,%.o,$(filter-out $(OBJS_FILTER_OUT),$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/*/*.cpp))))))
-HDRS_libfawkesaspects = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h $(SRCDIR)/*/*.h))
-INST_HDRS_SUBDIR_libfawkesaspects = aspect
+OBJS_libllsfrbaspects = $(patsubst %.cpp,%.o,$(filter-out $(OBJS_FILTER_OUT),$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/*/*.cpp))))))
+HDRS_libllsfrbaspects = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h $(SRCDIR)/*/*.h))
+INST_HDRS_SUBDIR_libllsfrbaspects = aspect
 
-OBJS_all = $(OBJS_libfawkesaspects)
-LIBS_all  = $(LIBDIR)/libfawkesaspects.so
+OBJS_all = $(OBJS_libllsfrbaspects)
+LIBS_all  = $(LIBDIR)/libllsfrbaspects.so
 
 include $(BUILDSYSDIR)/base.mk
-
