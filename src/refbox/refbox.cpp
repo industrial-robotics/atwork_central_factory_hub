@@ -42,7 +42,6 @@
 #include <config/yaml.h>
 #include <protobuf_clips/communicator.h>
 #include <protobuf_comm/peer.h>
-#include <llsf_sps/sps_comm.h>
 #include <logging/multi.h>
 #include <logging/file.h>
 #include <logging/network.h>
@@ -66,10 +65,8 @@
 #  include <netcomm/utils/resolver.h>
 #endif
 
-using namespace llsf_sps;
 using namespace protobuf_comm;
 using namespace protobuf_clips;
-using namespace llsf_utils;
 
 namespace llsfrb {
 #if 0 /* just to make Emacs auto-indent happy */
@@ -134,52 +131,6 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
     mlogger->add_logger(new FileLogger(logfile.c_str(), log_level_));
   } catch (fawkes::Exception &e) {} // ignored, use default
   logger_ = mlogger;
-
-
-  cfg_machine_assignment_ = ASSIGNMENT_2014;
-  try {
-    std::string m_ass_str = config_->get_string("/llsfrb/game/machine-assignment");
-    if (m_ass_str == "2013") {
-      cfg_machine_assignment_ = ASSIGNMENT_2013;
-    } else if (m_ass_str == "2014") {
-      cfg_machine_assignment_ = ASSIGNMENT_2014;
-    } else {
-      logger_->log_warn("RefBox", "Invalid machine assignment '%s', using 2014",
-			m_ass_str.c_str());
-      cfg_machine_assignment_ = ASSIGNMENT_2014;
-    }
-  } catch (fawkes::Exception &e) {} // ignored, use default
-  logger_->log_info("RefBox", "Using %s machine assignment",
-		    (cfg_machine_assignment_ == ASSIGNMENT_2013) ? "2013" : "2014");
-
-  try {
-    sps_ = NULL;
-    if (config_->get_bool("/llsfrb/sps/enable")) {
-      logger_->log_info("RefBox", "Connecting to SPS");
-      bool test_lights = true;
-      try {
-	test_lights = config_->get_bool("/llsfrb/sps/test-lights");
-      } catch (fawkes::Exception &e) {} // ignore, use default
-
-      if (config_->exists("/llsfrb/sps/hosts") && cfg_machine_assignment_ == ASSIGNMENT_2014) {
-	sps_ = new SPSComm(config_->get_strings("/llsfrb/sps/hosts"),
-			   config_->get_uint("/llsfrb/sps/port"));
-      } else {
-	sps_ = new SPSComm(config_->get_string("/llsfrb/sps/host").c_str(),
-			   config_->get_uint("/llsfrb/sps/port"));
-      }
-
-      sps_->reset_lights();
-      sps_->reset_rfids();
-      if (test_lights) {
-	sps_->test_lights();
-      }
-    }
-  } catch (fawkes::Exception &e) {
-    logger_->log_warn("RefBox", "Cannot connect to SPS, running without");
-    delete sps_;
-    sps_ = NULL;
-  }
 
   clips_ = new CLIPS::Environment();
   setup_protobuf_comm();
@@ -294,7 +245,6 @@ LLSFRefBox::~LLSFRefBox()
 
   delete pb_comm_;
   delete config_;
-  delete sps_;
   delete clips_;
   delete logger_;
   delete clips_logger_;
@@ -352,7 +302,6 @@ LLSFRefBox::setup_protobuf_comm()
 
   } catch (std::runtime_error &e) {
     delete config_;
-    delete sps_;
     delete pb_comm_;
     throw;
   }
@@ -390,7 +339,6 @@ LLSFRefBox::setup_clips()
   clips_->add_function("get-clips-dirs", sigc::slot<CLIPS::Values>(sigc::mem_fun(*this, &LLSFRefBox::clips_get_clips_dirs)));
   clips_->add_function("now", sigc::slot<CLIPS::Values>(sigc::mem_fun(*this, &LLSFRefBox::clips_now)));
   clips_->add_function("load-config", sigc::slot<void, std::string>(sigc::mem_fun(*this, &LLSFRefBox::clips_load_config)));
-  clips_->add_function("sps-set-signal", sigc::slot<void, std::string, std::string, std::string>(sigc::mem_fun(*this, &LLSFRefBox::clips_sps_set_signal)));
 
   clips_->signal_periodic().connect(sigc::mem_fun(*this, &LLSFRefBox::handle_clips_periodic));
 
@@ -488,19 +436,6 @@ LLSFRefBox::clips_load_config(std::string cfg_prefix)
       clips_->assert_fact_f("(confval (path \"%s\") (type %s) (value %s))",
 			    v->path(), type.c_str(), value.c_str());
     }
-  }
-}
-
-
-void
-LLSFRefBox::clips_sps_set_signal(std::string machine, std::string light, std::string state)
-{
-  if (! sps_)  return;
-  try {
-    unsigned int m = to_machine(machine, cfg_machine_assignment_);
-    sps_->set_light(m, light, state);
-  } catch (fawkes::Exception &e) {
-    logger_->log_warn("RefBox", "Failed to set signal: %s", e.what());
   }
 }
 
@@ -929,41 +864,6 @@ LLSFRefBox::clips_mongodb_replace(std::string collection, void *bson, CLIPS::Val
 #endif
 
 
-void
-LLSFRefBox::sps_read_rfids()
-{
-  if (! sps_)  return;
-
-  //std::lock_guard<std::recursive_mutex> lock(clips_mutex_);
-  fawkes::MutexLocker lock(&clips_mutex_);
-
-
-  try {
-    std::vector<uint32_t> puck_ids = sps_->read_rfids();
-    for (unsigned int i = 0; i < puck_ids.size(); ++i) {
-      const char *machine_name = to_string(i, cfg_machine_assignment_);
-      if (puck_ids[i] == SPSComm::NO_PUCK) {
-        clips_->assert_fact_f("(rfid-input (machine %s) (has-puck FALSE))",
-			      machine_name);
-      } else {
-        clips_->assert_fact_f("(rfid-input (machine %s) (has-puck TRUE) (id %u))",
-			      machine_name, puck_ids[i]);
-      }
-    }
-  } catch (fawkes::Exception &e) {
-    logger_->log_warn("RefBox", "Failed to read RFIDs");
-    logger_->log_warn("RefBox", e);
-    try {
-      sps_->try_reconnect();
-      logger_->log_info("RefBox", "Successfully reconnected");
-    } catch (fawkes::Exception &e) {
-      logger_->log_error("RefBox", "Failed to reconnect");
-      logger_->log_error("RefBox", e);
-    }
-  }
-}
-
-
 /** Start the timer for another run. */
 void
 LLSFRefBox::start_timer()
@@ -986,8 +886,6 @@ LLSFRefBox::handle_timer(const boost::system::error_code& error)
     long ms = (now - timer_last_).total_milliseconds();
     timer_last_ = now;
     */
-
-    sps_read_rfids();
 
     {
       //std::lock_guard<std::recursive_mutex> lock(clips_mutex_);

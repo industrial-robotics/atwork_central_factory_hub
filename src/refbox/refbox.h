@@ -42,7 +42,6 @@
 #include <logging/logger.h>
 #include <core/threading/mutex.h>
 #include <core/threading/mutex_locker.h>
-#include <utils/llsf/machines.h>
 #include <protobuf_comm/server.h>
 
 #include <clipsmm.h>
@@ -136,9 +135,6 @@ class LLSFRefBox
 			       CLIPS::Value &query, bool upsert);
 #endif
 
-  void          clips_sps_set_signal(std::string machine, std::string light, std::string state);
-  void          sps_read_rfids();
-
   void handle_server_client_msg(protobuf_comm::ProtobufStreamServer::ClientID client,
 				uint16_t component_id, uint16_t msg_type,
 				std::shared_ptr<google::protobuf::Message> msg);
@@ -166,7 +162,6 @@ class LLSFRefBox
   Logger        *logger_;
   MultiLogger   *clips_logger_;
   Logger::LogLevel log_level_;
-  llsf_sps::SPSComm *sps_;
   protobuf_clips::ClipsProtobufCommunicator *pb_comm_;
 
   CLIPS::Environment                       *clips_;
@@ -184,7 +179,6 @@ class LLSFRefBox
 
   unsigned int cfg_timer_interval_;
   std::string  cfg_clips_dir_;
-  llsf_utils::MachineAssignment cfg_machine_assignment_;
 
 #ifdef HAVE_AVAHI
   fawkes::AvahiThread          *avahi_thread_;

@@ -11,7 +11,7 @@ include:
 # Main configuration document
 
 llsfrb:
-  plugins: ""
+  plugins: "llsf_machine"
 
   log:
     level: info
