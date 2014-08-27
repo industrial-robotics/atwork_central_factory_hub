@@ -196,6 +196,14 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
   aspect_manager_->register_default_inifins(config_, logger_, clips_,
       &clips_mutex_);
 
+  std::string plugins = "";
+  try {
+    plugins = config_->get_string("llsfrb/plugins");
+  } catch (fawkes::Exception &e) {
+    // no plugins configuration parameter specified, do nothing
+  }
+  plugin_manager_->load(plugins.c_str());
+
  #ifdef HAVE_MONGODB
   cfg_mongodb_enabled_ = false;
   try {
