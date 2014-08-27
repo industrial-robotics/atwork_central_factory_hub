@@ -51,6 +51,12 @@
 #endif
 
 
+namespace fawkes {
+  class AspectManager;
+  class PluginManager;
+  class ThreadManager;
+}
+
 namespace protobuf_clips {
   class ClipsProtobufCommunicator;
 }
@@ -167,6 +173,10 @@ class LLSFRefBox
   //std::recursive_mutex                      clips_mutex_;
   fawkes::Mutex                             clips_mutex_;
   std::map<long int, CLIPS::Fact::pointer>  clips_msg_facts_;
+
+  fawkes::PluginManager *plugin_manager_;
+  fawkes::AspectManager *aspect_manager_;
+  fawkes::ThreadManager *thread_manager_;
 
   boost::asio::io_service      io_service_;
   boost::asio::deadline_timer  timer_;

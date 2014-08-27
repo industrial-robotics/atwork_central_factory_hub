@@ -47,6 +47,9 @@
 #include <logging/file.h>
 #include <logging/network.h>
 #include <logging/console.h>
+#include <aspect/manager.h>
+#include <baseapp/thread_manager.h>
+#include <plugin/manager.h>
 
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -183,6 +186,15 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
   setup_clips();
 
   mlogger->add_logger(new NetworkLogger(pb_comm_->server(), log_level_));
+
+  // Set up the plugin infrastructure
+  aspect_manager_ = new fawkes::AspectManager();
+  thread_manager_ = new fawkes::ThreadManager(aspect_manager_, aspect_manager_);
+  plugin_manager_ = new fawkes::PluginManager(thread_manager_, config_,
+      "/llsfrb/meta_plugins/", fawkes::Module::MODULE_FLAGS_DEFAULT, false);
+
+  aspect_manager_->register_default_inifins(config_, logger_, clips_,
+      &clips_mutex_);
 
  #ifdef HAVE_MONGODB
   cfg_mongodb_enabled_ = false;
