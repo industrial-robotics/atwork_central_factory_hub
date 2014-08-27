@@ -22,6 +22,7 @@
  */
 
 #include <aspect/manager.h>
+#include <aspect/inifins/clips.h>
 #include <aspect/inifins/configurable.h>
 #include <aspect/inifins/logging.h>
 #include <aspect/aspect.h>
@@ -191,15 +192,18 @@ AspectManager::prepare_finalize(Thread *thread)
  */
 void
 AspectManager::register_default_inifins(Configuration *config,
-					Logger *logger)
+					Logger *logger,
+					CLIPS::Environment *clips, Mutex *clips_mutex)
 {
   if (! __default_inifins.empty())  return;
 
   ConfigurableAspectIniFin *conf_aif = new ConfigurableAspectIniFin(config);
   LoggingAspectIniFin *log_aif = new LoggingAspectIniFin(logger);
+  CLIPSAspectIniFin *clips_aif = new CLIPSAspectIniFin(clips, clips_mutex);
 
   __default_inifins[conf_aif->get_aspect_name()] = conf_aif;
   __default_inifins[log_aif->get_aspect_name()] = log_aif;
+  __default_inifins[clips_aif->get_aspect_name()] = clips_aif;
 
   std::map<std::string, AspectIniFin *>::iterator i;
   for (i = __default_inifins.begin(); i != __default_inifins.end(); ++i) {

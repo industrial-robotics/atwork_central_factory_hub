@@ -31,6 +31,10 @@
 #include <list>
 #include <string>
 
+namespace CLIPS {
+  class Environment;
+}
+
 namespace llsfrb {
   class Configuration;
   class Logger;
@@ -45,6 +49,7 @@ namespace fawkes {
 #endif
 
 class Thread;
+class Mutex;
 class AspectIniFin;
 
 namespace tf {
@@ -66,7 +71,8 @@ class AspectManager : public ThreadInitializer, public ThreadFinalizer
   bool has_threads_for_aspect(const char *aspect_name);
 
   void register_default_inifins(Configuration *config,
-				Logger *logger);
+				Logger *logger,
+				CLIPS::Environment *clips, Mutex *clips_mutex);
 
  private:
   std::map<std::string, AspectIniFin *> __inifins;
