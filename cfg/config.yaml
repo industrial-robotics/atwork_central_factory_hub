@@ -11,6 +11,8 @@ include:
 # Main configuration document
 
 llsfrb:
+  plugins: "llsf_machine"
+
   log:
     level: info
     general: refbox.log

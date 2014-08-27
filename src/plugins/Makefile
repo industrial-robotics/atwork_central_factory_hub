@@ -1,8 +1,8 @@
 #*****************************************************************************
-#                      Makefile Build System for Fawkes
+#             Makefile Build System for Fawkes : RefBox Plugins
 #                            -------------------
-#   Created on Wed Jan 16 16:55:21 2013
-#   Copyright (C) 2006-2011 by Tim Niemueller, Carologistics RoboCup Team
+#   Created on Wed Jan 16 17:43:33 2013
+#   Copyright (C) 2006-2008 by Tim Niemueller, Carologistics RoboCup Team
 #
 #*****************************************************************************
 #
@@ -13,16 +13,10 @@
 #
 #*****************************************************************************
 
-BASEDIR = ..
+BASEDIR = ../..
 
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = libs msgs refbox shell tools plugins
-
-# Explicit dependencies, this is needed to have make bail out if there is any
-# error. This is also necessary for working parallel build (i.e. for dual core)
-refbox tools shell: msgs
-msgs refbox tools shell plugins: libs
-
+SUBDIRS = llsf_machine
 
 include $(BUILDSYSDIR)/base.mk

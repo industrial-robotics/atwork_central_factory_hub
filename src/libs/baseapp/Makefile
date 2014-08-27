@@ -1,8 +1,8 @@
 #*****************************************************************************
-#                      Makefile Build System for Fawkes
+#          Makefile Build System for Fawkes: Base Application Library
 #                            -------------------
-#   Created on Wed Jan 16 16:55:21 2013
-#   Copyright (C) 2006-2011 by Tim Niemueller, Carologistics RoboCup Team
+#   Created on Wed May 04 21:20:58 2011
+#   Copyright (C) 2006-2011 by Tim Niemueller, AllemaniACs RoboCup Team
 #
 #*****************************************************************************
 #
@@ -13,16 +13,17 @@
 #
 #*****************************************************************************
 
-BASEDIR = ..
-
+BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = libs msgs refbox shell tools plugins
+LIBS_libllsfrbbaseapp = stdc++ llsfrbcore llsfrbutils llsfrbconfig \
+			llsfrbplugin llsfrbaspects llsfrblogging
 
-# Explicit dependencies, this is needed to have make bail out if there is any
-# error. This is also necessary for working parallel build (i.e. for dual core)
-refbox tools shell: msgs
-msgs refbox tools shell plugins: libs
+OBJS_libllsfrbbaseapp =	$(patsubst %.cpp,%.o,$(patsubst qa/%,,$(subst $(SRCDIR)/,,$(realpath $(wildcard $(SRCDIR)/*.cpp)))))
+HDRS_libllsfrbbaseapp = $(subst $(SRCDIR)/,,$(wildcard $(SRCDIR)/*.h))
 
+OBJS_all = $(OBJS_libllsfrbbaseapp)
+LIBS_all  = $(LIBDIR)/libllsfrbbaseapp.so
 
 include $(BUILDSYSDIR)/base.mk
+

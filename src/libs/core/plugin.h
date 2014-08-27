@@ -26,9 +26,13 @@
 
 #include <core/threading/thread_list.h>
 
-namespace fawkes {
+namespace llsfrb {
+  class Configuration;
+}
 
-class Configuration;
+using llsfrb::Configuration;
+
+namespace fawkes {
 
 class Plugin {
  public:
@@ -66,7 +70,7 @@ class Plugin {
  * Do not use directly, rather use the EXPORT_PLUGIN macro.
  * @relates fawkes::Plugin
  */
-typedef Plugin *  (* PluginFactoryFunc)  (fawkes::Configuration *);
+typedef Plugin *  (* PluginFactoryFunc)  (Configuration *);
 
 /** Plugin destructor function for the shared library.
  * Do not use directly, rather use the EXPORT_PLUGIN macro.
@@ -94,7 +98,7 @@ typedef const char *  (* PluginDependenciesFunc) ();
 #define PLUGIN_FACTORY(plugin_class)			\
   extern "C"						\
   Plugin *						\
-  plugin_factory(fawkes::Configuration *config)		\
+  plugin_factory(Configuration *config)		\
   {							\
     return new plugin_class(config);			\
   }

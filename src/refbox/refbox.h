@@ -42,7 +42,6 @@
 #include <logging/logger.h>
 #include <core/threading/mutex.h>
 #include <core/threading/mutex_locker.h>
-#include <utils/llsf/machines.h>
 #include <protobuf_comm/server.h>
 
 #include <clipsmm.h>
@@ -50,6 +49,12 @@
 #  include <mongo/bson/bson.h>
 #endif
 
+
+namespace fawkes {
+  class AspectManager;
+  class PluginManager;
+  class ThreadManager;
+}
 
 namespace protobuf_clips {
   class ClipsProtobufCommunicator;
@@ -130,9 +135,6 @@ class LLSFRefBox
 			       CLIPS::Value &query, bool upsert);
 #endif
 
-  void          clips_sps_set_signal(std::string machine, std::string light, std::string state);
-  void          sps_read_rfids();
-
   void handle_server_client_msg(protobuf_comm::ProtobufStreamServer::ClientID client,
 				uint16_t component_id, uint16_t msg_type,
 				std::shared_ptr<google::protobuf::Message> msg);
@@ -162,7 +164,6 @@ class LLSFRefBox
   Logger        *logger_;
   MultiLogger   *clips_logger_;
   Logger::LogLevel log_level_;
-  llsf_sps::SPSComm *sps_;
   protobuf_clips::ClipsProtobufCommunicator *pb_comm_;
 
   CLIPS::Environment                       *clips_;
@@ -170,13 +171,16 @@ class LLSFRefBox
   fawkes::Mutex                             clips_mutex_;
   std::map<long int, CLIPS::Fact::pointer>  clips_msg_facts_;
 
+  fawkes::PluginManager *plugin_manager_;
+  fawkes::AspectManager *aspect_manager_;
+  fawkes::ThreadManager *thread_manager_;
+
   boost::asio::io_service      io_service_;
   boost::asio::deadline_timer  timer_;
   boost::posix_time::ptime     timer_last_;
 
   unsigned int cfg_timer_interval_;
   std::string  cfg_clips_dir_;
-  llsf_utils::MachineAssignment cfg_machine_assignment_;
 
 #ifdef HAVE_AVAHI
   fawkes::AvahiThread          *avahi_thread_;
