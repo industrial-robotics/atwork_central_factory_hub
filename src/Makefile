@@ -17,12 +17,12 @@ BASEDIR = ..
 
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = libs msgs refbox shell tools
+SUBDIRS = libs msgs refbox shell tools plugins
 
 # Explicit dependencies, this is needed to have make bail out if there is any
 # error. This is also necessary for working parallel build (i.e. for dual core)
 refbox tools shell: msgs
-msgs refbox tools shell: libs
+msgs refbox tools shell plugins: libs
 
 
 include $(BUILDSYSDIR)/base.mk
