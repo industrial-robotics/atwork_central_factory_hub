@@ -27,7 +27,7 @@ ifneq ($(wildcard /usr/include/mongo/client/dbclient.h /usr/local/include/mongo/
   ifeq ($(call boost-have-libs,thread system filesystem)$(HAVE_LIBSSL),11)
     HAVE_MONGODB = 1
     CFLAGS_MONGODB  = -DHAVE_MONGODB $(CFLAGS_LIBSSL)
-    LDFLAGS_MONGODB = -lm -lpthread \
+    LDFLAGS_MONGODB = -lm -lpthread -lmongoclient \
 		      $(call boost-libs-ldflags,thread system filesystem) \
 		      $(LDFLAGS_LIBSSL)
   endif
