@@ -15,6 +15,7 @@
 
 BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
+include $(BUILDSYSDIR)/clips.mk
 
 LIBS_libllsfrbaspects = llsfrbcore llsfrbutils llsfrbconfig llsfrblogging
 
@@ -24,5 +25,19 @@ INST_HDRS_SUBDIR_libllsfrbaspects = aspect
 
 OBJS_all = $(OBJS_libllsfrbaspects)
 LIBS_all  = $(LIBDIR)/libllsfrbaspects.so
+
+ifeq ($(HAVE_CLIPS),1)
+  CFLAGS  += $(CFLAGS_CLIPS)
+  LDFLAGS += $(LDFLAGS_CLIPS)
+else
+  WARN_TARGETS += warning_clips
+endif
+
+ifeq ($(OBJSSUBMAKE),1)
+all: $(WARN_TARGETS) $(WARN_TARGETS_BOOST)
+.PHONY: warning_clips
+warning_clips:
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build LLSF Aspects$(TNORMAL) (clipsmm not found)"
+endif
 
 include $(BUILDSYSDIR)/base.mk
