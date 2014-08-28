@@ -151,6 +151,8 @@ class LLSFRefBox
   void handle_client_sent_msg(std::string host, unsigned short port,
 			      std::shared_ptr<google::protobuf::Message> msg);
 
+  std::string modify_directory_path(std::string dir);
+
 #ifdef HAVE_MONGODB
   void add_comp_type(google::protobuf::Message &m, mongo::BSONObjBuilder *b);
 #endif
