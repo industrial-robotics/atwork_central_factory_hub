@@ -18,6 +18,7 @@ BASEDIR = ../..
 include $(BASEDIR)/etc/buildsys/config.mk
 include $(BUILDSYSDIR)/protobuf.mk
 include $(BUILDSYSDIR)/boost.mk
+include $(BASEDIR)/llsf/llsf.mk
 
 CFLAGS += $(CFLAGS_CPP11)
 

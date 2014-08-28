@@ -26,7 +26,7 @@ llsfrb:
     test-lights: true
 
   clips:
-    dir: "@BASEDIR@/src/refbox/clips"
+    dir: "@BASEDIR@/llsf/clips"
     # Timer interval, in milliseconds
     timer-interval: 40
 
@@ -43,7 +43,7 @@ llsfrb:
                     net-send-VersionInfo]
 
   comm:
-    protobuf-dirs: ["@BASEDIR@/src/msgs"]
+    protobuf-dirs: ["@BASEDIR@/llsf/msgs"]
 
     server-port: !tcp-port 4444
     

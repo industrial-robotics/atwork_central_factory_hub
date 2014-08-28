@@ -20,6 +20,7 @@ include $(BUILDSYSDIR)/protobuf.mk
 include $(BUILDSYSDIR)/clips.mk
 include $(BUILDSYSDIR)/boost.mk
 include $(BUILDCONFDIR)/llsf_sps/llsf_sps.mk
+include $(BASEDIR)/llsf/llsf.mk
 
 CFLAGS += $(CFLAGS_CPP11)
 

@@ -1,8 +1,8 @@
 #*****************************************************************************
 #                      Makefile Build System for Fawkes
 #                            -------------------
-#   Created on Wed Sep 06 02:39:46 2006
-#   Copyright (C) 2006 by Tim Niemueller, AllemaniACs RoboCup Team
+#   Created on Sun Sep 03 14:14:14 2006
+#   Copyright (C) 2006-2007 by Tim Niemueller, AllemaniACs RoboCup Team
 #
 #*****************************************************************************
 #
@@ -13,11 +13,8 @@
 #
 #*****************************************************************************
 
-BASEDIR = .
+ifndef __buildsys_config_mk_
+$(error config.mk must be included before base.mk)
+endif
 
-SUBDIRS = src llsf
-
-include $(BASEDIR)/etc/buildsys/config.mk
-include $(BUILDSYSDIR)/rules.mk
-include $(BUILDSYSDIR)/root/root.mk
-
+CFLAGS += -I$(BASEDIR)/llsf
