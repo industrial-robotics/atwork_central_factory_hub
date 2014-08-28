@@ -1,8 +1,8 @@
 #*****************************************************************************
 #                      Makefile Build System for Fawkes
 #                            -------------------
-#   Created on Wed Sep 06 02:39:46 2006
-#   Copyright (C) 2006 by Tim Niemueller, AllemaniACs RoboCup Team
+#   Created on Wed Jan 16 16:55:21 2013
+#   Copyright (C) 2006-2011 by Tim Niemueller, Carologistics RoboCup Team
 #
 #*****************************************************************************
 #
@@ -13,11 +13,15 @@
 #
 #*****************************************************************************
 
-BASEDIR = .
-
-SUBDIRS = src llsf
+BASEDIR = ..
 
 include $(BASEDIR)/etc/buildsys/config.mk
-include $(BUILDSYSDIR)/rules.mk
-include $(BUILDSYSDIR)/root/root.mk
 
+SUBDIRS = msgs shell tools
+
+# Explicit dependencies, this is needed to have make bail out if there is any
+# error. This is also necessary for working parallel build (i.e. for dual core)
+tools shell: msgs
+
+
+include $(BUILDSYSDIR)/base.mk
