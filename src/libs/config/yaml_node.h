@@ -30,6 +30,7 @@
 
 #include <utils/misc/string_conversions.h>
 #include <utils/misc/string_split.h>
+#include <iostream>
 #include <fstream>
 #include <stack>
 #include <cerrno>
