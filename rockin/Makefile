@@ -1,10 +1,4 @@
 #*****************************************************************************
-#                      Makefile Build System for Fawkes
-#                            -------------------
-#   Created on Wed Sep 06 02:39:46 2006
-#   Copyright (C) 2006 by Tim Niemueller, AllemaniACs RoboCup Team
-#
-#*****************************************************************************
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -13,11 +7,14 @@
 #
 #*****************************************************************************
 
-BASEDIR = .
-
-SUBDIRS = src rockin
+BASEDIR = ..
 
 include $(BASEDIR)/etc/buildsys/config.mk
-include $(BUILDSYSDIR)/rules.mk
-include $(BUILDSYSDIR)/root/root.mk
 
+SUBDIRS = msgs examples
+
+# Explicit dependencies, this is needed to have make bail out if there is any
+# error. This is also necessary for working parallel build (i.e. for dual core)
+examples: msgs
+
+include $(BUILDSYSDIR)/base.mk
