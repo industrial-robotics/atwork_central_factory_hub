@@ -22,13 +22,21 @@ HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 LIBS_example_client = stdc++ llsf_protobuf_comm rockin_msgs
 OBJS_example_client = client.o
 
+LIBS_example_peer = stdc++ llsf_protobuf_comm rockin_msgs
+OBJS_example_peer = peer.o
+
 ifeq ($(HAVE_PROTOBUF)$(HAVE_BOOST_LIBS),11)
-  OBJS_all += $(OBJS_example_client)
-  BINS_all += $(BINDIR)/example-client
+  OBJS_all += $(OBJS_example_client) $(OBJS_example_peer)
+  BINS_all += $(BINDIR)/example-client $(BINDIR)/example-peer
 
   CFLAGS_example_client  += $(CFLAGS_PROTOBUF) \
 	     		    $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
   LDFLAGS_example_client += $(LDFLAGS_PROTOBUF) \
+	     		    $(call boost-libs-ldflags,$(REQ_BOOST_LIBS))
+
+  CFLAGS_example_peer  += $(CFLAGS_PROTOBUF) \
+	     		    $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
+  LDFLAGS_example_peer += $(LDFLAGS_PROTOBUF) \
 	     		    $(call boost-libs-ldflags,$(REQ_BOOST_LIBS))
 
   #MANPAGES_all =  $(MANDIR)/man1/refbox-llsf.1
