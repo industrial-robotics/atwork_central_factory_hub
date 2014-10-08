@@ -1,0 +1,105 @@
+/*  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the authors nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "ConveyorBeltProtos";
+
+enum ConveyorBeltRunMode {
+  STOP  = 0;  // The conveyor belt is standing still
+  START = 1;  // The conveyor belt is moving
+}
+
+// This message is only meant to be used by clients (i.e. not robots), e.g. to
+// visualize the conveyor belt status.
+message ConveyorBeltStatus {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 300;
+  }
+
+  // The current motion state of the conveyor belt
+  required ConveyorBeltRunMode state = 1;
+}
+
+// This message is only meant to be used by clients (i.e. not robots), e.g. to
+// control the conveyor belt. Clients can always start and stop the conveyor
+// belt.
+message ConveyorBeltCommand {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 301;
+  }
+
+  // The desired motion state of the conveyor belt
+  required ConveyorBeltRunMode command = 1;
+}
+
+// The peers (robots) receive the conveyor belt status via this message. In
+// addition to the motion state of the conveyor belt, the message contains a
+// "cycle" field. The cycle indicates how often the conveyor belt has been
+// started by a peer and then been stopped by the quality control camera.
+message TriggeredConveyorBeltStatus {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 308;
+  }
+
+  // The current motion state of the conveyor belt.
+  required ConveyorBeltRunMode state = 1;
+
+  // The cycle determines how often the conveyor belt has already been
+  // activated. Every time that the conveyor belt is restarted by a robot, the
+  // cycle counter is increased.
+  required int32 cycle = 2;
+}
+
+// The peers (robots) can start the conveyor belt via this message. Note, that
+// only the quality control camera can stop the conveyor belt and stop commands
+// from the peers will be ignored by the Central Factory Hub. For the start
+// command to succeed, the "next_cycle" field must be increased by exactly one
+// (1) in comparison to the "cycle" count which the peer received from the
+// TriggeredConveyorBeltStatus. Else the Central Factory Hub ignores the
+// command. This mechanism allows the peer to continuously send the command
+// until the TriggeredConveyorBeltStatus indicates the successful execution of
+// the command.
+message TriggeredConveyorBeltCommand {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 309;
+  }
+
+  // The desired motion state of the conveyor belt.
+  required ConveyorBeltRunMode command = 1;
+
+  // The next cycle for which the command is executed. The peer must set this
+  // field to exactly one greater than the cycle received via the
+  // TriggeredConveyorBeltStatus (next_cycle = cycle + 1).
+  required int32 next_cycle = 2;
+}

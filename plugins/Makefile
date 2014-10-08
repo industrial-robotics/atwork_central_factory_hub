@@ -1,4 +1,10 @@
 #*****************************************************************************
+#             Makefile Build System for Fawkes : RefBox Plugins
+#                            -------------------
+#   Created on Wed Jan 16 17:43:33 2013
+#   Copyright (C) 2006-2008 by Tim Niemueller, Carologistics RoboCup Team
+#
+#*****************************************************************************
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -7,14 +13,10 @@
 #
 #*****************************************************************************
 
-BASEDIR = ..
+BASEDIR = ../..
 
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = msgs examples plugins tools viewer controller
-
-# Explicit dependencies, this is needed to have make bail out if there is any
-# error. This is also necessary for working parallel build (i.e. for dual core)
-examples tools viewer controller: msgs
+SUBDIRS = msgs conveyor_belt triggered_conveyor_belt drilling_machine force_fitting_machine
 
 include $(BUILDSYSDIR)/base.mk

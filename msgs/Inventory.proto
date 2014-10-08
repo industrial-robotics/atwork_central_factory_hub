@@ -1,0 +1,133 @@
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "InventoryProtos";
+
+
+message ObjectIdentifier {
+
+  enum ObjectType {
+    AX = 1;
+    EM = 2;
+    ER = 3;
+  }
+
+  // The object class (e.g. "EM-01") consists of the type ("EM") and a type
+  // ID (1).
+  required ObjectType type        = 1;  // The type of the object
+  required int64      type_id     = 2;  // The type ID of the object
+
+  // All labeled objects also have an instance ID. For example, there could
+  // exist two instances of EM-01 containers, called "EM-01-001" and
+  // "EM-01-002" where "EM-01" represents the item's class and "001"/"002" are
+  // the instance IDs.
+  optional int64      instance_id = 3;
+
+  // A human-readable description of the identifier
+  optional string     description = 4;
+}
+
+
+message LocationIdentifier {
+
+  enum LocationType {
+    SH    = 1;  // Shelf
+    WS    = 2;  // Workstation
+    CB    = 3;  // Conveyor belt
+    ROBOT = 4;
+  }
+
+  required LocationType type        = 1;  // The type of location
+  required uint64       instance_id = 2;  // The instance ID of the location (e.g. if there are several shelves)
+  optional string       description = 3;  // A human-readable description of the location
+}
+
+
+message Inventory {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 200;
+  }
+
+  message Item {
+    enum CompType {
+      COMP_ID  = 2000;
+      MSG_TYPE = 203;
+    }
+  
+    // A description of the object.
+    required ObjectIdentifier object = 1;
+
+    // When the object describes a class (i.e. the instance_id of the label is
+    // *not* set) the quantity of the object must be specified. For object
+    // instances (i.e. the instance_id of the label *is* set) the quantity is
+    // ignored.
+    optional uint64 quantity = 2;
+
+    // Either the container or the location field must be set
+    optional ObjectIdentifier   container = 3; // The container in which this item is stored
+    optional LocationIdentifier location  = 4; // The location at which this item is stored
+  }
+
+  repeated Item items = 1;
+}
+
+
+message Transaction {
+  enum Action {
+    // INSERT instantiates new objects in the inventory. Use this action e.g.
+    // to add a new, external delivery to the inventory. Alternatively, the
+    // INSERT action (after REMOVE actions) is also used to change the class
+    // of an object, for instance, after assembly.
+    INSERT = 1;
+
+    // REMOVE deletes existing objects from the inventory. Use this action
+    // e.g. to remove objects which have been shipped. Alternatively, REMOVE
+    // actions (before INSERT actions) are also used to change the class of an
+    // object, for instance, after assembly.
+    REMOVE = 2;
+
+    // MOVE modifies the location of the specified objects. Use this action
+    // e.g. to describe that a robot grasped or placed an object.
+    MOVE = 3;
+  }
+
+  // A unique identifier (per robot) of the transaction. Transactions in the
+  // log must start with the transaction_id 1 and must increase the
+  // transaction_id by 1 for each further transaction.
+  required uint64 transaction_id = 1;
+
+  // The unique ID of one of the active orders to which this transaction is
+  // associated.
+  required uint64 order_id = 2;
+
+  // A class or instance description of the object which is modified by the
+  // transaction.
+  required ObjectIdentifier object = 3;
+
+  // This parameter is only required for object classes (i.e. the instance_id
+  // is not set in the ObjectIdentifier). In other cases it is ignored.
+  optional uint32 quantity = 4;
+
+  // The action to be performed
+  required Action action = 5;
+
+  // The semantics of the source and destination parameter depend on the
+  // action:
+  // * MOVE(source, destination) i.e. source & destination required
+  // * INSERT(destination) i.e. destination required, source ignored
+  // * REMOVE(source) i.e. source required, destination ignored
+  optional LocationIdentifier source      = 6;
+  optional LocationIdentifier destination = 7;
+}
+
+
+message TransactionLog {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 201;
+  }
+
+  // The complete history of inventory transactions performed by the robot
+  repeated Transaction transactions = 1;
+}

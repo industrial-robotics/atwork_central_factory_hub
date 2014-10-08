@@ -1,0 +1,112 @@
+/***************************************************************************
+ *  OrderInfo.proto - RoCKIn Protocol - Order Info message
+ *
+ *  Copyright  2013  Tim Niemueller [www.niemueller.de]
+ ****************************************************************************/
+
+/*  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the authors nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package rockin_msgs;
+
+import "Inventory.proto";
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "OrderInfoProtos";
+
+message Order {
+  // Status changes can be triggered by a (robot) peer or a controller
+  enum Status {
+    OFFERED     = 1;  // The order is offered by the RefBox and can be processed by a team/robot
+    TIMEOUT     = 2;  // The order has not been accepted in time or processing took too long
+    IN_PROGRESS = 3;  // A team/robot is currently processing this order
+    PAUSED      = 4;  // Temporarily pause processing this order
+    ABORTED     = 5;  // Stop working on this order
+    FINISHED    = 6;  // The order has been processed successfully
+  }
+
+  // A unique identifier of this order
+  required uint64 id = 1;
+
+  // The status of this order as specified in the Status enumeration
+  required Status status = 2;
+
+  // The requested product represented by their identifier
+  required ObjectIdentifier object = 3;
+
+  // There are two different interpretations of this field:
+  // * When the destination field is set, the object(s) must be delivered to
+  //   this destination INSIDE of the container.
+  // * When the destination field is not set, the container represents the
+  //   location into which the object(s) must be delivered.
+  optional ObjectIdentifier container = 4;
+
+  // The already delivered quantity of the object
+  required uint64 quantity_delivered = 5;
+
+  // The requested quantity of the object. This is only required for object
+  // classes. When a concrete object instance is requested, this field is not
+  // set.
+  // If the objects are requested in a container (i.e. the container field is
+  // set), this field specifies the amount of objects inside the container!
+  optional uint64 quantity_requested = 6;
+
+  // The location to where the product should be delivered. When the destination
+  // is not specified, the container must be set. This container the identifies
+  // the delivery location.
+  optional LocationIdentifier destination = 7;
+
+  // The location to where the product should be fetched
+  optional LocationIdentifier source = 8;
+
+  // The team which is currently processing this order
+  optional string processing_team = 9;
+}
+
+
+message OrderInfo {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 210;
+  }
+
+  // All orders which are currently available
+  repeated Order orders = 1;
+}
+
+
+message OrderAcceptance {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 211;
+  }
+
+  // A list of order IDs (as offered by the RefBox) which the robot is
+  // processing
+  repeated uint64 id = 1;
+}

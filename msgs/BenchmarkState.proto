@@ -1,0 +1,138 @@
+/*  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the authors nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package rockin_msgs;
+
+import "Time.proto";
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "BenchmarkStateProtos";
+
+
+message BenchmarkScenario {
+  enum BenchmarkType {
+    NONE = 0; // No benchmark running
+    TBM  = 1; // Task benchmark
+    FBM  = 2; // Functionality benchmark
+  }
+
+  // e.g. TASK_BENCHMARK 1 "TBM 1: Assembly aid tray"
+  required BenchmarkType type         = 1;
+  required uint32        type_id      = 2;
+  optional string        description  = 3;
+}
+
+
+message BenchmarkState {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 100;
+  }
+
+  enum State {
+    RUNNING   = 1;
+    PAUSED    = 2;
+    FINISHED  = 3;
+    STOPPED   = 4;
+  }
+
+  enum Phase {
+    EXECUTION   = 0;
+    CALIBRATION = 1;
+    PREPARATION = 2;
+  }
+
+  // Time since benchmark start
+  required Time benchmark_time = 1;
+
+  // Current benchmark state
+  required State state = 3;
+
+  // Current benchmark phase
+  required Phase phase = 9;
+
+  // Current benchmark scenario
+  required BenchmarkScenario scenario = 4;
+
+  // Name of all known teams
+  repeated string known_teams = 5;
+
+  // Name of teams which are currently connected to the RefBox
+  repeated string connected_teams = 6;
+}
+
+
+// Request setting of a new benchmark state
+message SetBenchmarkState {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 101;
+  }
+
+  // The new desired state
+  required BenchmarkState.State state = 1;
+}
+
+
+// Request setting of a new benchmark scenario
+message SetBenchmarkScenario {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 102;
+  }
+
+  // The new desired benchmark
+  required BenchmarkScenario scenario = 1;
+}
+
+
+// Message to control the benchmark state machine by requesting transitions
+message SetBenchmarkTransitionEvent {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 103;
+  }
+
+  enum Event {
+    // Transition from any state to STOPPED state and re-initialize the
+    // benchmark scenario (e.g. after setting a new benchmark scenario)
+    RESET = 0;
+
+    // Transition from STOPPED or PAUSED to RUNNING state
+    START = 1;
+
+    // Transition from RUNNING to STOPPED state
+    STOP = 2;
+
+    // Transition from RUNNING to PAUSED state
+    PAUSE = 3;
+  }
+
+  // The requested transition
+  required Event event = 1;
+}
