@@ -29,6 +29,7 @@
 .cproject
 .project
 .settings
+.autotools
 
 # Vim files
 .*.swp
