@@ -5,14 +5,12 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-
 (defglobal
   ?*CLIPS_DIRS* = (get-clips-dirs)
   ?*DEBUG* = 2  ;debug levels: 0 ~ none, 1 ~ minimal, 2 ~ more, 3 ~ maximum
   ?*CONFIG_PREFIXES* = (create$ "/llsfrb")
   ?*START-TIME* = (now)
 )
-
 
 (deffunction resolve-file (?file)
   (foreach ?d ?*CLIPS_DIRS*
@@ -29,6 +27,8 @@
 (load* (resolve-file utils.clp))
 (load* (resolve-file time.clp))
 (load* (resolve-file config.clp))
+(load* (resolve-file protobuf.clp))
+
 (load* (resolve-file priorities.clp))
 
 (defrule load-config
