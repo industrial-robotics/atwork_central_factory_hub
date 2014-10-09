@@ -79,6 +79,14 @@
   (foreach ?v ?lv (unwatch rules (sym-cat ?v)))
 )
 
+(defrule load-mongodb
+  (init)
+  (have-feature MongoDB)
+  =>
+  (printout t "Enabling MongoDB logging" crlf)
+  (load* (resolve-file mongodb.clp))
+)
+
 (defrule announce-loading-done
   (declare (salience ?*PRIORITY_LAST*))
   (init)
