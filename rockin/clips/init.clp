@@ -59,6 +59,26 @@
   (bind ?*DEBUG* ?v)
 )
 
+(defrule silence-debug-facts
+  (declare (salience -1000))
+  (init)
+  (confval (path "/llsfrb/clips/debug") (type BOOL) (value true))
+  (confval (path "/llsfrb/clips/unwatch-facts") (type STRING) (is-list TRUE) (list-value $?lv))
+  =>
+  (printout t "Disabling watching of the following facts: " ?lv crlf)
+  (foreach ?v ?lv (unwatch facts (sym-cat ?v)))
+)
+
+(defrule silence-debug-rules
+  (declare (salience -1000))
+  (init)
+  (confval (path "/llsfrb/clips/debug") (type BOOL) (value true))
+  (confval (path "/llsfrb/clips/unwatch-rules") (type STRING) (is-list TRUE) (list-value $?lv))
+  =>
+  (printout t "Disabling watching of the following rules: " ?lv crlf)
+  (foreach ?v ?lv (unwatch rules (sym-cat ?v)))
+)
+
 (defrule announce-loading-done
   (declare (salience ?*PRIORITY_LAST*))
   (init)
