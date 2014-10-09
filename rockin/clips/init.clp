@@ -96,6 +96,12 @@
   (load* (resolve-file mongodb.clp))
 )
 
+(defrule config-timer-interval
+  (confval (path "/llsfrb/clips/timer-interval") (type ?t) (value ?v))
+  =>
+  (bind ?*TIMER-INTERVAL* (/ ?v 1000.))
+)
+
 (defrule announce-loading-done
   (declare (salience ?*PRIORITY_LAST*))
   (init)
