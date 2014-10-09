@@ -40,6 +40,14 @@
   (assert (config-loaded))
 )
 
+(defrule load-refbox
+  (init)
+  (confval (path "/llsfrb/clips/main") (type STRING) (value ?v))
+  =>
+  (printout t "Loading refbox main file '" ?v "'" crlf)
+  (batch* (resolve-file (str-cat ?v ".clp")))
+)
+
 (defrule enable-debug
   (init)
   (confval (path "/llsfrb/clips/debug") (type BOOL) (value ?v))
