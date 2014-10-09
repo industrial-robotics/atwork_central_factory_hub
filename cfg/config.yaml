@@ -20,8 +20,8 @@ llsfrb:
     debug: true
     # debug levels: 0 ~ none, 1 ~ minimal, 2 ~ more, 3 ~ maximum
     debug-level: 2
-    unwatch-facts: []
-    unwatch-rules: []
+    unwatch-facts: [""]
+    unwatch-rules: [""]
 
   comm:
     protobuf-dirs: ["@BASEDIR@/rockin/msgs"]
