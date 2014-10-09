@@ -11,7 +11,7 @@ BASEDIR = ..
 
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = msgs examples
+SUBDIRS = msgs examples plugins
 
 # Explicit dependencies, this is needed to have make bail out if there is any
 # error. This is also necessary for working parallel build (i.e. for dual core)
