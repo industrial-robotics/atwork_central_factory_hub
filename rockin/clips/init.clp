@@ -31,6 +31,7 @@
 
 (load* (resolve-file globals.clp))
 (load* (resolve-file priorities.clp))
+(load* (resolve-file facts.clp))
 
 (defrule load-config
   (init)
