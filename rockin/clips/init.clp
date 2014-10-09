@@ -86,5 +86,12 @@
   (printout t "RefBox loaded and ready to run" crlf)
 )
 
+(defrule announce-finalize
+  (declare (salience ?*PRIORITY_LAST*))
+  (finalize)
+  =>
+  (printout t "===  Shutting down  ===" crlf)
+)
+
 (reset)
 (seed (integer (time)))
