@@ -29,6 +29,7 @@
 (load* (resolve-file config.clp))
 (load* (resolve-file protobuf.clp))
 
+(load* (resolve-file globals.clp))
 (load* (resolve-file priorities.clp))
 
 (defrule load-config
