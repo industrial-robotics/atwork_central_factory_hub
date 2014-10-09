@@ -10,6 +10,12 @@ llsfrb:
     general: refbox.log
     clips: clips.log
     game: game.log
+   
+  conveyor-belt:
+    enable: false
+    host: !ipv4 conveyor-belt
+    command_port: !tcp-port 55555
+    status_port: !tcp-port 55556
 
   clips:
     dir: "@BASEDIR@/rockin/clips"
