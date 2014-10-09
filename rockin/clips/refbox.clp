@@ -3,3 +3,5 @@
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
+
+(load* (resolve-file net.clp))
