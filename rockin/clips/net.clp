@@ -15,6 +15,44 @@
   (return ?vi)
 )
 
+(deffunction net-init-peer (?cfg-prefix ?group)
+  (bind ?peer-id 0)
+
+  (do-for-fact ((?csp confval) (?crp confval) (?ch confval))
+    (and (eq ?csp:type UINT) (eq ?csp:path (str-cat ?cfg-prefix "send-port"))
+        (eq ?crp:type UINT) (eq ?crp:path (str-cat ?cfg-prefix "recv-port"))
+        (eq ?ch:type STRING) (eq ?ch:path (str-cat ?cfg-prefix "host")))
+    (printout t "Creating local communication peer for group " ?group
+        " (send port " ?csp:value "  recv port " ?crp:value ")" crlf)
+    (bind ?peer-id (pb-peer-create-local ?ch:value ?csp:value ?crp:value))
+  )
+  (if (eq ?peer-id 0)
+   then
+    (do-for-fact ((?cp confval) (?ch confval))
+      (and (eq ?cp:type UINT) (eq ?cp:path (str-cat ?cfg-prefix "port"))
+          (eq ?ch:type STRING) (eq ?ch:path (str-cat ?cfg-prefix "host")))
+      (printout t "Creating communication peer for group " ?group
+          " (port " ?cp:value ")" crlf)
+      (bind ?peer-id (pb-peer-create ?ch:value ?cp:value))
+    )
+  )
+
+  (if (neq ?peer-id 0)
+   then
+    (assert (network-peer (group ?group) (id ?peer-id)))
+   else
+    (printout warn "No network configuration found for " ?group " at " ?cfg-prefix crlf)
+  )
+)
+
+(defrule net-init
+  (init)
+  (config-loaded)
+  (not (network-peer (group "PUBLIC")))
+  =>
+  (net-init-peer "/llsfrb/comm/public-peer/" "PUBLIC")
+)
+
 (defrule net-read-known-teams
   (declare (salience -1000))
   (init)
