@@ -9,3 +9,8 @@
   (slot host (type STRING))
   (slot port (type INTEGER))
 )
+
+(deftemplate network-peer
+  (slot group (type STRING))
+  (slot id (type INTEGER))
+)
