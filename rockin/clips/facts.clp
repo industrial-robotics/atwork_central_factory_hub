@@ -22,6 +22,12 @@
   (slot id (type INTEGER))
 )
 
+(deftemplate attention-message
+  (slot team (type STRING) (default ""))
+  (slot text (type STRING))
+  (slot time (type INTEGER) (default 5))
+)
+
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
