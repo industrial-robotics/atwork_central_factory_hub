@@ -4,6 +4,10 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
+(deftemplate known-team
+  (slot name (type STRING))
+)
+
 (deftemplate signal
   (slot type)
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
