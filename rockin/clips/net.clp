@@ -113,6 +113,48 @@
   (pb-destroy ?beacon)
 )
 
+(defrule net-recv-beacon-unknown
+  ?mf <- (protobuf-msg (type "rockin_msgs.BeaconSignal") (ptr ?p) (rcvd-at $?rcvd-at)
+           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
+  (not (robot (host ?from-host) (port ?from-port)))
+  ?sf <- (signal (type version-info))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (modify ?sf (count 0) (time 0 0))
+  (printout debug "Received initial beacon from " ?from-host ":" ?from-port crlf)
+  (bind ?team (pb-field-value ?p "team_name"))
+  (bind ?name (pb-field-value ?p "peer_name"))
+  (bind ?timef (pb-field-value ?p "time"))
+  (bind ?time (create$ (pb-field-value ?timef "sec") (integer (/ (pb-field-value ?timef "nsec") 1000))))
+  (bind ?peer-time-diff (abs (time-diff-sec ?rcvd-at ?time)))
+  (if (> ?peer-time-diff ?*PEER-TIME-DIFFERENCE-WARNING*)
+   then
+    (printout warn "Robot " ?name " of " ?team
+        " has a large time offset (" ?peer-time-diff " sec)" crlf)
+    (assert (attention-message (text (str-cat "Robot " ?name " of " ?team
+                " has a large time offset ("
+                ?peer-time-diff " sec)"))))
+  )
+  (do-for-fact ((?other robot)) (eq ?other:host ?from-host)
+    (printout warn "Received two BeaconSignals from host " ?from-host
+        " (" ?other:team "/" ?other:name "@" ?other:port " vs "
+        ?team "/" ?from-host "@" ?from-port ")" crlf)
+    (assert (attention-message (text (str-cat "Received two BeaconSignals form host "
+                ?from-host " (" ?other:team "/" ?other:name
+                "@" ?other:port " vs " ?team "/" ?from-host
+                "@" ?from-port ")"))))
+  )
+
+  (if (and (eq ?team "LLSF") (eq ?name "RefBox"))
+   then
+    (printout warn "Detected another RefBox at " ?from-host ":" ?from-port crlf)
+    (assert (attention-message (text (str-cat "Detected another RefBox at "
+                ?from-host ":" ?from-port))))
+  )
+  (assert (robot (team ?team) (name ?name) (host ?from-host) (port ?from-port)
+    (last-seen ?rcvd-at)))
+)
+
 (defrule send-attmsg
   ?af <- (attention-message (text ?text) (team ?team) (time ?time-to-show))
   =>
