@@ -21,3 +21,8 @@
   (slot group (type STRING))
   (slot id (type INTEGER))
 )
+
+
+(deffacts startup
+  (signal (type beacon) (time (create$ 0 0)) (seq 1))
+)
