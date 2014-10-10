@@ -45,7 +45,7 @@
   )
 )
 
-(defrule net-init
+(defrule net-init-public
   (init)
   (config-loaded)
   (not (network-peer (group "PUBLIC")))
