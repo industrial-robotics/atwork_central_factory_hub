@@ -5,3 +5,4 @@
 ;---------------------------------------------------------------------------
 
 (load* (resolve-file net.clp))
+(load* (resolve-file robots.clp))
