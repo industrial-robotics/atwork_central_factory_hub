@@ -101,3 +101,16 @@
   (pb-broadcast ?peer-id-public ?beacon)
   (pb-destroy ?beacon)
 )
+
+(defrule net-send-VersionInfo
+  (time $?now)
+  ?sf <- (signal (type version-info) (seq ?seq)
+     (count ?count&:(< ?count ?*BC-VERSIONINFO-COUNT*))
+     (time $?t&:(timeout ?now ?t ?*BC-VERSIONINFO-PERIOD*)))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
+  (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
+  (bind ?vi (net-create-VersionInfo))
+  (pb-broadcast ?peer-id-public ?vi)
+  (pb-destroy ?vi)
+)
