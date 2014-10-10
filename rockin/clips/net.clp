@@ -59,7 +59,9 @@
   (confval (path "/llsfrb/game/teams") (type STRING) (is-list TRUE) (list-value $?lv))
   =>
   (printout t "Teams: " ?lv crlf)
-  (assert (known-teams ?lv))
+  (foreach ?team ?lv
+    (assert (known-team (name ?team)))
+  )
 )
 
 (defrule net-client-connected
