@@ -8,6 +8,15 @@
   (slot name (type STRING))
 )
 
+(deftemplate robot
+  (slot team (type STRING))
+  (slot name (type STRING))
+  (slot host (type STRING))
+  (slot port (type INTEGER))
+  (multislot last-seen (type INTEGER) (cardinality 2 2))
+  (slot warning-sent (type SYMBOL) (allowed-values TRUE FALSE) (default FALSE))
+)
+
 (deftemplate signal
   (slot type)
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
