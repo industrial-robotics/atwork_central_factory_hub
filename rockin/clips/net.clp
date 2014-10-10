@@ -102,6 +102,21 @@
   (pb-destroy ?beacon)
 )
 
+(defrule send-attmsg
+  ?af <- (attention-message (text ?text) (team ?team) (time ?time-to-show))
+  =>
+  (retract ?af)
+  (bind ?attmsg (pb-create "rockin_msgs.AttentionMessage"))
+  (pb-set-field ?attmsg "message" (str-cat ?text))
+  (if (neq (str-compare ?team "") 0) then (pb-set-field ?attmsg "team" ?team))
+  (if (> ?time-to-show 0) then
+    (pb-set-field ?attmsg "time_to_show" ?time-to-show))
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?attmsg))
+  (pb-destroy ?attmsg)
+)
+
 (defrule net-send-VersionInfo
   (time $?now)
   ?sf <- (signal (type version-info) (seq ?seq)
