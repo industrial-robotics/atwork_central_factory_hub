@@ -113,6 +113,21 @@
   (pb-destroy ?beacon)
 )
 
+(defrule net-recv-beacon-known
+  ?mf <- (protobuf-msg (type "rockin_msgs.BeaconSignal") (ptr ?p) (rcvd-at $?rcvd-at)
+           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
+  ?rf <- (robot (host ?from-host) (port ?from-port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout debug "Received beacon from known " ?from-host ":" ?from-port crlf)
+  (bind ?team (pb-field-value ?p "team_name"))
+  (bind ?name (pb-field-value ?p "peer_name"))
+  (bind ?time (pb-field-value ?p "time"))
+
+  (modify ?rf (last-seen ?rcvd-at) (warning-sent FALSE))
+)
+
+
 (defrule net-recv-beacon-unknown
   ?mf <- (protobuf-msg (type "rockin_msgs.BeaconSignal") (ptr ?p) (rcvd-at $?rcvd-at)
            (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
