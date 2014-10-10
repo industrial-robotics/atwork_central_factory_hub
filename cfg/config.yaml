@@ -40,6 +40,12 @@ llsfrb:
       #send-port: !udp-port 4444
       #recv-port: !udp-port 4445
 
+    RoCKInNRoLLIn-peer:
+      host: !ipv4 127.0.0.1
+      port: !udp-port 4446
+      #send-port: !udp-port 4446
+      #recv-port: !udp-port 4447
+
   mongodb:
     enable: true
     hostport: localhost
