@@ -53,6 +53,15 @@
   (net-init-peer "/llsfrb/comm/public-peer/" "PUBLIC")
 )
 
+(defrule net-init-peers
+  (init)
+  (config-loaded)
+  (known-team (name ?team))
+  (not (network-peer (group ?team)))
+  =>
+  (net-init-peer (str-cat "/llsfrb/comm/" ?team "-peer/") ?team)
+)
+
 (defrule net-read-known-teams
   (declare (salience -1000))
   (init)
