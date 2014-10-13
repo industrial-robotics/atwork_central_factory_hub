@@ -66,4 +66,5 @@
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
   (signal (type beacon) (time (create$ 0 0)) (seq 1))
+  (signal (type benchmark-state) (time (create$ 0 0)) (seq 1))
 )
