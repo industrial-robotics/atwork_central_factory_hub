@@ -68,3 +68,14 @@
   (signal (type beacon) (time (create$ 0 0)) (seq 1))
   (signal (type benchmark-state) (time (create$ 0 0)) (seq 1))
 )
+
+(deffacts benchmarks
+  (benchmark-phase (id 0) (type NONE) (type-id 0) (description "No benchmark running"))
+  (benchmark-phase (id 1) (type TBM)  (type-id 1) (description "Prepare Assembly Aid Tray for Force Fitting"))
+  (benchmark-phase (id 2) (type TBM)  (type-id 2) (description "Plate Drilling"))
+  (benchmark-phase (id 3) (type TBM)  (type-id 3) (description "Fill a Box with Parts for Manual Assembly"))
+  (benchmark-phase (id 4) (type FBM)  (type-id 1) (description "Object Perception Functionality"))
+  (benchmark-phase (id 5) (type FBM)  (type-id 2) (description "Visual Servoing Functionality"))
+
+  (benchmark-state)
+)
