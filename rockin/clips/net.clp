@@ -127,7 +127,6 @@
   (modify ?rf (last-seen ?rcvd-at) (warning-sent FALSE))
 )
 
-
 (defrule net-recv-beacon-unknown
   ?mf <- (protobuf-msg (type "rockin_msgs.BeaconSignal") (ptr ?p) (rcvd-at $?rcvd-at)
            (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
@@ -183,6 +182,58 @@
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?attmsg))
   (pb-destroy ?attmsg)
+)
+
+(deffunction net-create-BenchmarkState (?bs)
+  (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
+  (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
+  (bind ?benchmarkstate-phase (pb-field-value ?benchmarkstate "phase"))
+
+  ; Set the benchmark time (in seconds)
+  (if (eq (type ?benchmarkstate-time) EXTERNAL-ADDRESS) then
+    (bind ?gt (time-from-sec (fact-slot-value ?bs benchmark-time)))
+    (pb-set-field ?benchmarkstate-time "sec" (nth$ 1 ?gt))
+    (pb-set-field ?benchmarkstate-time "nsec" (integer (* (nth$ 2 ?gt) 1000)))
+    (pb-set-field ?benchmarkstate "benchmark_time" ?benchmarkstate-time) ; destroys ?benchmarkstate-time!
+  )
+
+  ; Add the current phase of the benchmark
+  (do-for-fact ((?phase benchmark-phase)) (eq ?phase:id (fact-slot-value ?bs phase-id))
+    (pb-set-field ?benchmarkstate-phase "type" ?phase:type)
+    (pb-set-field ?benchmarkstate-phase "type_id" ?phase:type-id)
+    (pb-set-field ?benchmarkstate-phase "description" ?phase:description)
+  )
+  (pb-set-field ?benchmarkstate "phase" ?benchmarkstate-phase)
+
+  ; Add all known teams
+  (do-for-all-facts ((?team known-team)) TRUE
+    (pb-add-list ?benchmarkstate "known_teams" ?team:name)
+  )
+
+  (pb-set-field ?benchmarkstate "state" (fact-slot-value ?bs state))
+
+  (return ?benchmarkstate)
+)
+
+(defrule net-send-BenchmarkState
+  (time $?now)
+  ?bs <- (benchmark-state (refbox-mode ?refbox-mode))
+  ?f <- (signal (type benchmark-state) (time $?t&:(timeout ?now ?t ?*BENCHMARKSTATE-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+  (if (debug 3) then (printout t "Sending BenchmarkState" crlf))
+  (bind ?benchmark-state (net-create-BenchmarkState ?bs))
+
+  (pb-broadcast ?peer-id-public ?benchmark-state)
+
+  ; For stream clients set refbox mode
+  (pb-set-field ?benchmark-state "refbox_mode" ?refbox-mode)
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?benchmark-state)
+  )
+  (pb-destroy ?benchmark-state)
 )
 
 (defrule net-send-VersionInfo
