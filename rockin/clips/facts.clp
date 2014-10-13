@@ -41,6 +41,27 @@
   (slot time (type INTEGER) (default 5))
 )
 
+(deftemplate benchmark-phase
+  (slot id (type INTEGER))
+  (slot type (type SYMBOL) (allowed-values NONE TBM FBM))  ; No benchmark running, task benchmark, functionality benchmark
+  (slot type-id (type INTEGER))
+  (slot description (type STRING))
+)
+
+(deftemplate benchmark-state
+  (slot refbox-mode (type SYMBOL) (allowed-values STANDALONE) (default STANDALONE))
+  (slot state (type SYMBOL) (allowed-values INIT RUNNING PAUSED FINISHED) (default INIT))
+  (slot prev-state (type SYMBOL) (allowed-values INIT RUNNING PAUSED FINISHED) (default INIT))
+  (slot phase-id (type INTEGER) (default 0))        ; identifier of a phase
+  (slot prev-phase-id (type INTEGER) (default 0))   ; identifier of a phase
+  (slot benchmark-time (type FLOAT) (default 0.0))
+
+  ; cardinality 2: sec msec
+  (multislot start-time (type INTEGER) (cardinality 2 2) (default 0 0))
+  (multislot end-time (type INTEGER) (cardinality 2 2) (default 0 0))
+  (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
+)
+
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
