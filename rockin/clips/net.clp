@@ -184,6 +184,47 @@
   (pb-destroy ?attmsg)
 )
 
+(defrule net-recv-SetBenchmarkState
+  ?sf <- (benchmark-state (state ?state))
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p) (rcvd-via STREAM))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (modify ?sf (state (sym-cat (pb-field-value ?p "state"))) (prev-state ?state))
+)
+
+(defrule net-recv-SetBenchmarkState-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p)
+           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout warn "Illegal SetBenchmarkState message received from host " ?host crlf)
+)
+
+(defrule net-recv-SetBenchmarkPhase
+  ?sf <- (benchmark-state (phase-id ?phase-id))
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the phase type (NONE, FBM, TBM) and type id from the message
+  (bind ?pb-phase (pb-field-value ?p "phase"))
+  (bind ?pb-phase-type (pb-field-value ?pb-phase "type"))
+  (bind ?pb-phase-type-id (pb-field-value ?pb-phase "type_id"))
+
+  ; When a phase was found, that matches the type and ID in the message, update the current and previous phase ID
+  (do-for-fact ((?phase benchmark-phase)) (and (eq ?phase:type ?pb-phase-type) (eq ?phase:type-id ?pb-phase-type-id))
+    (modify ?sf (phase-id ?phase:id) (prev-phase-id ?phase-id))
+  )
+)
+
+(defrule net-recv-SetBenchmarkPhase-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p)
+           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout warn "Illegal SetBenchmarkPhase message received from host " ?host crlf)
+)
+
 (deffunction net-create-BenchmarkState (?bs)
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
