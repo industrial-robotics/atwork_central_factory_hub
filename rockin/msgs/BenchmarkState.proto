@@ -84,3 +84,27 @@ message BenchmarkState {
 
   optional RefBoxMode refbox_mode = 7 [default = STANDALONE];
 }
+
+
+// Request setting of a new benchmark state
+message SetBenchmarkState {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 101;
+  }
+
+  // The new desired state
+  required BenchmarkState.State state = 1;
+}
+
+
+// Request setting of a new benchmark phase
+message SetBenchmarkPhase {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 102;
+  }
+
+  // The new desired phase
+  required BenchmarkPhase phase = 1;
+}
