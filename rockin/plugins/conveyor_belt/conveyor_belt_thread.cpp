@@ -143,18 +143,24 @@ void ConveyorBeltThread::clips_set_run_state(int run)
     else
         command_msg.set_mode(STOP);
 
+    zmq::message_t *query = NULL;
     try
     {
         command_msg.SerializeToString(&serialized_string);
-        zmq::message_t *query = new zmq::message_t(serialized_string.length());
+        query = new zmq::message_t(serialized_string.length());
         memcpy(query->data(), serialized_string.c_str(), serialized_string.length());
         zmq_publisher_->send(*query);
 
         logger->log_info("ConveyorBelt", "Set run state: %d", command_msg.mode());
 
+        delete query;
+
     } catch (fawkes::Exception &e)
     {
         logger->log_warn("ConveyorBelt", "Failed to set run state: %s", e.what());
+
+        if (query != NULL)
+            delete query;
     }
 }
 
