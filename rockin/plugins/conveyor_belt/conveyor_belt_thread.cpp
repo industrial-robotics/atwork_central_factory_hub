@@ -24,7 +24,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/thread/thread.hpp>
 
-/** @class ConveyorBeltThread "conveyor_belt_thread.h"
+/** @class ConveyorBeltThread
  * Thread to communicate with @Work conveyor belt.
  * @author Frederik Hegger
  */
