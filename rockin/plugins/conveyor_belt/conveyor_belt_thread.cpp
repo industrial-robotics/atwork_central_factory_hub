@@ -171,8 +171,7 @@ void ConveyorBeltThread::receiveAndBufferStatusMsg()
 
         // remember time of last received msg
         prev_device_update_timestamp_ = boost::posix_time::microsec_clock::local_time();
-    }
-    else
+    } else
     {
         boost::posix_time::time_duration time_diff = boost::posix_time::microsec_clock::local_time() - prev_device_update_timestamp_;
 
