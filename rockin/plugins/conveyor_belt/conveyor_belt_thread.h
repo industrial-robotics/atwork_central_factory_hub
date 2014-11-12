@@ -25,7 +25,7 @@
 #include <aspect/logging.h>
 #include <aspect/clips.h>
 #include <aspect/configurable.h>
-#include <msgs/ConveyorBelt.pb.h>
+#include <plugins/msgs/ConveyorBelt.pb.h>
 #include <zmq.hpp>
 
 class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, public fawkes::ConfigurableAspect, public fawkes::CLIPSAspect
@@ -51,7 +51,7 @@ class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, p
 
         unsigned int cfg_timer_interval_;
 
-        ConveyorBeltStatusMessage last_status_msg_;
+        ConveyorBeltStatus last_status_msg_;
         zmq::message_t zmq_message_;
 
         std::string default_network_interface_;

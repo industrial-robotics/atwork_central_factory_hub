@@ -22,7 +22,7 @@ include $(BASEDIR)/rockin/rockin.mk
 REQ_BOOST_LIBS = thread system
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
-LIBS_conveyor_belt = llsfrbcore llsfrbaspects rockin_msgs
+LIBS_conveyor_belt = llsfrbcore llsfrbaspects rockin_plugin_msgs
 OBJS_conveyor_belt = conveyor_belt_plugin.o conveyor_belt_thread.o
 
 ifeq ($(HAVE_CLIPS)$(HAVE_PROTOBUF)$(HAVE_LIBZMQ)$(HAVE_BOOST_LIBS),1111)

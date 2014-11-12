@@ -135,7 +135,7 @@ void ConveyorBeltThread::clips_set_run_state(int run)
     if (!zmq_publisher_)
         return;
 
-    ConveyorBeltCommandMessage command_msg;
+    ConveyorBeltCommand command_msg;
     std::string serialized_string;
 
     if (run)
