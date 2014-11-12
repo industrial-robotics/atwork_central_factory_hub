@@ -17,6 +17,6 @@ BASEDIR = ../..
 
 include $(BASEDIR)/etc/buildsys/config.mk
 
-SUBDIRS = msgs conveyor_belt
+SUBDIRS = msgs conveyor_belt drilling_machine
 
 include $(BUILDSYSDIR)/base.mk

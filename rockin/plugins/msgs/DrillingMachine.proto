@@ -1,0 +1,24 @@
+message DrillingMachineCommand
+{
+	enum Command
+	{
+		MOVE_DOWN = 0;
+		MOVE_UP = 1;
+	}
+
+	required Command command = 1;
+}
+
+message DrillingMachineStatus
+{
+	enum State
+	{
+		UP = 0;
+		DOWN = 1;
+		MOVING = 2;
+		UNKOWN = 3;
+	}
+
+	required bool is_device_connected = 1;
+	optional State state = 2;
+}
