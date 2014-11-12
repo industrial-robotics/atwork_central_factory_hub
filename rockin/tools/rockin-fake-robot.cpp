@@ -41,6 +41,7 @@
 
 #include <msgs/BeaconSignal.pb.h>
 #include <msgs/VersionInfo.pb.h>
+#include <msgs/BenchmarkState.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -97,7 +98,40 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
 
   std::shared_ptr<VersionInfo> vi;
   if ((vi = std::dynamic_pointer_cast<VersionInfo>(msg))) {
-    std::cout << "VersionInfo received:" << vi->version_string() << std::endl;
+    std::cout << "VersionInfo received: " << vi->version_string() << std::endl;
+  }
+
+  std::shared_ptr<BenchmarkState> bs;
+  if ((bs = std::dynamic_pointer_cast<BenchmarkState>(msg))) {
+    std::cout << "BenchmarkState received:" << std::endl;
+
+    std::cout << "  Time: " << bs->benchmark_time().sec() << "s" << std::endl;
+
+    std::cout << "  Phase: ";
+    switch (bs->phase().type()) {
+      case BenchmarkPhase::NONE: std::cout << "NONE"; break;
+      case BenchmarkPhase::FBM: std::cout << "FBM"; break;
+      case BenchmarkPhase::TBM: std::cout << "TBM"; break;
+    }
+    std::cout << " " << bs->phase().type_id();
+    if (bs->phase().has_description()) std::cout << " (" << bs->phase().description() << ")";
+    std::cout << std::endl;
+
+    std::cout << "  State: ";
+    switch (bs->state()) {
+      case BenchmarkState::INIT: std::cout << "INIT" << std::endl; break;
+      case BenchmarkState::RUNNING: std::cout << "RUNNING" << std::endl; break;
+      case BenchmarkState::PAUSED: std::cout << "PAUSED" << std::endl; break;
+      case BenchmarkState::FINISHED: std::cout << "FINISHED" << std::endl; break;
+    }
+
+    std::cout << "  Known teams: ";
+    for (int i = 0; i < bs->known_teams_size(); i++) std::cout << bs->known_teams(i) << ", ";
+    std::cout << std::endl;
+
+    std::cout << "  Connected teams: ";
+    for (int i = 0; i < bs->connected_teams_size(); i++) std::cout << bs->connected_teams(i) << ", ";
+    std::cout << std::endl;
   }
 }
 
@@ -160,6 +194,7 @@ main(int argc, char **argv)
   MessageRegister & message_register = peer_public_->message_register();
   message_register.add_message_type<BeaconSignal>();
   message_register.add_message_type<VersionInfo>();
+  message_register.add_message_type<BenchmarkState>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
