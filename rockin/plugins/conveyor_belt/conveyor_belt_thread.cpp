@@ -88,7 +88,8 @@ void ConveyorBeltThread::init()
 
     fawkes::MutexLocker lock(clips_mutex);
 
-    clips->add_function("conveyor-belt-set-run-state", sigc::slot<void, int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_set_run_state)));
+    clips->add_function("conveyor-belt-start-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_start_belt)));
+    clips->add_function("conveyor-belt-stop-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_stop_belt)));
     clips->add_function("conveyor-belt-is-running", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_belt_running)));
     clips->add_function("conveyor-belt-is-device-connected", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_device_connected)));
 
@@ -130,7 +131,17 @@ int ConveyorBeltThread::clips_is_device_connected()
         return false;
 }
 
-void ConveyorBeltThread::clips_set_run_state(int run)
+void ConveyorBeltThread::clips_start_belt()
+{
+    setConveyorBeltRunMode(START);
+}
+
+void ConveyorBeltThread::clips_stop_belt()
+{
+    setConveyorBeltRunMode(STOP);
+}
+
+void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
 {
     if (!zmq_publisher_)
         return;
@@ -138,10 +149,7 @@ void ConveyorBeltThread::clips_set_run_state(int run)
     ConveyorBeltCommand command_msg;
     std::string serialized_string;
 
-    if (run)
-        command_msg.set_mode(START);
-    else
-        command_msg.set_mode(STOP);
+    command_msg.set_mode(mode);
 
     zmq::message_t *query = NULL;
     try

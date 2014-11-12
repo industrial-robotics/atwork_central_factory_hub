@@ -39,10 +39,12 @@ class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, p
         virtual void finalize();
 
     private:
-        void clips_set_run_state(int run);
+        void clips_start_belt();
+        void clips_stop_belt();
         int clips_is_belt_running();
         int clips_is_device_connected();
 
+        void setConveyorBeltRunMode(RunMode mode);
         void receiveAndBufferStatusMsg();
 
     private:
