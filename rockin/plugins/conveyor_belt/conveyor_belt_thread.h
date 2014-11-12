@@ -25,6 +25,7 @@
 #include <aspect/logging.h>
 #include <aspect/clips.h>
 #include <aspect/configurable.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <plugins/msgs/ConveyorBelt.pb.h>
 #include <zmq.hpp>
 
@@ -55,6 +56,8 @@ class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, p
         zmq::message_t zmq_message_;
 
         std::string default_network_interface_;
+
+        boost::posix_time::ptime prev_device_update_timestamp_;
 };
 
 #endif

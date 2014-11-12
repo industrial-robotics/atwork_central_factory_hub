@@ -166,5 +166,20 @@ void ConveyorBeltThread::receiveAndBufferStatusMsg()
     fawkes::MutexLocker lock(clips_mutex);
 
     if (zmq_subscriber_->recv(&zmq_message_, ZMQ_NOBLOCK))
+    {
         last_status_msg_.ParseFromArray(zmq_message_.data(), zmq_message_.size());
+
+        // remember time of last received msg
+        prev_device_update_timestamp_ = boost::posix_time::microsec_clock::local_time();
+    }
+    else
+    {
+        boost::posix_time::time_duration time_diff = boost::posix_time::microsec_clock::local_time() - prev_device_update_timestamp_;
+
+        if (time_diff.total_seconds() >= 3)
+        {
+            last_status_msg_.set_mode(STOP);
+            last_status_msg_.set_is_device_connected(false);
+        }
+    }
 }
