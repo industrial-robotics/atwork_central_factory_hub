@@ -77,7 +77,7 @@ void ConveyorBeltThread::init()
     {
         logger->log_warn("ConveyorBelt", "Cannot create communication for the conveyor belt: %s", e.what());
 
-        delete zmq_publisher_;
+        delete zmq_context_;
         delete zmq_publisher_;
         delete zmq_subscriber_;
 
