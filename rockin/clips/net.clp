@@ -277,6 +277,81 @@
   (pb-destroy ?benchmark-state)
 )
 
+(deffunction net-create-ObjectIdentifier (?object-id)
+  "Create a ProtoBuf message of an ObjectIdentifier which is referenced by its
+   ID as specified in the ?object-id parameter"
+
+  (bind ?pb-object-identifier (pb-create "rockin_msgs.ObjectIdentifier"))
+
+  (do-for-fact ((?object object-identifier)) (eq ?object-id ?object:id)
+    (pb-set-field ?pb-object-identifier "type" ?object:type)
+    (pb-set-field ?pb-object-identifier "type_id" ?object:type-id)
+
+    ; Only set the instance id if it is available
+    (if (<> (length$ ?object:instance-id) 0) then
+      (pb-set-field ?pb-object-identifier "instance_id" ?object:instance-id)
+    )
+
+    ; Only set the description if it is available
+    (if (<> (length$ ?object:description) 0) then
+      (pb-set-field ?pb-object-identifier "description" ?object:description)
+    )
+  )
+
+  (return ?pb-object-identifier)
+)
+
+(deffunction net-create-LocationIdentifier (?location-id)
+  "Create a ProtoBuf message of a LocationIdentifier which is referenced by its
+   ID as specified in the ?location-id parameter"
+
+  (bind ?pb-location-identifier (pb-create "rockin_msgs.LocationIdentifier"))
+
+  (do-for-fact ((?location location-identifier)) (eq ?location-id ?location:id)
+    (pb-set-field ?pb-location-identifier "type" ?location:type)
+    (pb-set-field ?pb-location-identifier "instance_id" ?location:instance-id)
+
+    ; Only set the description if it is available
+    (if (<> (length$ ?location:description) 0) then
+      (pb-set-field ?pb-location-identifier "description" ?location:description)
+    )
+  )
+
+  (return ?pb-location-identifier)
+)
+
+(deffunction net-create-Inventory ()
+  ; Instantiate a new inventory
+  (bind ?pb-inventory (pb-create "rockin_msgs.Inventory"))
+
+  ; Iterate over all asserted items (which form the inventory)
+  (do-for-all-facts ((?item item)) TRUE
+    ; Instantiate a new item for the protobuf message
+    (bind ?pb-item (pb-create "rockin_msgs.Inventory.Item"))
+
+    (pb-set-field ?pb-item "object" (net-create-ObjectIdentifier ?item:object-id))
+
+    ; Only set the location if is available
+    (if (<> (length$ ?item:location-id) 0) then
+      (pb-set-field ?pb-item "location" (net-create-LocationIdentifier (nth$ 1 ?item:location-id)))
+    )
+
+    ; Only set the container if it is available
+    (if (<> (length$ ?item:container-id) 0) then
+      (pb-set-field ?pb-item "container" (net-create-ObjectIdentifier (nth$ 1 ?item:container-id)))
+    )
+
+    ; Only set the quantity if it is available
+    (if (<> (length$ ?item:quantity) 0) then
+      (pb-set-field ?pb-item "quantity" (nth$ 1 ?item:quantity))
+    )
+
+    (pb-add-list ?pb-inventory "items" ?pb-item)
+  )
+
+  (return ?pb-inventory)
+)
+
 (defrule net-send-VersionInfo
   (time $?now)
   ?sf <- (signal (type version-info) (seq ?seq)
