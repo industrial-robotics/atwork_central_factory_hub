@@ -18,7 +18,7 @@ llsfrb:
     status_port: !tcp-port 55501
 
   quality-control-camera:
-    enable: flase
+    enable: false
     host: !ipv4 192.168.1.102
     service_port: !tcp-port 55522
     status_port: !tcp-port 55521
