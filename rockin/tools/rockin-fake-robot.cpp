@@ -42,6 +42,7 @@
 #include <msgs/BeaconSignal.pb.h>
 #include <msgs/VersionInfo.pb.h>
 #include <msgs/BenchmarkState.pb.h>
+#include <msgs/Inventory.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -133,6 +134,19 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     for (int i = 0; i < bs->connected_teams_size(); i++) std::cout << bs->connected_teams(i) << ", ";
     std::cout << std::endl;
   }
+
+  std::shared_ptr<Inventory> in;
+  if ((in = std::dynamic_pointer_cast<Inventory>(msg))) {
+    std::cout << "Inventory received:" << std::endl;
+
+    for (int i = 0; i < in->items_size(); i++) {
+      const Inventory_Item &item = in->items(i);
+      std::cout << "  Object " << i << ": " << item.object().description() << std::endl;
+      if (item.has_location()) std::cout << "    In location: " << item.location().description() << std::endl;
+      if (item.has_container()) std::cout << "    In container: " << item.container().description() << std::endl;
+      if (item.has_quantity()) std::cout << "    Quantity: " << item.quantity() << std::endl;
+    }
+  }
 }
 
 
@@ -195,6 +209,7 @@ main(int argc, char **argv)
   message_register.add_message_type<BeaconSignal>();
   message_register.add_message_type<VersionInfo>();
   message_register.add_message_type<BenchmarkState>();
+  message_register.add_message_type<Inventory>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
