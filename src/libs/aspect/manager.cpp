@@ -25,6 +25,7 @@
 #include <aspect/inifins/clips.h>
 #include <aspect/inifins/configurable.h>
 #include <aspect/inifins/logging.h>
+#include <aspect/inifins/protobuf_comm.h>
 #include <aspect/aspect.h>
 
 namespace fawkes {
@@ -193,17 +194,21 @@ AspectManager::prepare_finalize(Thread *thread)
 void
 AspectManager::register_default_inifins(Configuration *config,
 					Logger *logger,
-					CLIPS::Environment *clips, Mutex *clips_mutex)
+					CLIPS::Environment *clips,
+					Mutex *clips_mutex,
+					protobuf_clips::ClipsProtobufCommunicator *protobuf_comm)
 {
   if (! __default_inifins.empty())  return;
 
   ConfigurableAspectIniFin *conf_aif = new ConfigurableAspectIniFin(config);
   LoggingAspectIniFin *log_aif = new LoggingAspectIniFin(logger);
   CLIPSAspectIniFin *clips_aif = new CLIPSAspectIniFin(clips, clips_mutex);
+  ProtobufCommAspectIniFin *protobuf_aif = new ProtobufCommAspectIniFin(protobuf_comm);
 
   __default_inifins[conf_aif->get_aspect_name()] = conf_aif;
   __default_inifins[log_aif->get_aspect_name()] = log_aif;
   __default_inifins[clips_aif->get_aspect_name()] = clips_aif;
+  __default_inifins[protobuf_aif->get_aspect_name()] = protobuf_aif;
 
   std::map<std::string, AspectIniFin *>::iterator i;
   for (i = __default_inifins.begin(); i != __default_inifins.end(); ++i) {

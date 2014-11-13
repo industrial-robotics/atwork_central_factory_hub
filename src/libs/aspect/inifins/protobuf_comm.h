@@ -1,8 +1,9 @@
 
 /***************************************************************************
- *  manager.h - Fawkes Aspect Manager
+ *  protobuf_comm.h - Fawkes Protobuf Communication Aspect initializer/finalizer
+
  *
- *  Created: Thu Nov 25 00:27:42 2010 (based on inifin.h)
+ *  Created: Nov 12 14:23:50 2014
  *  Copyright  2006-2010  Tim Niemueller [www.niemueller.de]
  *
  ****************************************************************************/
@@ -21,72 +22,33 @@
  *  Read the full text in the LICENSE.GPL_WRE file in the doc directory.
  */
 
-#ifndef __ASPECT_MANAGER_H_
-#define __ASPECT_MANAGER_H_
+#ifndef __ASPECT_INIFINS_PROTOBUF_COMM_H_
+#define __ASPECT_INIFINS_PROTOBUF_COMM_H_
 
-#include <core/threading/thread_initializer.h>
-#include <core/threading/thread_finalizer.h>
-
-#include <map>
-#include <list>
-#include <string>
-
-namespace CLIPS {
-  class Environment;
-}
-
-namespace llsfrb {
-  class Configuration;
-  class Logger;
-}
+#include <aspect/inifins/inifin.h>
 
 namespace protobuf_clips {
   class ClipsProtobufCommunicator;
 }
 
 using protobuf_clips::ClipsProtobufCommunicator;
-using llsfrb::Configuration;
-using llsfrb::Logger;
 
 namespace fawkes {
 #if 0 /* just to make Emacs auto-indent happy */
 }
 #endif
 
-class Thread;
-class Mutex;
-class AspectIniFin;
-
-namespace tf {
-  class Transformer;
-}
-
-class AspectManager : public ThreadInitializer, public ThreadFinalizer
+class ProtobufCommAspectIniFin : public AspectIniFin
 {
  public:
-  virtual ~AspectManager();
+        ProtobufCommAspectIniFin(ClipsProtobufCommunicator *protobuf_comm);
 
   virtual void init(Thread *thread);
   virtual void finalize(Thread *thread);
-  virtual bool prepare_finalize(Thread *thread);
-
-  void register_inifin(AspectIniFin *inifin);
-  void unregister_inifin(AspectIniFin *inifin);
-
-  bool has_threads_for_aspect(const char *aspect_name);
-
-  void register_default_inifins(Configuration *config,
-				Logger *logger,
-				CLIPS::Environment *clips,
-				Mutex *clips_mutex,
-				protobuf_clips::ClipsProtobufCommunicator *protobuf_comm);
 
  private:
-  std::map<std::string, AspectIniFin *> __inifins;
-  std::map<std::string, AspectIniFin *> __default_inifins;
-  std::map<std::string, std::list<Thread *> > __threads;
+  ClipsProtobufCommunicator *__protobuf_comm;
 };
-
 
 } // end namespace fawkes
 

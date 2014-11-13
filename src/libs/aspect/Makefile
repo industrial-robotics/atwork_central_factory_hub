@@ -16,6 +16,10 @@
 BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
 include $(BUILDSYSDIR)/clips.mk
+include $(BUILDSYSDIR)/boost.mk
+
+REQ_BOOST_LIBS = system
+HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
 LIBS_libllsfrbaspects = llsfrbcore llsfrbutils llsfrbconfig llsfrblogging
 
@@ -26,11 +30,16 @@ INST_HDRS_SUBDIR_libllsfrbaspects = aspect
 OBJS_all = $(OBJS_libllsfrbaspects)
 LIBS_all  = $(LIBDIR)/libllsfrbaspects.so
 
-ifeq ($(HAVE_CLIPS),1)
-  CFLAGS  += $(CFLAGS_CLIPS)
-  LDFLAGS += $(LDFLAGS_CLIPS)
+ifeq ($(HAVE_CLIPS)$(HAVE_BOOST_LIBS),11)
+  CFLAGS  += $(CFLAGS_CLIPS) $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
+  LDFLAGS += $(LDFLAGS_CLIPS) $(call boost-libs-ldflags,$(REQ_BOOST_LIBS))
 else
-  WARN_TARGETS += warning_clips
+  ifneq ($(HAVE_CLIPS),1)
+    WARN_TARGETS += warning_clips
+  endif
+  ifneq ($(HAVE_BOOST_LIBS),1)
+    WARN_TARGETS_BOOST = $(foreach l,$(REQ_BOOST_LIBS),$(if $(call boost-have-lib,$l),, warning_boost_$l))
+  endif
 endif
 
 ifeq ($(OBJSSUBMAKE),1)
@@ -38,6 +47,8 @@ all: $(WARN_TARGETS) $(WARN_TARGETS_BOOST)
 .PHONY: warning_clips
 warning_clips:
 	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build LLSF Aspects$(TNORMAL) (clipsmm not found)"
+$(WARN_TARGETS_BOOST): warning_boost_%:
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build LLSF Aspects$(TNORMAL) (Boost library $* not found)"
 endif
 
 include $(BUILDSYSDIR)/base.mk
