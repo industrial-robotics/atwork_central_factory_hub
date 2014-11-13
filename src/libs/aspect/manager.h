@@ -40,6 +40,11 @@ namespace llsfrb {
   class Logger;
 }
 
+namespace protobuf_clips {
+  class ClipsProtobufCommunicator;
+}
+
+using protobuf_clips::ClipsProtobufCommunicator;
 using llsfrb::Configuration;
 using llsfrb::Logger;
 
@@ -72,7 +77,9 @@ class AspectManager : public ThreadInitializer, public ThreadFinalizer
 
   void register_default_inifins(Configuration *config,
 				Logger *logger,
-				CLIPS::Environment *clips, Mutex *clips_mutex);
+				CLIPS::Environment *clips,
+				Mutex *clips_mutex,
+				protobuf_clips::ClipsProtobufCommunicator *protobuf_comm);
 
  private:
   std::map<std::string, AspectIniFin *> __inifins;

@@ -152,7 +152,7 @@ LLSFRefBox::LLSFRefBox(int argc, char **argv)
       "/llsfrb/meta_plugins/", fawkes::Module::MODULE_FLAGS_DEFAULT, false);
 
   aspect_manager_->register_default_inifins(config_, logger_, clips_,
-      &clips_mutex_);
+      &clips_mutex_, pb_comm_);
 
   std::string plugins = "";
   try {
