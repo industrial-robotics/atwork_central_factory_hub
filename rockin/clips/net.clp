@@ -352,6 +352,18 @@
   (return ?pb-inventory)
 )
 
+(defrule net-send-Inventory
+  (time $?now)
+  ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+
+  (bind ?pb-inventory (net-create-Inventory))
+  (pb-broadcast ?peer-id-public ?pb-inventory)
+  (pb-destroy ?pb-inventory)
+)
+
 (defrule net-send-VersionInfo
   (time $?now)
   ?sf <- (signal (type version-info) (seq ?seq)
