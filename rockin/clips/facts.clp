@@ -74,6 +74,17 @@
   (multislot description (type STRING) (cardinality 0 1))
 )
 
+(deftemplate location-identifier
+  ; identifier which is used in CLIPS only
+  (slot id (type INTEGER))
+
+  ; a location id, such as SHELF-01 consists of *type* and *instance-id*
+  (slot type (type SYMBOL) (allowed-values SHELF WORKSTATION CONVEYOR_BELT CENTRAL_STATION ROBOT))
+  (slot instance-id (type INTEGER))
+
+  (multislot description (type STRING) (cardinality 0 1))
+)
+
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
