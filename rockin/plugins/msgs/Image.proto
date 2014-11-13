@@ -1,0 +1,12 @@
+message ImageRequest
+{
+}
+
+message Image
+{
+    required uint32 height = 1;
+    required uint32 width = 2;
+    required uint32 encoding = 3;
+    required uint32 step = 4;
+    required bytes data = 5;
+}
