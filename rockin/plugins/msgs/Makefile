@@ -1,8 +1,8 @@
 #*****************************************************************************
-#             Makefile Build System for Fawkes : RefBox Plugins
+#           Makefile Build System for LLSF RefBox: Logging Utils
 #                            -------------------
-#   Created on Wed Jan 16 17:43:33 2013
-#   Copyright (C) 2006-2008 by Tim Niemueller, Carologistics RoboCup Team
+#   Created on Sat May 28 00:16:57 2011
+#   Copyright (C) 2006-2011 by Tim Niemueller, AllemaniACs RoboCup Team
 #
 #*****************************************************************************
 #
@@ -13,10 +13,13 @@
 #
 #*****************************************************************************
 
-BASEDIR = ../..
-
+BASEDIR = ../../..
 include $(BASEDIR)/etc/buildsys/config.mk
+include $(BASEDIR)/rockin/rockin.mk
 
-SUBDIRS = msgs conveyor_belt drilling_machine
+PROTOBUF_all = rockin_plugin_msgs
+MSGS_rockin_plugin_msgs = $(notdir $(patsubst %.proto,%,$(wildcard $(SRCDIR)/*.proto)))
 
+include $(BUILDSYSDIR)/protobuf.mk
 include $(BUILDSYSDIR)/base.mk
+

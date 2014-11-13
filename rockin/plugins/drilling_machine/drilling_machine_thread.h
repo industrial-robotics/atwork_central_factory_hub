@@ -1,7 +1,7 @@
 /***************************************************************************
- *  conveyour_belt_thread.h - Thread to communicate with the conveyor belt
+ *  drilling_machine_thread.h - Thread to communicate with the drilling machine
  *
- *  Created: Mon Oct 06 16:39:11 2014
+ *  Created: Mon Nov 11 09:16:11 2014
  *  Copyright  2014 Frederik Hegger
  ****************************************************************************/
 
@@ -18,33 +18,33 @@
  *  Read the full text in the LICENSE.GPL file in the doc directory.
  */
 
-#ifndef __PLUGINS_CONVEYOR_BELT_THREAD_H_
-#define __PLUGINS_CONVEYOR_BELT_THREAD_H_
+#ifndef __PLUGINS_DRILLING_MACHINE_THREAD_H_
+#define __PLUGINS_DRILLING_MACHINE_THREAD_H_
 
 #include <core/threading/thread.h>
 #include <aspect/logging.h>
 #include <aspect/clips.h>
 #include <aspect/configurable.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <plugins/msgs/ConveyorBelt.pb.h>
+#include <plugins/msgs/DrillingMachine.pb.h>
 #include <zmq.hpp>
 
-class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, public fawkes::ConfigurableAspect, public fawkes::CLIPSAspect
+class DrillingMachineThread: public fawkes::Thread, public fawkes::LoggingAspect, public fawkes::ConfigurableAspect, public fawkes::CLIPSAspect
 {
     public:
-        ConveyorBeltThread();
+        DrillingMachineThread();
 
         virtual void init();
         virtual void loop();
         virtual void finalize();
 
     private:
-        void clips_start_belt();
-        void clips_stop_belt();
-        int clips_is_belt_running();
+        void clips_move_drill_up();
+        void clips_move_drill_down();
+        int clips_get_device_state();
         int clips_is_device_connected();
 
-        void setConveyorBeltRunMode(RunMode mode);
+        void moveDrill(DrillingMachineCommand::Command drill_command);
         void receiveAndBufferStatusMsg();
 
     private:
@@ -54,7 +54,7 @@ class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, p
 
         unsigned int cfg_timer_interval_;
 
-        ConveyorBeltStatus last_status_msg_;
+        DrillingMachineStatus last_status_msg_;
         zmq::message_t zmq_message_;
 
         std::string default_network_interface_;

@@ -1,5 +1,5 @@
 #*****************************************************************************
-#               Makefile Build System for Fawkes: RoCKIn conveyor belt
+#               Makefile Build System for Fawkes: RoCKIn drilling machine
 #
 ##*****************************************************************************
 #
@@ -22,12 +22,12 @@ include $(BASEDIR)/rockin/rockin.mk
 REQ_BOOST_LIBS = thread system
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
-LIBS_conveyor_belt = llsfrbcore llsfrbaspects rockin_plugin_msgs
-OBJS_conveyor_belt = conveyor_belt_plugin.o conveyor_belt_thread.o
+LIBS_drilling_machine = llsfrbcore llsfrbaspects rockin_plugin_msgs
+OBJS_drilling_machine = drilling_machine_plugin.o drilling_machine_thread.o
 
 ifeq ($(HAVE_CLIPS)$(HAVE_PROTOBUF)$(HAVE_LIBZMQ)$(HAVE_BOOST_LIBS),1111)
-  OBJS_all    = $(OBJS_conveyor_belt)
-  PLUGINS_all = $(PLUGINDIR)/conveyor_belt.$(SOEXT)
+  OBJS_all    = $(OBJS_drilling_machine)
+  PLUGINS_all = $(PLUGINDIR)/drilling_machine.$(SOEXT)
 
   CFLAGS  += $(CFLAGS_CLIPS) ${CFLAGS_PROTOBUF} ${CFLAGS_LIBZMQ} \
              $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
@@ -52,13 +52,13 @@ ifeq ($(OBJSSUBMAKE),1)
 all: $(WARN_TARGETS) $(WARN_TARGETS_BOOST)
 .PHONY: warning_libmodbus warning_clips
 warning_libzmq:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Conveyor Belt Plugin$(TNORMAL) (libzmq not found)"
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Drilling Machine Plugin$(TNORMAL) (libzmq not found)"
 warning_clips:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Conveyor Belt Plugin$(TNORMAL) (clipsmm not found)"
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Drilling Machine Plugin$(TNORMAL) (clipsmm not found)"
 warning_protobuf:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Conveyor Belt Plugin$(TNORMAL) (protobuf not found)"
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Drilling Machine Plugin$(TNORMAL) (protobuf not found)"
 $(WARN_TARGETS_BOOST): warning_boost_%:
-	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Conveyor Belt Plugin$(TNORMAL) (Boost library $* not found)"
+	$(SILENT)echo -e "$(INDENT_PRINT)--> $(TRED)Cannot build Drilling Machine Plugin$(TNORMAL) (Boost library $* not found)"
 endif
 
 include $(BUILDSYSDIR)/base.mk

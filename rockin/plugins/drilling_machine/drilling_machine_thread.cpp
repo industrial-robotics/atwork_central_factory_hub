@@ -1,7 +1,7 @@
 /***************************************************************************
- *  conveyor_belt_thread.cpp - Thread to communicate with the conveyor belt
+ *  drilling_machine_thread.cpp - Thread to communicate with the drilling machine
  *
- *  Created: Mon Oct 06 16:39:11 2014
+ *  Created: Mon Nov 12 09:16:11 2014
  *  Copyright  2014 Frederik Hegger
  ****************************************************************************/
 
@@ -18,24 +18,24 @@
  *  Read the full text in the LICENSE.GPL file in the doc directory.
  */
 
-#include "conveyor_belt_thread.h"
+#include "drilling_machine_thread.h"
 
 #include <core/threading/mutex_locker.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread/thread.hpp>
 
-/** @class ConveyorBeltThread
- * Thread to communicate with @Work conveyor belt.
+/** @class DrillingMachineThread
+ * Thread to communicate with @Work drilling machine.
  * @author Frederik Hegger
  */
 
 /** Constructor. */
-ConveyorBeltThread::ConveyorBeltThread() :
-        Thread("ConveyorBeltThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("eth0")
+DrillingMachineThread::DrillingMachineThread() :
+        Thread("DrillingMachineThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("eth0")
 {
 }
 
-void ConveyorBeltThread::init()
+void DrillingMachineThread::init()
 {
     std::string host_ip_address = "";
     std::string host_command_port = "";
@@ -51,23 +51,23 @@ void ConveyorBeltThread::init()
 
     try
     {
-        if (config->get_bool("/llsfrb/conveyor-belt/enable"))
+        if (config->get_bool("/llsfrb/drilling-machine/enable"))
         {
-            if (config->exists("/llsfrb/conveyor-belt/host") && config->exists("/llsfrb/conveyor-belt/command_port") && config->exists("/llsfrb/conveyor-belt/status_port"))
+            if (config->exists("/llsfrb/drilling-machine/host") && config->exists("/llsfrb/drilling-machine/command_port") && config->exists("/llsfrb/drilling-machine/status_port"))
             {
-                host_ip_address = config->get_string("/llsfrb/conveyor-belt/host");
-                host_command_port = "tcp://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/conveyor-belt/command_port"));
-                host_status_port = "tcp://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/conveyor-belt/status_port"));
+                host_ip_address = config->get_string("/llsfrb/drilling-machine/host");
+                host_command_port = "tcp://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/command_port"));
+                host_status_port = "tcp://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/status_port"));
 
                 zmq_context_ = new zmq::context_t(1);
 
                 // add publisher to send status messages
-                logger->log_info("ConveyorBelt", "Connecting to the command port: %s", host_command_port.c_str());
+                logger->log_info("DrillingMachine", "Connecting to the command port: %s", host_command_port.c_str());
                 zmq_publisher_ = new zmq::socket_t(*zmq_context_, ZMQ_PUB);
                 zmq_publisher_->bind(host_command_port.c_str());
 
                 // add subscriber to receive command messages from a client
-                logger->log_info("ConveyorBelt", "Connecting to the status port: %s", host_status_port.c_str());
+                logger->log_info("DrillingMachine", "Connecting to the status port: %s", host_status_port.c_str());
                 zmq_subscriber_ = new zmq::socket_t(*zmq_context_, ZMQ_SUB);
                 zmq_subscriber_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
                 zmq_subscriber_->connect(host_status_port.c_str());
@@ -75,7 +75,7 @@ void ConveyorBeltThread::init()
         }
     } catch (fawkes::Exception &e)
     {
-        logger->log_warn("ConveyorBelt", "Cannot create communication for the conveyor belt: %s", e.what());
+        logger->log_warn("DrillingMachine", "Cannot create communication for the drilling machine: %s", e.what());
 
         delete zmq_context_;
         delete zmq_publisher_;
@@ -88,16 +88,16 @@ void ConveyorBeltThread::init()
 
     fawkes::MutexLocker lock(clips_mutex);
 
-    clips->add_function("conveyor-belt-start-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_start_belt)));
-    clips->add_function("conveyor-belt-stop-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_stop_belt)));
-    clips->add_function("conveyor-belt-is-running", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_belt_running)));
-    clips->add_function("conveyor-belt-is-device-connected", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_device_connected)));
+    clips->add_function("drilling-machine-move-drill-up", sigc::slot<void>(sigc::mem_fun(*this, &DrillingMachineThread::clips_move_drill_up)));
+    clips->add_function("drilling-machine-move-drill-down", sigc::slot<void>(sigc::mem_fun(*this, &DrillingMachineThread::clips_move_drill_down)));
+    clips->add_function("drilling-machine-get-state", sigc::slot<int>(sigc::mem_fun(*this, &DrillingMachineThread::clips_get_device_state)));
+    clips->add_function("drilling-machine-is-device-connected", sigc::slot<int>(sigc::mem_fun(*this, &DrillingMachineThread::clips_is_device_connected)));
 
-    if (!clips->build("(deffacts have-feature-conveyor-belt (have-feature ConveyorBelt))"))
-        logger->log_warn("ConveyorBelt", "Failed to build deffacts have-feature-conveyor-belt");
+    if (!clips->build("(deffacts have-feature-drilling-machine (have-feature DrillingMachine))"))
+        logger->log_warn("DrillingMachine", "Failed to build deffacts have-feature-drilling-machine");
 }
 
-void ConveyorBeltThread::finalize()
+void DrillingMachineThread::finalize()
 {
     delete zmq_context_;
     delete zmq_publisher_;
@@ -108,22 +108,22 @@ void ConveyorBeltThread::finalize()
     zmq_subscriber_ = NULL;
 }
 
-void ConveyorBeltThread::loop()
+void DrillingMachineThread::loop()
 {
     receiveAndBufferStatusMsg();
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(cfg_timer_interval_));
 }
 
-int ConveyorBeltThread::clips_is_belt_running()
+int DrillingMachineThread::clips_get_device_state()
 {
-    if (last_status_msg_.has_mode() && (last_status_msg_.mode() == START))
-        return true;
-    else
-        return false;
+    if (last_status_msg_.has_state())
+        return last_status_msg_.state();
+
+    return 3;
 }
 
-int ConveyorBeltThread::clips_is_device_connected()
+int DrillingMachineThread::clips_is_device_connected()
 {
     if (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected())
         return true;
@@ -131,25 +131,25 @@ int ConveyorBeltThread::clips_is_device_connected()
         return false;
 }
 
-void ConveyorBeltThread::clips_start_belt()
+void DrillingMachineThread::clips_move_drill_up()
 {
-    setConveyorBeltRunMode(START);
+    moveDrill(DrillingMachineCommand::MOVE_UP);
 }
 
-void ConveyorBeltThread::clips_stop_belt()
+void DrillingMachineThread::clips_move_drill_down()
 {
-    setConveyorBeltRunMode(STOP);
+    moveDrill(DrillingMachineCommand::MOVE_DOWN);
 }
 
-void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
+void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_command)
 {
     if (!zmq_publisher_)
         return;
 
-    ConveyorBeltCommand command_msg;
+    DrillingMachineCommand command_msg;
     std::string serialized_string;
 
-    command_msg.set_mode(mode);
+    command_msg.set_command(drill_command);
 
     zmq::message_t *query = NULL;
     try
@@ -159,20 +159,18 @@ void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
         memcpy(query->data(), serialized_string.c_str(), serialized_string.length());
         zmq_publisher_->send(*query);
 
-        logger->log_info("ConveyorBelt", "Set run state: %d", command_msg.mode());
-
-        delete query;
+        logger->log_info("DrillingMachine", "Send drill command: %d", command_msg.command());
 
     } catch (fawkes::Exception &e)
     {
-        logger->log_warn("ConveyorBelt", "Failed to set run state: %s", e.what());
+        logger->log_warn("DrillingMachine", "Failed to send drilling command: %s", e.what());
 
         if (query != NULL)
             delete query;
     }
 }
 
-void ConveyorBeltThread::receiveAndBufferStatusMsg()
+void DrillingMachineThread::receiveAndBufferStatusMsg()
 {
     if (!zmq_subscriber_)
         return;
@@ -191,7 +189,7 @@ void ConveyorBeltThread::receiveAndBufferStatusMsg()
 
         if (time_diff.total_seconds() >= 3)
         {
-            last_status_msg_.set_mode(STOP);
+            last_status_msg_.set_state(DrillingMachineStatus::UNKOWN);
             last_status_msg_.set_is_device_connected(false);
         }
     }
