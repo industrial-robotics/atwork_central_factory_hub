@@ -28,83 +28,15 @@
 
 package rockin_msgs;
 
-import "Time.proto";
+import "Position3D.proto";
+import "Quaternion.proto";
 
 option java_package = "org.rockin.common_msgs";
-option java_outer_classname = "BenchmarkStateProtos";
+option java_outer_classname = "Pose3DProtos";
 
+message Pose3D {
 
-message BenchmarkPhase {
-  enum BenchmarkType {
-    NONE = 0; // No benchmark running
-    TBM  = 1; // Task benchmark
-    FBM  = 2; // Functionality benchmark
-  }
+  required Position3D position = 1;
+  required Quaternion orientation = 2;
 
-  // e.g. TASK_BENCHMARK 1 "TBM 1: Assembly aid tray"
-  required BenchmarkType type         = 1;
-  required uint32        type_id      = 2;
-  optional string        description  = 3;
-}
-
-
-message BenchmarkState {
-  enum CompType {
-    COMP_ID  = 2000;
-    MSG_TYPE = 100;
-  }
-
-  enum State {
-    INIT      = 0;
-    RUNNING   = 1;
-    PAUSED    = 2;
-    FINISHED  = 3;
-  }
-
-  enum RefBoxMode {
-    STANDALONE  = 0;
-    MASTER      = 1;
-    SLAVE       = 2;
-  }
-
-  // Time since benchmark start
-  required Time benchmark_time = 1;
-
-  // Current benchmark state
-  required State state = 3;
-
-  // Current benchmark phase
-  required BenchmarkPhase phase = 4;
-
-  // Name of all known teams
-  repeated string known_teams = 5;
-
-  // Name of teams which are currently connected to the RefBox
-  repeated string connected_teams = 6;
-
-  optional RefBoxMode refbox_mode = 7 [default = STANDALONE];
-}
-
-
-// Request setting of a new benchmark state
-message SetBenchmarkState {
-  enum CompType {
-    COMP_ID  = 2000;
-    MSG_TYPE = 101;
-  }
-
-  // The new desired state
-  required BenchmarkState.State state = 1;
-}
-
-
-// Request setting of a new benchmark phase
-message SetBenchmarkPhase {
-  enum CompType {
-    COMP_ID  = 2000;
-    MSG_TYPE = 102;
-  }
-
-  // The new desired phase
-  required BenchmarkPhase phase = 1;
 }

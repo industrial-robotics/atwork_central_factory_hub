@@ -41,7 +41,7 @@ class DrillingMachineThread: public fawkes::Thread, public fawkes::LoggingAspect
     private:
         void clips_move_drill_up();
         void clips_move_drill_down();
-        int clips_get_device_state();
+        DrillingMachineStatus::State clips_get_device_state();
         int clips_is_device_connected();
 
         void moveDrill(DrillingMachineCommand::Command drill_command);

@@ -62,11 +62,45 @@
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
+(deftemplate object-identifier
+  ; identifier which is used in CLIPS only
+  (slot id (type INTEGER))
+
+  ; the object id (see rulebook), such as AX-01 consists of *type* and *type-id*
+  (slot type (type SYMBOL) (allowed-values EM AX ER))
+  (slot type-id (type INTEGER))
+
+  (multislot instance-id (type INTEGER) (cardinality 0 1))
+  (multislot description (type STRING) (cardinality 0 1))
+)
+
+(deftemplate location-identifier
+  ; identifier which is used in CLIPS only
+  (slot id (type INTEGER))
+
+  ; a location id, such as SHELF-01 consists of *type* and *instance-id*
+  (slot type (type SYMBOL) (allowed-values SHELF WORKSTATION CONVEYOR_BELT CENTRAL_STATION ROBOT))
+  (slot instance-id (type INTEGER))
+
+  (multislot description (type STRING) (cardinality 0 1))
+)
+
+(deftemplate item
+  ; identifier which is used in CLIPS only
+  (slot id (type INTEGER))
+
+  (slot object-id (type INTEGER))                           ; object-identifier
+  (multislot container-id (type INTEGER) (cardinality 0 1)) ; object-identifier
+  (multislot location-id (type INTEGER) (cardinality 0 1))  ; location-identifier
+  (multislot quantity (type INTEGER) (cardinality 0 1))
+)
+
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
   (signal (type beacon) (time (create$ 0 0)) (seq 1))
   (signal (type benchmark-state) (time (create$ 0 0)) (seq 1))
+  (signal (type inventory) (time (create$ 0 0)) (seq 1))
 )
 
 (deffacts benchmarks

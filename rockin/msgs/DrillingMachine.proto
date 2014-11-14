@@ -26,85 +26,35 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package rockin_msgs;
-
-import "Time.proto";
-
-option java_package = "org.rockin.common_msgs";
-option java_outer_classname = "BenchmarkStateProtos";
-
-
-message BenchmarkPhase {
-  enum BenchmarkType {
-    NONE = 0; // No benchmark running
-    TBM  = 1; // Task benchmark
-    FBM  = 2; // Functionality benchmark
-  }
-
-  // e.g. TASK_BENCHMARK 1 "TBM 1: Assembly aid tray"
-  required BenchmarkType type         = 1;
-  required uint32        type_id      = 2;
-  optional string        description  = 3;
-}
-
-
-message BenchmarkState {
+message DrillingMachineStatus {
   enum CompType {
     COMP_ID  = 2000;
-    MSG_TYPE = 100;
+    MSG_TYPE = 302;
   }
 
   enum State {
-    INIT      = 0;
-    RUNNING   = 1;
-    PAUSED    = 2;
-    FINISHED  = 3;
+    AT_TOP      = 0;  // The drill bit is in the topmost position
+    AT_BOTTOM   = 1;  // The drill bit is in the lowermost position
+    MOVING_UP   = 2;  // The drill bit is moving upwards
+    MOVING_DOWN = 3;  // The drill bit is moving downwards
+    UNKOWN      = 4;  // The position of the drill bit cannot be determined (e.g. because there is no connection to the drilling machine)
   }
 
-  enum RefBoxMode {
-    STANDALONE  = 0;
-    MASTER      = 1;
-    SLAVE       = 2;
-  }
-
-  // Time since benchmark start
-  required Time benchmark_time = 1;
-
-  // Current benchmark state
-  required State state = 3;
-
-  // Current benchmark phase
-  required BenchmarkPhase phase = 4;
-
-  // Name of all known teams
-  repeated string known_teams = 5;
-
-  // Name of teams which are currently connected to the RefBox
-  repeated string connected_teams = 6;
-
-  optional RefBoxMode refbox_mode = 7 [default = STANDALONE];
+  // The current position/motion state of the drilling machine
+  required State state = 1;
 }
 
-
-// Request setting of a new benchmark state
-message SetBenchmarkState {
+message DrillingMachineCommand {
   enum CompType {
     COMP_ID  = 2000;
-    MSG_TYPE = 101;
+    MSG_TYPE = 303;
   }
 
-  // The new desired state
-  required BenchmarkState.State state = 1;
-}
-
-
-// Request setting of a new benchmark phase
-message SetBenchmarkPhase {
-  enum CompType {
-    COMP_ID  = 2000;
-    MSG_TYPE = 102;
+   enum Command {
+    MOVE_DOWN = 0;  // Instruct the drilling machine to move downwards
+    MOVE_UP   = 1;  // Instruct the drilling machine to move upwards
   }
 
-  // The new desired phase
-  required BenchmarkPhase phase = 1;
+  // The desired motion state of the drilling machine
+  required Command command = 1;
 }

@@ -184,6 +184,47 @@
   (pb-destroy ?attmsg)
 )
 
+(defrule net-recv-SetBenchmarkState
+  ?sf <- (benchmark-state (state ?state))
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p) (rcvd-via STREAM))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (modify ?sf (state (sym-cat (pb-field-value ?p "state"))) (prev-state ?state))
+)
+
+(defrule net-recv-SetBenchmarkState-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p)
+           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout warn "Illegal SetBenchmarkState message received from host " ?host crlf)
+)
+
+(defrule net-recv-SetBenchmarkPhase
+  ?sf <- (benchmark-state (phase-id ?phase-id))
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the phase type (NONE, FBM, TBM) and type id from the message
+  (bind ?pb-phase (pb-field-value ?p "phase"))
+  (bind ?pb-phase-type (pb-field-value ?pb-phase "type"))
+  (bind ?pb-phase-type-id (pb-field-value ?pb-phase "type_id"))
+
+  ; When a phase was found, that matches the type and ID in the message, update the current and previous phase ID
+  (do-for-fact ((?phase benchmark-phase)) (and (eq ?phase:type ?pb-phase-type) (eq ?phase:type-id ?pb-phase-type-id))
+    (modify ?sf (phase-id ?phase:id) (prev-phase-id ?phase-id))
+  )
+)
+
+(defrule net-recv-SetBenchmarkPhase-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p)
+           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout warn "Illegal SetBenchmarkPhase message received from host " ?host crlf)
+)
+
 (deffunction net-create-BenchmarkState (?bs)
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
@@ -234,6 +275,93 @@
     (pb-send ?client:id ?benchmark-state)
   )
   (pb-destroy ?benchmark-state)
+)
+
+(deffunction net-create-ObjectIdentifier (?object-id)
+  "Create a ProtoBuf message of an ObjectIdentifier which is referenced by its
+   ID as specified in the ?object-id parameter"
+
+  (bind ?pb-object-identifier (pb-create "rockin_msgs.ObjectIdentifier"))
+
+  (do-for-fact ((?object object-identifier)) (eq ?object-id ?object:id)
+    (pb-set-field ?pb-object-identifier "type" ?object:type)
+    (pb-set-field ?pb-object-identifier "type_id" ?object:type-id)
+
+    ; Only set the instance id if it is available
+    (if (<> (length$ ?object:instance-id) 0) then
+      (pb-set-field ?pb-object-identifier "instance_id" ?object:instance-id)
+    )
+
+    ; Only set the description if it is available
+    (if (<> (length$ ?object:description) 0) then
+      (pb-set-field ?pb-object-identifier "description" ?object:description)
+    )
+  )
+
+  (return ?pb-object-identifier)
+)
+
+(deffunction net-create-LocationIdentifier (?location-id)
+  "Create a ProtoBuf message of a LocationIdentifier which is referenced by its
+   ID as specified in the ?location-id parameter"
+
+  (bind ?pb-location-identifier (pb-create "rockin_msgs.LocationIdentifier"))
+
+  (do-for-fact ((?location location-identifier)) (eq ?location-id ?location:id)
+    (pb-set-field ?pb-location-identifier "type" ?location:type)
+    (pb-set-field ?pb-location-identifier "instance_id" ?location:instance-id)
+
+    ; Only set the description if it is available
+    (if (<> (length$ ?location:description) 0) then
+      (pb-set-field ?pb-location-identifier "description" ?location:description)
+    )
+  )
+
+  (return ?pb-location-identifier)
+)
+
+(deffunction net-create-Inventory ()
+  ; Instantiate a new inventory
+  (bind ?pb-inventory (pb-create "rockin_msgs.Inventory"))
+
+  ; Iterate over all asserted items (which form the inventory)
+  (do-for-all-facts ((?item item)) TRUE
+    ; Instantiate a new item for the protobuf message
+    (bind ?pb-item (pb-create "rockin_msgs.Inventory.Item"))
+
+    (pb-set-field ?pb-item "object" (net-create-ObjectIdentifier ?item:object-id))
+
+    ; Only set the location if is available
+    (if (<> (length$ ?item:location-id) 0) then
+      (pb-set-field ?pb-item "location" (net-create-LocationIdentifier (nth$ 1 ?item:location-id)))
+    )
+
+    ; Only set the container if it is available
+    (if (<> (length$ ?item:container-id) 0) then
+      (pb-set-field ?pb-item "container" (net-create-ObjectIdentifier (nth$ 1 ?item:container-id)))
+    )
+
+    ; Only set the quantity if it is available
+    (if (<> (length$ ?item:quantity) 0) then
+      (pb-set-field ?pb-item "quantity" (nth$ 1 ?item:quantity))
+    )
+
+    (pb-add-list ?pb-inventory "items" ?pb-item)
+  )
+
+  (return ?pb-inventory)
+)
+
+(defrule net-send-Inventory
+  (time $?now)
+  ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+
+  (bind ?pb-inventory (net-create-Inventory))
+  (pb-broadcast ?peer-id-public ?pb-inventory)
+  (pb-destroy ?pb-inventory)
 )
 
 (defrule net-send-VersionInfo
