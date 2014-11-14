@@ -468,9 +468,6 @@
   ; Instantiate a new status message
   (bind ?pb-status (pb-create "rockin_msgs.ConveyorBeltStatus"))
 
-  ; Assumption: The enum in the device communication message is aligned with the
-  ;             enum of the robot communication (e.g. in both messages the state
-  ;             UNKNOWN maps to the value 4)
   (if (conveyor-belt-is-running)
    then
     (pb-set-field ?pb-status "state" START)
