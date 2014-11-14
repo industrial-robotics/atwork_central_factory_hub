@@ -102,6 +102,7 @@
   (signal (type benchmark-state) (time (create$ 0 0)) (seq 1))
   (signal (type inventory) (time (create$ 0 0)) (seq 1))
   (signal (type drilling-machine) (time (create$ 0 0)) (seq 1))
+  (signal (type conveyor-belt) (time (create$ 0 0)) (seq 1))
 )
 
 (deffacts benchmarks

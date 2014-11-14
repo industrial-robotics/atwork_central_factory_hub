@@ -464,3 +464,38 @@
   )
 )
 
+(deffunction net-create-ConveyorBeltStatus ()
+  ; Instantiate a new status message
+  (bind ?pb-status (pb-create "rockin_msgs.ConveyorBeltStatus"))
+
+  ; Assumption: The enum in the device communication message is aligned with the
+  ;             enum of the robot communication (e.g. in both messages the state
+  ;             UNKNOWN maps to the value 4)
+  (if (conveyor-belt-is-running)
+   then
+    (pb-set-field ?pb-status "state" START)
+   else
+    (pb-set-field ?pb-status "state" STOP)
+  )
+
+  (return ?pb-status)
+)
+
+(defrule net-send-ConveyorBeltStatus
+  (time $?now)
+  ?f <- (signal (type conveyor-belt) (time $?t&:(timeout ?now ?t ?*CONVEYOR-BELT-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  (have-feature ConveyorBelt)
+  =>
+  (bind ?status (net-create-ConveyorBeltStatus))
+
+  ; Broadcast to peers
+  (pb-broadcast ?peer-id-public ?status)
+
+  ; Send to all clients
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?status)
+  )
+
+  (pb-destroy ?status)
+)
