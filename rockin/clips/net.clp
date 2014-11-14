@@ -427,6 +427,14 @@
   (have-feature DrillingMachine)
   =>
   (bind ?ds (net-create-DrillingMachineStatus))
+
+  ; Broadcast to peers
   (pb-broadcast ?peer-id-public ?ds)
+
+  ; Send to all clients
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?ds)
+  )
+
   (pb-destroy ?ds)
 )
