@@ -120,7 +120,7 @@ DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
     if (last_status_msg_.has_state())
         return last_status_msg_.state();
 
-    return 3;
+    return DrillingMachineStatus::UNKNOWN;
 }
 
 int DrillingMachineThread::clips_is_device_connected()
@@ -189,7 +189,7 @@ void DrillingMachineThread::receiveAndBufferStatusMsg()
 
         if (time_diff.total_seconds() >= 3)
         {
-            last_status_msg_.set_state(DrillingMachineStatus::UNKOWN);
+            last_status_msg_.set_state(DrillingMachineStatus::UNKNOWN);
             last_status_msg_.set_is_device_connected(false);
         }
     }
