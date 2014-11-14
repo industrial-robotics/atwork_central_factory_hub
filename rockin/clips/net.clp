@@ -376,3 +376,126 @@
   (pb-broadcast ?peer-id-public ?vi)
   (pb-destroy ?vi)
 )
+
+(defrule net-recv-DrillingMachineCommand
+  ?mf <- (protobuf-msg (type "rockin_msgs.DrillingMachineCommand") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  (have-feature DrillingMachine)
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the command from the message
+  (bind ?pb-command (pb-field-value ?p "command"))
+
+  (switch ?pb-command
+    (case MOVE_UP then
+      (printout t "Host " ?host " commands drilling machine up" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands drilling machine up"))))
+      (drilling-machine-move-drill-up)
+    )
+
+    (case MOVE_DOWN then
+      (printout t "Host " ?host " commands drilling machine down" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands drilling machine down"))))
+      (drilling-machine-move-drill-down)
+    )
+  )
+)
+
+(deffunction net-create-DrillingMachineStatus ()
+  ; Instantiate a new status message
+  (bind ?pb-status (pb-create "rockin_msgs.DrillingMachineStatus"))
+
+  ; Assumption: The enum in the device communication message is aligned with the
+  ;             enum of the robot communication (e.g. in both messages the state
+  ;             UNKNOWN maps to the value 4)
+  (switch (drilling-machine-get-state)
+    (case 0 then (pb-set-field ?pb-status "state" AT_TOP))
+    (case 1 then (pb-set-field ?pb-status "state" AT_BOTTOM))
+    (case 2 then (pb-set-field ?pb-status "state" MOVING_UP))
+    (case 3 then (pb-set-field ?pb-status "state" MOVING_DOWN))
+    (case 4 then (pb-set-field ?pb-status "state" UNKNOWN))
+  )
+
+  (return ?pb-status)
+)
+
+(defrule net-send-DrillingMachineStatus
+  (time $?now)
+  ?f <- (signal (type drilling-machine) (time $?t&:(timeout ?now ?t ?*DRILLING-MACHINE-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  (have-feature DrillingMachine)
+  =>
+  (bind ?ds (net-create-DrillingMachineStatus))
+
+  ; Broadcast to peers
+  (pb-broadcast ?peer-id-public ?ds)
+
+  ; Send to all clients
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?ds)
+  )
+
+  (pb-destroy ?ds)
+)
+
+(defrule net-recv-ConveyorBeltCommand
+  ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  (have-feature ConveyorBelt)
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the command from the message
+  (bind ?pb-command (pb-field-value ?p "command"))
+
+  (switch ?pb-command
+    (case STOP then
+      (printout t "Host " ?host " commands conveyor belt to stop" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to stop"))))
+      (conveyor-belt-stop-belt)
+    )
+
+    (case START then
+      (printout t "Host " ?host " commands conveyor belt to start" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to start"))))
+      (conveyor-belt-start-belt)
+    )
+  )
+)
+
+(deffunction net-create-ConveyorBeltStatus ()
+  ; Instantiate a new status message
+  (bind ?pb-status (pb-create "rockin_msgs.ConveyorBeltStatus"))
+
+  ; Assumption: The enum in the device communication message is aligned with the
+  ;             enum of the robot communication (e.g. in both messages the state
+  ;             UNKNOWN maps to the value 4)
+  (if (conveyor-belt-is-running)
+   then
+    (pb-set-field ?pb-status "state" START)
+   else
+    (pb-set-field ?pb-status "state" STOP)
+  )
+
+  (return ?pb-status)
+)
+
+(defrule net-send-ConveyorBeltStatus
+  (time $?now)
+  ?f <- (signal (type conveyor-belt) (time $?t&:(timeout ?now ?t ?*CONVEYOR-BELT-PERIOD*)) (seq ?seq))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  (have-feature ConveyorBelt)
+  =>
+  (bind ?status (net-create-ConveyorBeltStatus))
+
+  ; Broadcast to peers
+  (pb-broadcast ?peer-id-public ?status)
+
+  ; Send to all clients
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?status)
+  )
+
+  (pb-destroy ?status)
+)

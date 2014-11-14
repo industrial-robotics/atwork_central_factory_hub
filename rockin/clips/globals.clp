@@ -10,6 +10,8 @@
   ?*BEACON-PERIOD* = 1.0
   ?*BENCHMARKSTATE-PERIOD* = 1.0
   ?*INVENTORY-PERIOD* = 1.0
+  ?*DRILLING-MACHINE-PERIOD* = 0.1
+  ?*CONVEYOR-BELT-PERIOD* = 0.1
 
   ; This value is set by the rule config-timer-interval from config.yaml
   ?*TIMER-INTERVAL* = 0.0
