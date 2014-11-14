@@ -90,8 +90,8 @@ void ConveyorBeltThread::init()
 
     clips->add_function("conveyor-belt-start-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_start_belt)));
     clips->add_function("conveyor-belt-stop-belt", sigc::slot<void>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_stop_belt)));
-    clips->add_function("conveyor-belt-is-running", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_belt_running)));
-    clips->add_function("conveyor-belt-is-device-connected", sigc::slot<int>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_device_connected)));
+    clips->add_function("conveyor-belt-is-running", sigc::slot<bool>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_belt_running)));
+    clips->add_function("conveyor-belt-is-device-connected", sigc::slot<bool>(sigc::mem_fun(*this, &ConveyorBeltThread::clips_is_device_connected)));
 
     if (!clips->build("(deffacts have-feature-conveyor-belt (have-feature ConveyorBelt))"))
         logger->log_warn("ConveyorBelt", "Failed to build deffacts have-feature-conveyor-belt");
@@ -115,7 +115,7 @@ void ConveyorBeltThread::loop()
     boost::this_thread::sleep(boost::posix_time::milliseconds(cfg_timer_interval_));
 }
 
-int ConveyorBeltThread::clips_is_belt_running()
+bool ConveyorBeltThread::clips_is_belt_running()
 {
     if (last_status_msg_.has_mode() && (last_status_msg_.mode() == START))
         return true;
@@ -123,7 +123,7 @@ int ConveyorBeltThread::clips_is_belt_running()
         return false;
 }
 
-int ConveyorBeltThread::clips_is_device_connected()
+bool ConveyorBeltThread::clips_is_device_connected()
 {
     if (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected())
         return true;
