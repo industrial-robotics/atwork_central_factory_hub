@@ -26,6 +26,11 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "ConveyorBeltProtos";
+
 enum ConveyorBeltRunMode {
   STOP  = 0;  // The conveyor belt is standing still
   START = 1;  // The conveyor belt is moving
