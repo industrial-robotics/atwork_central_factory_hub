@@ -117,18 +117,17 @@ void DrillingMachineThread::loop()
 
 DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 {
-    if (last_status_msg_.has_state())
+    if (last_status_msg_.has_state()) {
         return last_status_msg_.state();
+    }
 
     return DrillingMachineStatus::UNKNOWN;
 }
 
 int DrillingMachineThread::clips_is_device_connected()
 {
-    if (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected())
-        return true;
-    else
-        return false;
+    return (last_status_msg_.has_is_device_connected()
+            && last_status_msg_.is_device_connected());
 }
 
 void DrillingMachineThread::clips_move_drill_up()
