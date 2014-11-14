@@ -40,6 +40,7 @@
 #include <utils/system/argparser.h>
 
 #include <msgs/DrillingMachine.pb.h>
+#include <msgs/ConveyorBelt.pb.h>
 
 using namespace protobuf_comm;
 using namespace rockin_msgs;
@@ -47,6 +48,7 @@ using namespace fawkes;
 
 ProtobufStreamClient *client_ = 0;
 DrillingMachineStatus drilling_machine_status;
+ConveyorBeltStatus conveyor_belt_status;
 
 
 
@@ -90,6 +92,32 @@ bool control_drilling_machine(const std::string &command)
 }
 
 
+bool control_conveyor_belt(const std::string &command)
+{
+  if (!conveyor_belt_status.has_state()) return false;
+
+  ConveyorBeltRunMode state = conveyor_belt_status.state();
+  ConveyorBeltCommand msg;
+
+  if (command == "start") {
+    if (state == START) return true;
+
+    msg.set_command(START);
+  } else if (command == "stop") {
+    if (state == STOP) return true;
+
+    msg.set_command(STOP);
+  } else {
+    std::cerr << "Command '" << command << "' is invalid for the conveyor belt." << std::endl;
+    return true;
+  }
+
+  client_->send(msg);
+
+  return false;
+}
+
+
 int main(int argc, char **argv)
 {
   ArgumentParser argp(argc, argv, "");
@@ -110,6 +138,8 @@ int main(int argc, char **argv)
   MessageRegister & message_register = client_->message_register();
   message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<DrillingMachineCommand>();
+  message_register.add_message_type<ConveyorBeltStatus>();
+  message_register.add_message_type<ConveyorBeltCommand>();
 
   client_->signal_received().connect(handle_message);
   client_->async_connect(
@@ -120,6 +150,8 @@ int main(int argc, char **argv)
   while (!quit) {
     if (device == "drilling_machine") {
       quit = control_drilling_machine(command);
+    } else if (device == "conveyor_belt") {
+      quit = control_conveyor_belt(command);
     } else {
       std::cerr << "Device '" << device << "' is invalid." << std::endl;
       quit = true;
