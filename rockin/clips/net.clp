@@ -422,6 +422,7 @@
 
 (defrule net-send-DrillingMachineStatus
   (time $?now)
+  ?f <- (signal (type drilling-machine) (time $?t&:(timeout ?now ?t ?*DRILLING-MACHINE-PERIOD*)) (seq ?seq))
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   (have-feature DrillingMachine)
   =>
