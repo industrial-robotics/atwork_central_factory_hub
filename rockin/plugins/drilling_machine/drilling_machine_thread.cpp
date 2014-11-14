@@ -115,7 +115,7 @@ void DrillingMachineThread::loop()
     boost::this_thread::sleep(boost::posix_time::milliseconds(cfg_timer_interval_));
 }
 
-int DrillingMachineThread::clips_get_device_state()
+DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 {
     if (last_status_msg_.has_state())
         return last_status_msg_.state();
