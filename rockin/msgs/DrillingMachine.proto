@@ -37,7 +37,7 @@ message DrillingMachineStatus {
     AT_BOTTOM   = 1;  // The drill bit is in the lowermost position
     MOVING_UP   = 2;  // The drill bit is moving upwards
     MOVING_DOWN = 3;  // The drill bit is moving downwards
-    UNKOWN      = 4;  // The position of the drill bit cannot be determined (e.g. because there is no connection to the drilling machine)
+    UNKNOWN     = 4;  // The position of the drill bit cannot be determined (e.g. because there is no connection to the drilling machine)
   }
 
   // The current position/motion state of the drilling machine
