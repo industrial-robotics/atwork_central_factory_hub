@@ -438,3 +438,29 @@
 
   (pb-destroy ?ds)
 )
+
+(defrule net-recv-ConveyorBeltCommand
+  ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  (have-feature ConveyorBelt)
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the command from the message
+  (bind ?pb-command (pb-field-value ?p "command"))
+
+  (switch ?pb-command
+    (case STOP then
+      (printout t "Host " ?host " commands conveyor belt to stop" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to stop"))))
+      (conveyor-belt-stop-belt)
+    )
+
+    (case START then
+      (printout t "Host " ?host " commands conveyor belt to start" crlf)
+      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to start"))))
+      (conveyor-belt-start-belt)
+    )
+  )
+)
+
