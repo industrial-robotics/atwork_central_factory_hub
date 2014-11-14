@@ -59,6 +59,11 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
   if ((ds = std::dynamic_pointer_cast<DrillingMachineStatus>(msg))) {
     drilling_machine_status = *ds;
   }
+
+  std::shared_ptr<ConveyorBeltStatus> cs;
+  if ((cs = std::dynamic_pointer_cast<ConveyorBeltStatus>(msg))) {
+    conveyor_belt_status = *cs;
+  }
 }
 
 
