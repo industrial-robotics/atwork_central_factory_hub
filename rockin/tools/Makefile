@@ -25,9 +25,12 @@ OBJS_rockin_fake_robot = rockin-fake-robot.o
 LIBS_rockin_device_ctrl = stdc++ llsfrbcore llsfrbutils llsfrbconfig llsf_protobuf_comm rockin_msgs
 OBJS_rockin_device_ctrl = rockin-device-ctrl.o
 
+LIBS_rockin_benchmark_ctrl = stdc++ llsfrbcore llsfrbutils llsfrbconfig llsf_protobuf_comm rockin_msgs
+OBJS_rockin_benchmark_ctrl = rockin-benchmark-ctrl.o
+
 ifeq ($(HAVE_PROTOBUF)$(HAVE_BOOST_LIBS),11)
-  OBJS_all += $(OBJS_rockin_fake_robot) $(OBJS_rockin_device_ctrl)
-  BINS_all += $(BINDIR)/rockin-fake-robot $(BINDIR)/rockin-device-ctrl
+  OBJS_all += $(OBJS_rockin_fake_robot) $(OBJS_rockin_device_ctrl) $(OBJS_rockin_benchmark_ctrl)
+  BINS_all += $(BINDIR)/rockin-fake-robot $(BINDIR)/rockin-device-ctrl $(BINDIR)/rockin-benchmark-ctrl
 
   CFLAGS_rockin_fake_robot += $(CFLAGS_PROTOBUF) \
                               $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
@@ -37,6 +40,11 @@ ifeq ($(HAVE_PROTOBUF)$(HAVE_BOOST_LIBS),11)
   CFLAGS_rockin_device_ctrl += $(CFLAGS_PROTOBUF) \
                                $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
   LDFLAGS_rockin_device_ctrl += $(LDFLAGS_PROTOBUF) \
+                                $(call boost-libs-ldflags,$(REQ_BOOST_LIBS))
+
+  CFLAGS_rockin_benchmark_ctrl += $(CFLAGS_PROTOBUF) \
+                               $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
+  LDFLAGS_rockin_benchmark_ctrl += $(LDFLAGS_PROTOBUF) \
                                 $(call boost-libs-ldflags,$(REQ_BOOST_LIBS))
 else
   ifneq ($(HAVE_PROTOBUF),1)
