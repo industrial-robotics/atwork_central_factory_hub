@@ -9,7 +9,7 @@ message ObjectIdentifier {
   enum ObjectType {
     AX = 1;
     EM = 2;
-    EX = 3;
+    ER = 3;
   }
 
   // The object class (e.g. "EM-01") consists of the type ("EM") and a type
