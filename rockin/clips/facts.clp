@@ -79,7 +79,7 @@
   (slot id (type INTEGER))
 
   ; a location id, such as SHELF-01 consists of *type* and *instance-id*
-  (slot type (type SYMBOL) (allowed-values SHELF WORKSTATION CONVEYOR_BELT CENTRAL_STATION ROBOT))
+  (slot type (type SYMBOL) (allowed-values SH WS CB ROBOT))
   (slot instance-id (type INTEGER))
 
   (multislot description (type STRING) (cardinality 0 1))

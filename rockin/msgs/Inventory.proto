@@ -31,11 +31,10 @@ message ObjectIdentifier {
 message LocationIdentifier {
 
   enum LocationType {
-    SHELF           = 1;
-    WORKSTATION     = 2;
-    CONVEYOR_BELT   = 3;
-    CENTRAL_STATION = 4;
-    ROBOT           = 5;
+    SH    = 1;  // Shelf
+    WS    = 2;  // Workstation
+    CB    = 3;  // Conveyor belt
+    ROBOT = 4;
   }
 
   required LocationType type        = 1;  // The type of location
