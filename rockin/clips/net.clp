@@ -496,3 +496,17 @@
 
   (pb-destroy ?status)
 )
+
+(defrule net-recv-CameraCommand
+  ?mf <- (protobuf-msg (type "rockin_msgs.CameraCommand") (rcvd-from ?host ?port))
+  (network-peer (group ?group) (id ?peer-id))
+  (robot (team ?group))
+  (have-feature QualityControlCamera)
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (printout t "Host " ?host " requests camera image" crlf)
+  (assert (attention-message (text (str-cat "Host " ?host " requests camera image"))))
+
+  (quality-control-camera-send-image-to-peer ?peer-id)
+)
