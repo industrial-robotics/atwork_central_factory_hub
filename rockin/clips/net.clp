@@ -426,6 +426,8 @@
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   (have-feature DrillingMachine)
   =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+
   (bind ?ds (net-create-DrillingMachineStatus))
 
   ; Broadcast to peers
@@ -484,6 +486,8 @@
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   (have-feature ConveyorBelt)
   =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+
   (bind ?status (net-create-ConveyorBeltStatus))
 
   ; Broadcast to peers
