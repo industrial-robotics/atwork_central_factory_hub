@@ -26,7 +26,7 @@
 #include <aspect/clips.h>
 #include <aspect/configurable.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <plugins/msgs/ConveyorBelt.pb.h>
+#include <plugins/msgs/DeviceConveyorBelt.pb.h>
 #include <zmq.hpp>
 
 class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, public fawkes::ConfigurableAspect, public fawkes::CLIPSAspect

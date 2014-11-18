@@ -28,8 +28,8 @@
 #include <aspect/configurable.h>
 #include <aspect/protobuf_comm.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <plugins/msgs/Camera.pb.h>
-#include <plugins/msgs/Image.pb.h>
+#include <plugins/msgs/DeviceCamera.pb.h>
+#include <plugins/msgs/DeviceImage.pb.h>
 #include <zmq.hpp>
 
 class QualityControlCameraThread: public fawkes::Thread, public fawkes::LoggingAspect, public fawkes::ConfigurableAspect, public fawkes::CLIPSAspect, public fawkes::ProtobufCommAspect
