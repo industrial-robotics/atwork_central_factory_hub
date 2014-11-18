@@ -43,6 +43,8 @@
 #include <msgs/VersionInfo.pb.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/Inventory.pb.h>
+#include <msgs/DrillingMachine.pb.h>
+#include <msgs/ConveyorBelt.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -147,6 +149,29 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
       if (item.has_quantity()) std::cout << "    Quantity: " << item.quantity() << std::endl;
     }
   }
+
+  std::shared_ptr<DrillingMachineStatus> dm;
+  if ((dm = std::dynamic_pointer_cast<DrillingMachineStatus>(msg))) {
+    std::cout << "Drilling machine status received: ";
+    switch (dm->state()) {
+      case DrillingMachineStatus::AT_BOTTOM: std::cout << "AT_BOTTOM"; break;
+      case DrillingMachineStatus::AT_TOP: std::cout << "AT_TOP"; break;
+      case DrillingMachineStatus::MOVING_DOWN: std::cout << "MOVING_DOWN"; break;
+      case DrillingMachineStatus::MOVING_UP: std::cout << "MOVING_UP"; break;
+      case DrillingMachineStatus::UNKNOWN: std::cout << "UNKNOWN"; break;
+    }
+    std::cout << std::endl;
+  }
+
+  std::shared_ptr<ConveyorBeltStatus> cb;
+  if ((cb = std::dynamic_pointer_cast<ConveyorBeltStatus>(msg))) {
+    std::cout << "Conveyor belt status received: ";
+    switch (cb->state()) {
+      case ConveyorBeltRunMode::START: std::cout << "RUNNING"; break;
+      case ConveyorBeltRunMode::STOP: std::cout << "STOPPED"; break;
+    }
+    std::cout << std::endl;
+  }
 }
 
 
@@ -210,6 +235,8 @@ main(int argc, char **argv)
   message_register.add_message_type<VersionInfo>();
   message_register.add_message_type<BenchmarkState>();
   message_register.add_message_type<Inventory>();
+  message_register.add_message_type<DrillingMachineStatus>();
+  message_register.add_message_type<ConveyorBeltStatus>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
