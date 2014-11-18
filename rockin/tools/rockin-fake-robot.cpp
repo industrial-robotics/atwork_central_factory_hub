@@ -45,6 +45,8 @@
 #include <msgs/Inventory.pb.h>
 #include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
+#include <msgs/Camera.pb.h>
+#include <msgs/Image.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -172,6 +174,11 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     }
     std::cout << std::endl;
   }
+
+  std::shared_ptr<Image> img;
+  if ((img = std::dynamic_pointer_cast<Image>(msg))) {
+    std::cout << "Image received (width=" << img->width() << ", height=" << img->height() << ", step=" << img->step() <<")" << std::endl;
+  }
 }
 
 
@@ -194,6 +201,12 @@ handle_timer(const boost::system::error_code& error)
     signal->set_team_name(team_name_);
     signal->set_seq(++seq_);
     peer_team_->send(signal);
+
+
+    // Request a camera image
+    CameraCommand cam_cmd;
+    peer_team_->send(cam_cmd);
+
 
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));
@@ -237,6 +250,7 @@ main(int argc, char **argv)
   message_register.add_message_type<Inventory>();
   message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<ConveyorBeltStatus>();
+  message_register.add_message_type<Image>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
