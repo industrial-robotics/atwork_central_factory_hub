@@ -1,0 +1,57 @@
+/*  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the authors nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "ImageProtos";
+
+message Image {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 500;
+  }
+
+  // Height of the image in pixels (number of rows)
+  required uint32 height = 1;
+
+  // Width of the image in pixels (number of columns)
+  required uint32 width = 2;
+
+  // The encoding of the image which is equivalent to the OpenCV types as
+  // defined by the CV_MAKETYPE macros in:
+  // https://github.com/Itseez/opencv/blob/df8e28283f09825cca0c2902160b7abebcfe1b64/modules/core/include/opencv2/core/types_c.h#L561
+  required uint32 encoding = 3;
+
+  // Length of one row in bytes
+  required uint32 step = 4;
+
+  // The pixels of the image according to the specified encoding
+  // There are (width * height) pixels in the array
+  required bytes data = 5;
+}
