@@ -126,6 +126,7 @@ int main(int argc, char **argv)
       else if (state == "running") cmd.set_state(rockin_msgs::BenchmarkState::RUNNING);
       else if (state == "paused") cmd.set_state(rockin_msgs::BenchmarkState::PAUSED);
       else if (state == "finished") cmd.set_state(rockin_msgs::BenchmarkState::FINISHED);
+      else break;
 
       client.send(cmd);
       quit_ = true;
@@ -149,8 +150,12 @@ int main(int argc, char **argv)
       } else if (phase == "tbm3") {
         cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
         cmd.mutable_phase()->set_type_id(3);
+      } else if (phase == "none") {
+        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::NONE);
+        cmd.mutable_phase()->set_type_id(0);
       } else {
         std::cerr << "The provided phase '" << phase << "' is invalid" << std::endl;
+        break;
       }
 
       client.send(cmd);
