@@ -45,6 +45,4 @@ message CameraCommand
     COMP_ID  = 2000;
     MSG_TYPE = 305;
   }
-
-  optional int32 dummy = 1;
 }
