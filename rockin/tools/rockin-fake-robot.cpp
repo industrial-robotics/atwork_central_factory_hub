@@ -43,6 +43,7 @@
 #include <msgs/VersionInfo.pb.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/Inventory.pb.h>
+#include <msgs/Order.pb.h>
 #include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/Camera.pb.h>
@@ -152,6 +153,34 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     }
   }
 
+  std::shared_ptr<OrderInfo> o;
+  if ((o = std::dynamic_pointer_cast<OrderInfo>(msg))) {
+    std::cout << "OrderInfo received" << std::endl;
+
+    for (int i = 0; i < o->orders_size(); i++) {
+      const Order &order = o->orders(i);
+      std::cout << "  Order " << i << ":" << std::endl;
+      std::cout << "    Identifier: " << order.id() << std::endl;
+      std::cout << "    Status: ";
+      switch (order.status()) {
+        case Order::OFFERED: std::cout << "OFFERED"; break;
+        case Order::TIMEOUT: std::cout << "TIMEOUT"; break;
+        case Order::IN_PROGRESS: std::cout << "IN_PROGRESS"; break;
+        case Order::PAUSED: std::cout << "PAUSED"; break;
+        case Order::ABORTED: std::cout << "ABORTED"; break;
+        case Order::FINISHED: std::cout << "FINISHED"; break;
+      }
+      std::cout << std::endl;
+      std::cout << "    Object: " << order.object().description() << std::endl;
+      if (order.has_container()) std::cout << "    Container: " << order.container().description() << std::endl;
+      std::cout << "    Quantity delivered: " << order.quantity_delivered() << std::endl;
+      if (order.has_quantity_requested()) std::cout << "    Quantity requested: " << order.quantity_requested() << std::endl;
+      if (order.has_destination()) std::cout << "    Destination: " << order.destination().description() << std::endl;
+      if (order.has_source()) std::cout << "    Source: " << order.source().description() << std::endl;
+      if (order.has_processing_team()) std::cout << "    Processing team: " << order.processing_team() << std::endl;
+    }
+  }
+
   std::shared_ptr<DrillingMachineStatus> dm;
   if ((dm = std::dynamic_pointer_cast<DrillingMachineStatus>(msg))) {
     std::cout << "Drilling machine status received: ";
@@ -248,6 +277,7 @@ main(int argc, char **argv)
   message_register.add_message_type<VersionInfo>();
   message_register.add_message_type<BenchmarkState>();
   message_register.add_message_type<Inventory>();
+  message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<ConveyorBeltStatus>();
   message_register.add_message_type<Image>();
