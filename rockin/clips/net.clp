@@ -364,6 +364,71 @@
   (pb-destroy ?pb-inventory)
 )
 
+(deffunction net-create-Order (?order-fact)
+  (bind ?o (pb-create "rockin_msgs.Order"))
+
+  (pb-set-field ?o "id" (fact-slot-value ?order-fact id))
+  (pb-set-field ?o "status" (fact-slot-value ?order-fact status))
+
+  (bind ?oi (net-create-ObjectIdentifier (fact-slot-value ?order-fact object-id)))
+  (pb-set-field ?o "object" ?oi)  ; destroys ?oi
+
+  (if (<> (length$ (fact-slot-value ?order-fact container)) 0) then
+    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 (fact-slot-value ?order-fact container))))
+    (pb-set-field ?o "container" ?ci)  ; destroys ?ci
+  )
+
+  (pb-set-field ?o "quantity_delivered" (fact-slot-value ?order-fact quantity-delivered))
+
+  (if (<> (length$ (fact-slot-value ?order-fact quantity-requested)) 0) then
+    (pb-set-field ?o "quantity_requested" (nth$ 1 (fact-slot-value ?order-fact quantity-requested)))
+  )
+
+  (if (<> (length$ (fact-slot-value ?order-fact destination)) 0) then
+    (bind ?li (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact destination))))
+    (pb-set-field ?o "destination" ?li) ; destroys ?li
+  )
+
+  (if (<> (length$ (fact-slot-value ?order-fact source)) 0) then
+    (bind ?si (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact source))))
+    (pb-set-field ?o "source" ?si) ; destroys ?si
+  )
+
+  (if (<> (length$ (fact-slot-value ?order-fact processing-team)) 0) then
+    (pb-set-field ?o "processing_team" (nth$ 1 (fact-slot-value ?order-fact processing-team)))
+  )
+
+  (return ?o)
+)
+
+(deffunction net-create-OrderInfo ()
+  (bind ?oi (pb-create "rockin_msgs.OrderInfo"))
+
+  (do-for-all-facts ((?order order)) TRUE
+    (bind ?o (net-create-Order ?order))
+    (pb-add-list ?oi "orders" ?o) ; destroys ?o
+  )
+
+  (return ?oi)
+)
+
+(defrule net-send-OrderInfo
+  (time $?now)
+  (benchmark-state (state RUNNING))
+  ?sf <- (signal (type order-info) (seq ?seq) (count ?count)
+     (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-ORDERINFO-BURST-COUNT*)
+                 then ?*BC-ORDERINFO-PERIOD*
+                 else ?*BC-ORDERINFO-BURST-PERIOD*))))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
+  (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
+
+  (bind ?oi (net-create-OrderInfo))
+  (pb-broadcast ?peer-id-public ?oi)
+
+  (pb-destroy ?oi)
+)
+
 (defrule net-send-VersionInfo
   (time $?now)
   ?sf <- (signal (type version-info) (seq ?seq)
