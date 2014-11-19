@@ -238,3 +238,47 @@
   (object-identifier (id 27) (type ER) (type-id 2) (instance-id 10) (description "ER-02-10"))
 )
 
+
+(deffacts inventory-items
+  ;;;;;;;;;;;;;;;;;;;;
+  ; Assembly aid trays
+  ;;;;;;;;;;;;;;;;;;;;
+
+  ; Assembly aid tray EM-01-01 (object-id 10) at workstation WS-01 (location-id 25)
+  (item (id 1) (object-id 10) (location-id 25))
+
+  ; Assembly aid tray EM-01-02 (object-id 11) at workstation WS-01 (location-id 25)
+  (item (id 2) (object-id 11) (location-id 25))
+
+  ; Assembly aid tray EM-01-03 (object-id 12) at workstation WS-03 (location-id 27)
+  (item (id 3) (object-id 12) (location-id 27))
+
+
+  ;;;;;;;;;;;;;;;
+  ; Bearing boxes
+  ;;;;;;;;;;;;;;;
+
+  ; 1 bearing box (object-id 1) at shelf SH-08 (location-id 8)
+  (item (id 4) (object-id 1) (location-id 8) (quantity 1))
+
+  ; 1 bearing box (object-id 1) at shelf SH-14 (location-id 14)
+  (item (id 5) (object-id 1) (location-id 14) (quantity 1))
+
+  ; 1 bearing box (object-id 1) at shelf SH-19 (location-id 19)
+  (item (id 6) (object-id 1) (location-id 19) (quantity 1))
+
+  ; 1 bearing box (object-id 1) at shelf SH-21 (location-id 21)
+  (item (id 7) (object-id 1) (location-id 21) (quantity 1))
+
+  ; 2 bearing boxes (object-id 1) at shelf SH-02 (location-id 2)
+  (item (id 8) (object-id 1) (location-id 2) (quantity 1))
+  (item (id 9) (object-id 1) (location-id 2) (quantity 1))
+
+
+  ;;;;;;;;;;;;;;;;
+  ; Foam container
+  ;;;;;;;;;;;;;;;;
+
+  ; Foam container EM-03-01 (object-id 16) at workstation WS-04 (location-id 28)
+  (item (id 8) (object-id 16) (location-id 28))
+)
