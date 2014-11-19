@@ -59,10 +59,14 @@ message Order {
   // The requested product represented by their identifier
   required ObjectIdentifier object = 3;
 
-  // A container in which the requested objects should be delivered
+  // There are two different interpretations of this field:
+  // * When the destination field is set, the object(s) must be delivered to
+  //   this destination INSIDE of the container.
+  // * When the destination field is not set, the container represents the
+  //   location into which the object(s) must be delivered.
   optional ObjectIdentifier container = 4;
 
-  // The delivered quantity of the object
+  // The already delivered quantity of the object
   required uint64 quantity_delivered = 5;
 
   // The requested quantity of the object. This is only required for object
@@ -72,8 +76,10 @@ message Order {
   // set), this field specifies the amount of objects inside the container!
   optional uint64 quantity_requested = 6;
 
-  // The location to where the product should be delivered
-  required LocationIdentifier destination = 7;
+  // The location to where the product should be delivered. When the destination
+  // is not specified, the container must be set. This container the identifies
+  // the delivery location.
+  optional LocationIdentifier destination = 7;
 
   // The location to where the product should be fetched
   optional LocationIdentifier source = 8;
