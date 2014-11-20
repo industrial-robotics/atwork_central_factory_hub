@@ -67,6 +67,7 @@
   (slot phase-id (type INTEGER) (default 0))        ; identifier of a phase
   (slot prev-phase-id (type INTEGER) (default 0))   ; identifier of a phase
   (slot benchmark-time (type FLOAT) (default 0.0))
+  (slot run (type INTEGER) (default 0))             ; how often the specific benchmark has been executed already
 
   ; cardinality 2: sec msec
   (multislot start-time (type INTEGER) (cardinality 2 2) (default 0 0))
