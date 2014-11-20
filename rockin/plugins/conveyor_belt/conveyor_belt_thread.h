@@ -60,6 +60,7 @@ class ConveyorBeltThread: public fawkes::Thread, public fawkes::LoggingAspect, p
         std::string default_network_interface_;
 
         boost::posix_time::ptime prev_device_update_timestamp_;
+        boost::posix_time::ptime last_sent_command_timestamp_;
 };
 
 #endif

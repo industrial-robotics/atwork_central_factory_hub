@@ -41,6 +41,8 @@ void DrillingMachineThread::init()
     std::string host_command_port = "";
     std::string host_status_port = "";
 
+    last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
+
     try
     {
         cfg_timer_interval_ = config->get_uint("/llsfrb/clips/timer-interval");
@@ -117,7 +119,8 @@ void DrillingMachineThread::loop()
 
 DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 {
-    if (last_status_msg_.has_state()) {
+    if (last_status_msg_.has_state())
+    {
         return last_status_msg_.state();
     }
 
@@ -126,8 +129,7 @@ DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 
 int DrillingMachineThread::clips_is_device_connected()
 {
-    return (last_status_msg_.has_is_device_connected()
-            && last_status_msg_.is_device_connected());
+    return (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected());
 }
 
 void DrillingMachineThread::clips_move_drill_up()
@@ -142,11 +144,18 @@ void DrillingMachineThread::clips_move_drill_down()
 
 void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_command)
 {
+    boost::posix_time::time_duration time_diff;
+    DrillingMachineCommand command_msg;
+    std::string serialized_string;
+
     if (!zmq_publisher_)
         return;
 
-    DrillingMachineCommand command_msg;
-    std::string serialized_string;
+    // prevent sending to many messages to the device
+    time_diff = boost::posix_time::microsec_clock::local_time() - last_sent_command_timestamp_;
+    if (time_diff.total_milliseconds() < 200)
+        return;
+
 
     command_msg.set_command(drill_command);
 
@@ -157,6 +166,8 @@ void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_comm
         query = new zmq::message_t(serialized_string.length());
         memcpy(query->data(), serialized_string.c_str(), serialized_string.length());
         zmq_publisher_->send(*query);
+
+        last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
 
         logger->log_info("DrillingMachine", "Send drill command: %d", command_msg.command());
 

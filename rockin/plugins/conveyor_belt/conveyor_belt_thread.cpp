@@ -41,6 +41,8 @@ void ConveyorBeltThread::init()
     std::string host_command_port = "";
     std::string host_status_port = "";
 
+    last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
+
     try
     {
         cfg_timer_interval_ = config->get_uint("/llsfrb/clips/timer-interval");
@@ -143,11 +145,17 @@ void ConveyorBeltThread::clips_stop_belt()
 
 void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
 {
+    boost::posix_time::time_duration time_diff;
+    ConveyorBeltCommand command_msg;
+    std::string serialized_string;
+
     if (!zmq_publisher_)
         return;
 
-    ConveyorBeltCommand command_msg;
-    std::string serialized_string;
+    // prevent sending to many messages to the device
+    time_diff = boost::posix_time::microsec_clock::local_time() - last_sent_command_timestamp_;
+    if (time_diff.total_milliseconds() < 200)
+        return;
 
     command_msg.set_mode(mode);
 
@@ -158,6 +166,8 @@ void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
         query = new zmq::message_t(serialized_string.length());
         memcpy(query->data(), serialized_string.c_str(), serialized_string.length());
         zmq_publisher_->send(*query);
+
+        last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
 
         logger->log_info("ConveyorBelt", "Set run state: %d", command_msg.mode());
 
