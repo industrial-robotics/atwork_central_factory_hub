@@ -200,17 +200,20 @@
   ; Distance tube (class)
   (object-identifier (id  5) (type AX) (type-id 5) (description "AX-05"))
 
-  ; Cover plate - defect (class)
+  ; Cover plate - faulty (class)
   (object-identifier (id  6) (type AX) (type-id 6) (description "AX-06"))
 
   ; Cover plate - machined (class)
   (object-identifier (id  7) (type AX) (type-id 7) (description "AX-07"))
 
-  ; Cover plate - faulty (class)
+  ; Cover plate - unusable(class)
   (object-identifier (id  8) (type AX) (type-id 8) (description "AX-08"))
 
   ; Motor with gearbox (class)
   (object-identifier (id  9) (type AX) (type-id 9) (description "AX-09"))
+
+  ; Cover plate - unknown state (class)
+  (object-identifier (id 15) (type AX) (type-id 15) (description "AX-15"))
 
 
   ; Assembly aid trays (instances)
