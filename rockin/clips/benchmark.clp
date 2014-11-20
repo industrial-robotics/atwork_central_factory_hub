@@ -43,59 +43,69 @@
 
 
 
-(defrule fbm1-init
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+(defrule benchmark-fbm-init
+  (benchmark-phase (id ?phase) (type FBM) (type-id ?fbm-id))
   ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
-  (not (fbm1-is-initialized))
+  (not (benchmark-initialized))
   =>
-  (assert (fbm1-is-initialized))
+  (assert (benchmark-initialized))
+
+  (switch ?fbm-id
+    (case 1 then
+      (modify ?bs (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*))
+    )
+    (case 2 then
+      (modify ?bs (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*))
+    )
+  )
 
   (print-random-object)
 )
 
-(defrule fbm1-start
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+(defrule benchmark-fbm-start
+  (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT))
   =>
   (modify ?bs (prev-state RUNNING) (start-time (now)) (run 1))
 
-  (printout t "FBM1: Start" crlf)
-  (assert (attention-message (text "FBM1: Start") (time 15)))
+  (printout t "FBM: Start" crlf)
+  (assert (attention-message (text "FBM: Start") (time 15)))
 )
 
-(defrule fbm1-run-timeout
-  (time $?now)
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+(defrule benchmark-fbm-run-timeout
+  (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
-           (run ?run&:(< ?run ?*FBM1-COUNT*))
-           (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?*FBM1-TIME*)))
+           (max-runs ?max-runs) (run ?run&:(< ?run ?max-runs))
+           (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
   =>
   (modify ?bs (state PAUSED) (end-time (now)) (run (+ ?run 1)))
 
-  (printout t "FBM1: Run over" crlf)
-  (assert (attention-message (text "FBM1: Run over") (time 15)))
+  (printout t "FBM: Run over" crlf)
+  (assert (attention-message (text "FBM: Run over") (time 15)))
 
   (print-random-object)
 )
 
-(defrule fbm1-continue
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+(defrule benchmark-fbm-continue
+  (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state PAUSED))
   =>
   (modify ?bs (prev-state RUNNING) (start-time (now)) (last-time (now)) (benchmark-time 0.0))
 
-  (printout t "FBM1: Continue" crlf)
-  (assert (attention-message (text "FBM1: Continue") (time 15)))
+  (printout t "FBM: Continue" crlf)
+  (assert (attention-message (text "FBM: Continue") (time 15)))
 )
 
-(defrule fbm1-over
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+(defrule benchmark-fbm-over
+  (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
-           (run ?run&:(>= ?run ?*FBM1-COUNT*))
-           (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?*FBM1-TIME*)))
+           (max-runs ?max-runs) (run ?run&:(>= ?run ?max-runs))
+           (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
+  ?bf <- (benchmark-initialized)
   =>
+  (retract ?bf)
   (modify ?bs (state FINISHED) (end-time (now)))
 
-  (printout t "FBM1: Benchmark over" crlf)
-  (assert (attention-message (text "FBM1: Benchmark over") (time 15)))
+  (printout t "FBM: Benchmark over" crlf)
+  (assert (attention-message (text "FBM: Benchmark over") (time 15)))
 )
