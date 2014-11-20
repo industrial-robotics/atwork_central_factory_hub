@@ -373,8 +373,8 @@
   (bind ?oi (net-create-ObjectIdentifier (fact-slot-value ?order-fact object-id)))
   (pb-set-field ?o "object" ?oi)  ; destroys ?oi
 
-  (if (<> (length$ (fact-slot-value ?order-fact container)) 0) then
-    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 (fact-slot-value ?order-fact container))))
+  (if (<> (length$ (fact-slot-value ?order-fact container-id)) 0) then
+    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 (fact-slot-value ?order-fact container-id))))
     (pb-set-field ?o "container" ?ci)  ; destroys ?ci
   )
 
@@ -384,13 +384,13 @@
     (pb-set-field ?o "quantity_requested" (nth$ 1 (fact-slot-value ?order-fact quantity-requested)))
   )
 
-  (if (<> (length$ (fact-slot-value ?order-fact destination)) 0) then
-    (bind ?li (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact destination))))
+  (if (<> (length$ (fact-slot-value ?order-fact destination-id)) 0) then
+    (bind ?li (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact destination-id))))
     (pb-set-field ?o "destination" ?li) ; destroys ?li
   )
 
-  (if (<> (length$ (fact-slot-value ?order-fact source)) 0) then
-    (bind ?si (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact source))))
+  (if (<> (length$ (fact-slot-value ?order-fact source-id)) 0) then
+    (bind ?si (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact source-id))))
     (pb-set-field ?o "source" ?si) ; destroys ?si
   )
 

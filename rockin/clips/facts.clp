@@ -44,12 +44,12 @@
 (deftemplate order
   (slot id (type INTEGER))
   (slot status (type SYMBOL) (allowed-values OFFERED TIMEOUT IN_PROGRESS PAUSED ABORTED FINISHED))
-  (slot object-id (type INTEGER))                           ; id of an object identifier
-  (multislot container (type INTEGER) (cardinality 0 1))    ; id of an object identifier
+  (slot object-id (type INTEGER))                             ; id of an object identifier
+  (multislot container-id (type INTEGER) (cardinality 0 1))   ; id of an object identifier
   (slot quantity-delivered (type INTEGER) (default 0))
   (multislot quantity-requested (type INTEGER) (cardinality 0 1))
-  (multislot destination (type INTEGER) (cardinality 0 1))  ; id of a location identifier
-  (multislot source (type INTEGER) (cardinality 0 1))       ; id of a location identifier
+  (multislot destination-id (type INTEGER) (cardinality 0 1))  ; id of a location identifier
+  (multislot source-id (type INTEGER) (cardinality 0 1))       ; id of a location identifier
   (multislot processing-team (type STRING) (cardinality 0 1))
 )
 
@@ -245,13 +245,13 @@
 
 (deffacts tbm1-orders
   ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 10)
-  (order (id 1) (status OFFERED) (object-id 1) (container 10) (quantity-requested 2))
+  (order (id 1) (status OFFERED) (object-id 1) (container-id 10) (quantity-requested 2))
 
   ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container 11)
-  (order (id 2) (status OFFERED) (object-id 1) (container 11) (quantity-requested 2))
+  (order (id 2) (status OFFERED) (object-id 1) (container-id 11) (quantity-requested 2))
 
   ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 12)
-  (order (id 3) (status OFFERED) (object-id 1) (container 12) (quantity-requested 2))
+  (order (id 3) (status OFFERED) (object-id 1) (container-id 12) (quantity-requested 2))
 )
 
 
