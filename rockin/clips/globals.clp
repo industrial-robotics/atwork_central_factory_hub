@@ -30,4 +30,14 @@
   ; be send over the network when a new peer is detected?
   ?*BC-VERSIONINFO-PERIOD* = 0.5
   ?*BC-VERSIONINFO-COUNT* = 10
+
+  ; Benchmark times; seconds
+  ?*TBM-TIME*     = 6000
+  ?*FBM1-TIME*    =  120  ; per run
+  ?*FBM2-TIME*    =  240  ; per run
+
+  ; Benchmark repetitions
+  ?*TBM-COUNT*    =  1
+  ?*FBM1-COUNT*   = 10
+  ?*FBM2-COUNT*   =  5
 )
