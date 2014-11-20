@@ -25,3 +25,77 @@
   =>
   (modify ?gf (last-time ?now))
 )
+
+
+
+(deffunction print-random-object ()
+  (bind ?objects (create$))
+  (do-for-all-facts ((?o object-identifier)) (eq ?o:type AX)
+    (bind ?objects (insert$ ?objects 1 ?o))
+  )
+
+  (bind ?selected-object (pick-random$ ?objects))
+  (bind ?description (nth$ 1 (fact-slot-value ?selected-object description)))
+
+  (printout t "Place object " ?description " in front of the robot and continue the benchmark" crlf)
+  (assert (attention-message (text (str-cat "The robot should handle the object " ?description))))
+)
+
+
+
+(defrule fbm1-init
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+  ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
+  (not (fbm1-is-initialized))
+  =>
+  (assert (fbm1-is-initialized))
+
+  (print-random-object)
+)
+
+(defrule fbm1-start
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT))
+  =>
+  (modify ?bs (prev-state RUNNING) (start-time (now)) (run 1))
+
+  (printout t "FBM1: Start" crlf)
+  (assert (attention-message (text "FBM1: Start") (time 15)))
+)
+
+(defrule fbm1-run-timeout
+  (time $?now)
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
+           (run ?run&:(< ?run ?*FBM1-COUNT*))
+           (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?*FBM1-TIME*)))
+  =>
+  (modify ?bs (state PAUSED) (end-time (now)) (run (+ ?run 1)))
+
+  (printout t "FBM1: Run over" crlf)
+  (assert (attention-message (text "FBM1: Run over") (time 15)))
+
+  (print-random-object)
+)
+
+(defrule fbm1-continue
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state PAUSED))
+  =>
+  (modify ?bs (prev-state RUNNING) (start-time (now)) (last-time (now)) (benchmark-time 0.0))
+
+  (printout t "FBM1: Continue" crlf)
+  (assert (attention-message (text "FBM1: Continue") (time 15)))
+)
+
+(defrule fbm1-over
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
+           (run ?run&:(>= ?run ?*FBM1-COUNT*))
+           (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?*FBM1-TIME*)))
+  =>
+  (modify ?bs (state FINISHED) (end-time (now)))
+
+  (printout t "FBM1: Benchmark over" crlf)
+  (assert (attention-message (text "FBM1: Benchmark over") (time 15)))
+)
