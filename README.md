@@ -26,7 +26,7 @@ Additionally, the following debian packages need to be installed:
     
 ### Run the RoCKIn@Work Referee Box
 
-    llsf-refbox
+    ./bin/llsf-refbox
     
     
     
