@@ -240,6 +240,18 @@
 )
 
 
+(deffacts tbm1-orders
+  ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 10)
+  (order (id 1) (status OFFERED) (object-id 1) (container 10) (quantity-requested 2))
+
+  ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container 11)
+  (order (id 2) (status OFFERED) (object-id 1) (container 11) (quantity-requested 2))
+
+  ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 12)
+  (order (id 3) (status OFFERED) (object-id 1) (container 12) (quantity-requested 2))
+)
+
+
 (deffacts inventory-items
   ;;;;;;;;;;;;;;;;;;;;
   ; Assembly aid trays
