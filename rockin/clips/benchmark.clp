@@ -39,6 +39,9 @@
 
   (printout t "Place object " ?description " in front of the robot and continue the benchmark" crlf)
   (assert (attention-message (text (str-cat "The robot should handle the object " ?description))))
+
+  ; Make the selected object available e.g. for logging
+  (assert (selected-object (object-id (fact-slot-value ?selected-object id))))
 )
 
 

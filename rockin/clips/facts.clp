@@ -78,6 +78,10 @@
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
+(deftemplate selected-object
+  (slot object-id (type INTEGER))
+)
+
 (deftemplate object-identifier
   ; identifier which is used in CLIPS only
   (slot id (type INTEGER))
