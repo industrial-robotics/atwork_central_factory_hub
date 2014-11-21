@@ -68,7 +68,9 @@
 (defrule benchmark-fbm-start-or-continue
   (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT|PAUSED))
+  ?so <- (selected-object)
   =>
+  (retract ?so)
   (modify ?bs (prev-state RUNNING) (start-time (now)) (benchmark-time 0.0))
 
   (printout t "FBM: Start" crlf)
