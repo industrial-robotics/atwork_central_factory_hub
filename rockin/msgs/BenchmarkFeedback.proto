@@ -56,6 +56,7 @@ message BenchmarkFeedback {
 
   // FBM2
   optional bool grasp_notification = 4;
+  optional Pose3D end_effector_pose = 9;
 
   // TBM1
   optional string assembly_aid_tray_id = 5;
