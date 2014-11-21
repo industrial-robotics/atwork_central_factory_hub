@@ -617,6 +617,46 @@
   )
 )
 
+(defrule net-recv-BenchmarkFeedback-fbm2-peer
+  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
+          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
+  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
+  (benchmark-state (phase-id ?phase) (state RUNNING))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (assert (benchmark-run-over))
+
+  (if (and
+       (pb-has-field ?p "grasp_notification")
+       (pb-has-field ?p "object_class_name")
+       (pb-has-field ?p "object_instance_name")
+       (pb-has-field ?p "end_effector_pose"))
+   then
+    (printout t "Benchmark feedback valid" crlf)
+
+    (bind ?pose (pb-field-value ?p "end_effector_pose"))
+    (bind ?position (pb-field-value ?pose "position"))
+    (bind ?orientation (pb-field-value ?pose "orientation"))
+
+    (assert (benchmark-feedback (time ?rcvd-at) (type LIFTED)
+        (grasp-notification (pb-field-value ?p "grasp_notification"))
+        (object-class-name (pb-field-value ?p "object_class_name"))
+        (object-instance-name (pb-field-value ?p "object_instance_name"))
+        (end-effector-pose-position-x (pb-field-value ?position "x"))
+        (end-effector-pose-position-y (pb-field-value ?position "y"))
+        (end-effector-pose-position-z (pb-field-value ?position "z"))
+        (end-effector-pose-orientation-x (pb-field-value ?orientation "x"))
+        (end-effector-pose-orientation-y (pb-field-value ?orientation "y"))
+        (end-effector-pose-orientation-z (pb-field-value ?orientation "z"))
+        (end-effector-pose-orientation-w (pb-field-value ?orientation "w"))))
+   else
+    (printout t "Benchmark feedback from " ?from-host ":" ?from-port " is invalid" crlf)
+    (assert (benchmark-feedback (time ?rcvd-at) (type TIMEOUT)))
+  )
+)
+
+
 ; In case there is no rule consuming the feedback, retract it here
 (defrule retract-benchmark-feedback
   (declare (salience ?*PRIORITY_LAST*))
