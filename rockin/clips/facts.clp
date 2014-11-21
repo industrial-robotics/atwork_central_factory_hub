@@ -170,19 +170,19 @@
   (location-identifier (id 24) (type SH) (instance-id 24) (description "SHELF-24"))
 
   ; Workstations
-  (location-identifier (id 25) (type WS) (instance-id 1) (description "WORKSTATION-01"))
-  (location-identifier (id 26) (type WS) (instance-id 2) (description "WORKSTATION-02"))
-  (location-identifier (id 27) (type WS) (instance-id 3) (description "WORKSTATION-03"))
-  (location-identifier (id 28) (type WS) (instance-id 4) (description "WORKSTATION-04"))
-  (location-identifier (id 29) (type WS) (instance-id 5) (description "WORKSTATION-05"))
-  (location-identifier (id 30) (type WS) (instance-id 6) (description "WORKSTATION-06"))
-  (location-identifier (id 31) (type WS) (instance-id 7) (description "WORKSTATION-07"))
+  (location-identifier (id 30) (type WS) (instance-id 1) (description "WORKSTATION-01"))
+  (location-identifier (id 31) (type WS) (instance-id 2) (description "WORKSTATION-02"))
+  (location-identifier (id 32) (type WS) (instance-id 3) (description "WORKSTATION-03"))
+  (location-identifier (id 33) (type WS) (instance-id 4) (description "WORKSTATION-04"))
+  (location-identifier (id 34) (type WS) (instance-id 5) (description "WORKSTATION-05"))
+  (location-identifier (id 35) (type WS) (instance-id 6) (description "WORKSTATION-06"))
+  (location-identifier (id 36) (type WS) (instance-id 7) (description "WORKSTATION-07"))
 
   ; Conveyor belt
-  (location-identifier (id 32) (type CB) (instance-id 1) (description "CONVEYOR_BELT-01"))
+  (location-identifier (id 40) (type CB) (instance-id 1) (description "CONVEYOR_BELT-01"))
 
   ; Robot
-  (location-identifier (id 33) (type ROBOT) (instance-id 1) (description "ROBOT"))
+  (location-identifier (id 50) (type ROBOT) (instance-id 1) (description "ROBOT"))
 
 
   ;;;;;;;;;;;;;;;;;;;;
@@ -221,30 +221,30 @@
 
 
   ; Assembly aid trays (instances)
-  (object-identifier (id 10) (type EM) (type-id 1) (instance-id 1) (description "EM-01-01"))
-  (object-identifier (id 11) (type EM) (type-id 1) (instance-id 2) (description "EM-01-02"))
-  (object-identifier (id 12) (type EM) (type-id 1) (instance-id 3) (description "EM-01-03"))
+  (object-identifier (id 20) (type EM) (type-id 1) (instance-id 1) (description "EM-01-01"))
+  (object-identifier (id 21) (type EM) (type-id 1) (instance-id 2) (description "EM-01-02"))
+  (object-identifier (id 22) (type EM) (type-id 1) (instance-id 3) (description "EM-01-03"))
 
   ; File card box (instances)
-  (object-identifier (id 13) (type EM) (type-id 2) (instance-id 1) (description "EM-02-01"))
-  (object-identifier (id 14) (type EM) (type-id 2) (instance-id 2) (description "EM-02-02"))
-  (object-identifier (id 15) (type EM) (type-id 2) (instance-id 3) (description "EM-02-03"))
+  (object-identifier (id 31) (type EM) (type-id 2) (instance-id 1) (description "EM-02-01"))
+  (object-identifier (id 32) (type EM) (type-id 2) (instance-id 2) (description "EM-02-02"))
+  (object-identifier (id 33) (type EM) (type-id 2) (instance-id 3) (description "EM-02-03"))
 
   ; Foam container (instances)
-  (object-identifier (id 16) (type EM) (type-id 3) (instance-id 1) (description "EM-03-01"))
+  (object-identifier (id 41) (type EM) (type-id 3) (instance-id 1) (description "EM-03-01"))
 
   ; Tray rack (instances)
-  (object-identifier (id 17) (type ER) (type-id 1) (instance-id 1) (description "ER-01-01"))
+  (object-identifier (id 51) (type ER) (type-id 1) (instance-id 1) (description "ER-01-01"))
 
   ; Common shelf container (instances)
-  (object-identifier (id 18) (type ER) (type-id 2) (instance-id  1) (description "ER-02-01"))
-  (object-identifier (id 19) (type ER) (type-id 2) (instance-id  2) (description "ER-02-02"))
-  (object-identifier (id 20) (type ER) (type-id 2) (instance-id  3) (description "ER-02-03"))
-  (object-identifier (id 21) (type ER) (type-id 2) (instance-id  4) (description "ER-02-04"))
-  (object-identifier (id 22) (type ER) (type-id 2) (instance-id  5) (description "ER-02-05"))
-  (object-identifier (id 23) (type ER) (type-id 2) (instance-id  6) (description "ER-02-06"))
-  (object-identifier (id 24) (type ER) (type-id 2) (instance-id  7) (description "ER-02-07"))
-  (object-identifier (id 25) (type ER) (type-id 2) (instance-id  8) (description "ER-02-08"))
-  (object-identifier (id 26) (type ER) (type-id 2) (instance-id  9) (description "ER-02-09"))
-  (object-identifier (id 27) (type ER) (type-id 2) (instance-id 10) (description "ER-02-10"))
+  (object-identifier (id 61) (type ER) (type-id 2) (instance-id  1) (description "ER-02-01"))
+  (object-identifier (id 62) (type ER) (type-id 2) (instance-id  2) (description "ER-02-02"))
+  (object-identifier (id 63) (type ER) (type-id 2) (instance-id  3) (description "ER-02-03"))
+  (object-identifier (id 64) (type ER) (type-id 2) (instance-id  4) (description "ER-02-04"))
+  (object-identifier (id 65) (type ER) (type-id 2) (instance-id  5) (description "ER-02-05"))
+  (object-identifier (id 66) (type ER) (type-id 2) (instance-id  6) (description "ER-02-06"))
+  (object-identifier (id 67) (type ER) (type-id 2) (instance-id  7) (description "ER-02-07"))
+  (object-identifier (id 68) (type ER) (type-id 2) (instance-id  8) (description "ER-02-08"))
+  (object-identifier (id 60) (type ER) (type-id 2) (instance-id  9) (description "ER-02-09"))
+  (object-identifier (id 70) (type ER) (type-id 2) (instance-id 10) (description "ER-02-10"))
 )
