@@ -656,6 +656,28 @@
   )
 )
 
+(defrule net-recv-BenchmarkFeedback-fbm2-client
+  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
+          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type CLIENT))
+  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
+  (benchmark-state (phase-id ?phase) (state PAUSED|FINISHED))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (if (pb-has-field ?p "grasp_notification")
+   then
+    (printout t "Benchmark feedback valid" crlf)
+
+    (if (pb-field-value ?p "grasp_notification")
+     then
+      (assert (benchmark-feedback (source CLIENT) (time ?rcvd-at) (type SUCCESS)))
+     else
+      (assert (benchmark-feedback (source CLIENT) (time ?rcvd-at) (type FAIL)))
+    )
+   else
+    (printout t "Benchmark feedback from " ?from-host ":" ?from-port " is invalid" crlf)
+  )
+)
 
 ; In case there is no rule consuming the feedback, retract it here
 (defrule retract-benchmark-feedback

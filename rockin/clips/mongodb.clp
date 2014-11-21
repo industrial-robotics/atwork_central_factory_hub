@@ -147,30 +147,19 @@
   (bson-destroy ?bf)
 )
 
-(defrule mongodb-net-recv-BenchmarkFeedback-fbm2-client
+(defrule mongodb-fbm2-feedback-client
   (declare (salience ?*PRIORITY_HIGH*))
-  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (rcvd-via STREAM))
   (benchmark-phase (id ?phase) (type FBM) (type-id 2))
-  (benchmark-state (phase-id ?phase) (state PAUSED) (run ?run))
+  (benchmark-state (phase-id ?phase) (state PAUSED|FINISHED) (run ?run))
+  ?bf <- (benchmark-feedback (source CLIENT) (time $?time) (type ?type))
   =>
-  (if (pb-has-field ?p "grasp_notification")
-   then
-    (printout "Benchmarking message from client " ?from-host ":" ?from-port " valid" crlf)
+  (retract ?bf)
 
-    (bind ?bf (bson-create))
-    (bson-append-time ?bf "timestamp" (now))
-    (bson-append ?bf "run_counter" ?run)
-    (if (pb-field-value ?p "grasp_notification")
-     then
-      (bson-append ?bf "action" "SUCCESS")
-     else
-      (bson-append ?bf "action" "FAILED")
-    )
+  (bind ?bf (bson-create))
+  (bson-append-time ?bf "timestamp" ?time)
+  (bson-append ?bf "run_counter" ?run)
+  (bson-append ?bf "action" ?type)
 
-    (mongodb-insert "llsfrb.benchmark" ?bf)
-    (bson-destroy ?bf)
-   else
-    (printout t "Benchmarking message from client " ?from-host ":" ?from-port " invalid" crlf)
-  )
+  (mongodb-insert "llsfrb.benchmark" ?bf)
+  (bson-destroy ?bf)
 )
