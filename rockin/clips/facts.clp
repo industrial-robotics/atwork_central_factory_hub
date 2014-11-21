@@ -79,6 +79,7 @@
 )
 
 (deftemplate benchmark-feedback
+  (slot source (type SYMBOL))
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
   (slot type (type SYMBOL) (allowed-values SELECTED STARTED TIMEOUT RECOGNIZED LIFTED FAIL SUCCESS))
 

@@ -112,7 +112,7 @@
   (declare (salience ?*PRIORITY_HIGH*))
   (benchmark-phase (id ?phase) (type FBM) (type-id 2))
   (benchmark-state (phase-id ?phase) (state RUNNING) (run ?run))
-  ?bf <- (benchmark-feedback (time $?time) (type ?type)
+  ?bf <- (benchmark-feedback (source PEER) (time $?time) (type ?type)
       (grasp-notification ?notification)
       (object-class-name ?class) (object-instance-name ?instance)
       (end-effector-pose-position-x ?end-effector-pose-position-x)

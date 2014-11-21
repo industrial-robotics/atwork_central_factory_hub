@@ -639,7 +639,7 @@
     (bind ?position (pb-field-value ?pose "position"))
     (bind ?orientation (pb-field-value ?pose "orientation"))
 
-    (assert (benchmark-feedback (time ?rcvd-at) (type LIFTED)
+    (assert (benchmark-feedback (source PEER) (time ?rcvd-at) (type LIFTED)
         (grasp-notification (pb-field-value ?p "grasp_notification"))
         (object-class-name (pb-field-value ?p "object_class_name"))
         (object-instance-name (pb-field-value ?p "object_instance_name"))
