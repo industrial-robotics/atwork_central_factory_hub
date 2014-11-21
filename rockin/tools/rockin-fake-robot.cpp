@@ -247,6 +247,13 @@ handle_timer(const boost::system::error_code& error)
     bf.mutable_object_pose()->mutable_orientation()->set_x(1.0);
     bf.mutable_object_pose()->mutable_orientation()->set_y(0.0);
     bf.mutable_object_pose()->mutable_orientation()->set_z(0.0);
+    bf.mutable_end_effector_pose()->mutable_position()->set_x(0.0);
+    bf.mutable_end_effector_pose()->mutable_position()->set_y(0.0);
+    bf.mutable_end_effector_pose()->mutable_position()->set_z(0.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_w(0.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_x(1.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_y(0.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_z(0.0);
     bf.set_object_instance_name("AX-01");
     bf.set_object_class_name("aluminium");
     bf.set_grasp_notification(true);
