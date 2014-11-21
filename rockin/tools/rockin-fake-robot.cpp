@@ -48,6 +48,7 @@
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/Camera.pb.h>
 #include <msgs/Image.pb.h>
+#include <msgs/BenchmarkFeedback.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -237,6 +238,21 @@ handle_timer(const boost::system::error_code& error)
     peer_team_->send(cam_cmd);
 
 
+    // Send benchnmark feedback
+    BenchmarkFeedback bf;
+    bf.mutable_object_pose()->mutable_position()->set_x(0.0);
+    bf.mutable_object_pose()->mutable_position()->set_y(0.0);
+    bf.mutable_object_pose()->mutable_position()->set_z(0.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_w(0.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_x(1.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_y(0.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_z(0.0);
+    bf.set_object_instance_name("AX-01");
+    bf.set_object_class_name("aluminium");
+    bf.set_grasp_notification(true);
+    peer_public_->send(bf);
+
+
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));
     timer_->async_wait(handle_timer);
@@ -281,6 +297,7 @@ main(int argc, char **argv)
   message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<ConveyorBeltStatus>();
   message_register.add_message_type<Image>();
+  message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
