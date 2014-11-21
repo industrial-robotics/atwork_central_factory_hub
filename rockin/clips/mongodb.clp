@@ -119,3 +119,77 @@
   )
 )
 
+(defrule mongodb-net-recv-BenchmarkFeedback-fbm2-peer
+  (declare (salience ?*PRIORITY_HIGH*))
+  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
+          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (rcvd-via BROADCAST))
+  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
+  (benchmark-state (phase-id ?phase) (state RUNNING) (run ?run))
+  =>
+  (if (and
+       (pb-has-field ?p "grasp_notification")
+       (pb-has-field ?p "object_instance_name")
+       (pb-has-field ?p "end_effector_pose"))
+   then
+    (printout "Benchmarking message valid" crlf)
+
+    (bind ?bf (bson-create))
+    (bson-append-time ?bf "timestamp" (now))
+    (bson-append ?bf "run_counter" ?run)
+    (bson-append ?bf "action" "LIFTED")
+    (bson-append ?bf "object" (pb-field-value ?p "object_instance_name"))
+
+    (bind ?pose (pb-field-value ?p "end_effector_pose"))
+    (bind ?position (pb-field-value ?pose "position"))
+    (bind ?orientation (pb-field-value ?pose "orientation"))
+
+    (bson-append ?bf "position_x" (pb-field-value ?position "x"))
+    (bson-append ?bf "position_y" (pb-field-value ?position "y"))
+    (bson-append ?bf "position_z" (pb-field-value ?position "z"))
+    (bson-append ?bf "orientation_x" (pb-field-value ?orientation "x"))
+    (bson-append ?bf "orientation_y" (pb-field-value ?orientation "y"))
+    (bson-append ?bf "orientation_z" (pb-field-value ?orientation "z"))
+    (bson-append ?bf "orientation_w" (pb-field-value ?orientation "w"))
+
+    (mongodb-insert "llsfrb.benchmark" ?bf)
+    (bson-destroy ?bf)
+   else
+    (printout t "Benchmarking message invalid" crlf)
+
+    (bind ?bf (bson-create))
+    (bson-append-time ?bf "timestamp" (now))
+    (bson-append ?bf "run_counter" ?run)
+    (bson-append ?bf "action" "TIMEOUT")
+
+    (mongodb-insert "llsfrb.benchmark" ?bf)
+    (bson-destroy ?bf)
+  )
+)
+
+(defrule mongodb-net-recv-BenchmarkFeedback-fbm2-client
+  (declare (salience ?*PRIORITY_HIGH*))
+  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
+          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (rcvd-via STREAM))
+  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
+  (benchmark-state (phase-id ?phase) (state PAUSED) (run ?run))
+  =>
+  (if (pb-has-field ?p "grasp_notification")
+   then
+    (printout "Benchmarking message from client " ?from-host ":" ?from-port " valid" crlf)
+
+    (bind ?bf (bson-create))
+    (bson-append-time ?bf "timestamp" (now))
+    (bson-append ?bf "run_counter" ?run)
+    (if (pb-field-value ?p "grasp_notification")
+     then
+      (bson-append ?bf "action" "SUCCESS")
+     else
+      (bson-append ?bf "action" "FAILED")
+    )
+
+    (mongodb-insert "llsfrb.benchmark" ?bf)
+    (bson-destroy ?bf)
+   else
+    (printout t "Benchmarking message from client " ?from-host ":" ?from-port " invalid" crlf)
+  )
+)
