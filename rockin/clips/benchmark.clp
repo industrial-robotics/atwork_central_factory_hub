@@ -6,6 +6,18 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
+(deffunction benchmark-reset ()
+  ; Retract all items
+  (delayed-do-for-all-facts ((?i item)) TRUE
+    (retract ?i)
+  )
+
+  ; Retract all orders
+  (delayed-do-for-all-facts ((?o order)) TRUE
+    (retract ?o)
+  )
+)
+
 (defrule benchmark-update-benchmark-time
   (declare (salience ?*PRIORITY_FIRST*))
   (time $?now)
@@ -44,6 +56,12 @@
   (assert (selected-object (object-id (fact-slot-value ?selected-object id))))
 )
 
+
+(defrule benchmark-switch-to-init
+  ?bs <- (benchmark-state (state INIT) (prev-state ~INIT))
+  =>
+  (benchmark-reset)
+)
 
 
 (defrule benchmark-fbm-init
