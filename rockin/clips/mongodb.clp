@@ -133,6 +133,7 @@
   (if (eq ?type LIFTED)
    then
     (bson-append ?bf "object_id" ?instance)
+    (bson-append ?bf "class" ?class)
     (bson-append ?bf "end_effector_position_x" ?end-effector-pose-position-x)
     (bson-append ?bf "end_effector_position_y" ?end-effector-pose-position-y)
     (bson-append ?bf "end_effector_position_z" ?end-effector-pose-position-z)
