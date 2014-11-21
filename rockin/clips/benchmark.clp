@@ -55,21 +55,21 @@
 
   (switch ?fbm-id
     (case 1 then
-      (modify ?bs (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*))
+      (modify ?bs (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*) (run 0))
     )
     (case 2 then
-      (modify ?bs (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*))
+      (modify ?bs (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*) (run 0))
     )
   )
 
   (print-random-object)
 )
 
-(defrule benchmark-fbm-start
+(defrule benchmark-fbm-start-or-continue
   (benchmark-phase (id ?phase) (type FBM))
-  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT|PAUSED))
   =>
-  (modify ?bs (prev-state RUNNING) (start-time (now)) (run 1))
+  (modify ?bs (prev-state RUNNING) (start-time (now)) (benchmark-time 0.0))
 
   (printout t "FBM: Start" crlf)
   (assert (attention-message (text "FBM: Start") (time 15)))
@@ -81,22 +81,12 @@
            (max-runs ?max-runs) (run ?run&:(< ?run ?max-runs))
            (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
   =>
-  (modify ?bs (state PAUSED) (end-time (now)) (run (+ ?run 1)))
+  (modify ?bs (state PAUSED) (end-time (now)) (run (+ ?run 1)) (benchmark-time 0.0))
 
   (printout t "FBM: Run over" crlf)
   (assert (attention-message (text "FBM: Run over") (time 15)))
 
   (print-random-object)
-)
-
-(defrule benchmark-fbm-continue
-  (benchmark-phase (id ?phase) (type FBM))
-  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state PAUSED))
-  =>
-  (modify ?bs (prev-state RUNNING) (start-time (now)) (last-time (now)) (benchmark-time 0.0))
-
-  (printout t "FBM: Continue" crlf)
-  (assert (attention-message (text "FBM: Continue") (time 15)))
 )
 
 (defrule benchmark-fbm-over
