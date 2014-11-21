@@ -28,7 +28,7 @@
 
 
 
-(deffunction print-random-object ()
+(deffunction select-random-object ()
   (bind ?objects (create$))
   (do-for-all-facts ((?o object-identifier)) (eq ?o:type AX)
     (bind ?objects (insert$ ?objects 1 ?o))
@@ -62,7 +62,7 @@
     )
   )
 
-  (print-random-object)
+  (select-random-object)
 )
 
 (defrule benchmark-fbm-start-or-continue
@@ -86,7 +86,7 @@
   (printout t "FBM: Run over" crlf)
   (assert (attention-message (text "FBM: Run over") (time 15)))
 
-  (print-random-object)
+  (select-random-object)
 )
 
 (defrule benchmark-fbm-over
