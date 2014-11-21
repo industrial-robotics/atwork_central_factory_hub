@@ -64,28 +64,35 @@
 )
 
 
+; Initialize and directly transition to PAUSED state
 (defrule benchmark-fbm-init
   (benchmark-phase (id ?phase) (type FBM) (type-id ?fbm-id))
   ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
-  (not (benchmark-initialized))
   =>
-  (assert (benchmark-initialized))
-
   (switch ?fbm-id
     (case 1 then
-      (modify ?bs (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*) (run 0))
+      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*) (run 1))
     )
     (case 2 then
-      (modify ?bs (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*) (run 0))
+      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*) (run 1))
     )
   )
+)
+
+; Select an object when entering PAUSED state
+(defrule benchmark-fbm-switch-to-pause
+  (benchmark-phase (id ?phase) (type FBM))
+  ?bs <- (benchmark-state (phase-id ?phase) (state PAUSED) (prev-state ~PAUSED))
+  =>
+  (modify ?bs (prev-state PAUSED))
 
   (select-random-object)
 )
 
-(defrule benchmark-fbm-start-or-continue
+; When a command switches the state from PAUSED to RUNNING, setup the current run
+(defrule benchmark-fbm-run-start
   (benchmark-phase (id ?phase) (type FBM))
-  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT|PAUSED))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state PAUSED))
   ?so <- (selected-object)
   =>
   (retract ?so)
@@ -95,29 +102,38 @@
   (assert (attention-message (text "FBM: Start") (time 15)))
 )
 
+; The current run has timed-out, switch to "run-over" state
 (defrule benchmark-fbm-run-timeout
   (benchmark-phase (id ?phase) (type FBM))
-  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
-           (max-runs ?max-runs) (run ?run&:(< ?run ?max-runs))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (run ?run)
            (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
   =>
-  (modify ?bs (state PAUSED) (end-time (now)) (run (+ ?run 1)) (benchmark-time 0.0))
-
-  (printout t "FBM: Run over" crlf)
-  (assert (attention-message (text "FBM: Run over") (time 15)))
-
-  (select-random-object)
+  (assert (benchmark-run-over))
 )
 
-(defrule benchmark-fbm-over
+; Still runs left, so loop
+(defrule benchmark-fbm-loop
+  ?ro <- (benchmark-run-over)
   (benchmark-phase (id ?phase) (type FBM))
   ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
-           (max-runs ?max-runs) (run ?run&:(>= ?run ?max-runs))
-           (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
-  ?bf <- (benchmark-initialized)
+           (max-runs ?max-runs) (run ?run&:(< ?run ?max-runs)))
   =>
-  (retract ?bf)
-  (modify ?bs (state FINISHED) (end-time (now)))
+  (retract ?ro)   ; Reset for the next run
+  (modify ?bs (state PAUSED) (prev-state RUNNING) (end-time (now)) (run (+ ?run 1)) (benchmark-time 0.0))
+
+  (printout t "FBM: Run " ?run " over" crlf)
+  (assert (attention-message (text (str-cat "FBM: Run " ?run " over")) (time 15)))
+)
+
+; All runs over, so finish
+(defrule benchmark-fbm-over
+  ?ro <- (benchmark-run-over)
+  (benchmark-phase (id ?phase) (type FBM))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
+           (max-runs ?max-runs) (run ?run&:(>= ?run ?max-runs)))
+  =>
+  (retract ?ro)   ; Reset for future runs
+  (modify ?bs (state FINISHED) (prev-state RUNNING))
 
   (printout t "FBM: Benchmark over" crlf)
   (assert (attention-message (text "FBM: Benchmark over") (time 15)))
