@@ -78,6 +78,29 @@
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
+(deftemplate benchmark-feedback
+  (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
+  (slot type (type SYMBOL) (allowed-values SELECTED STARTED TIMEOUT RECOGNIZED LIFTED FAIL SUCCESS))
+
+  (slot object-class-name (type STRING) (default ""))
+  (slot object-pose-position-x (type FLOAT) (default 0.0))
+  (slot object-pose-position-y (type FLOAT) (default 0.0))
+  (slot object-pose-position-z (type FLOAT) (default 0.0))
+  (slot object-pose-orientation-w (type FLOAT) (default 0.0))
+  (slot object-pose-orientation-x (type FLOAT) (default 0.0))
+  (slot object-pose-orientation-y (type FLOAT) (default 0.0))
+  (slot object-pose-orientation-z (type FLOAT) (default 0.0))
+  (slot object-instance-name (type STRING) (default ""))
+  (slot grasp-notification (type SYMBOL) (allowed-values TRUE FALSE) (default FALSE))
+  (slot end-effector-pose-position-x (type FLOAT) (default 0.0))
+  (slot end-effector-pose-position-y (type FLOAT) (default 0.0))
+  (slot end-effector-pose-position-z (type FLOAT) (default 0.0))
+  (slot end-effector-pose-orientation-w (type FLOAT) (default 0.0))
+  (slot end-effector-pose-orientation-x (type FLOAT) (default 0.0))
+  (slot end-effector-pose-orientation-y (type FLOAT) (default 0.0))
+  (slot end-effector-pose-orientation-z (type FLOAT) (default 0.0))
+)
+
 (deftemplate selected-object
   (slot object-id (type INTEGER))
 )
