@@ -34,3 +34,39 @@
   (bson-destroy ?client-update-doc)
   (bson-destroy ?update-query)
 )
+
+(defrule mongodb-fbm-start-or-continue
+  (declare (salience ?*PRIORITY_HIGH*))
+  (benchmark-phase (id ?phase) (type FBM))
+  (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state INIT|PAUSED) (run ?run))
+  (selected-object (object-id ?id))
+  =>
+  (bind ?bf (bson-create))
+  (bson-append-time ?bf "timestamp" (now))
+  (bson-append ?bf "run_counter" ?run)
+
+  (bson-append ?bf "action" "STARTED")
+  (do-for-fact ((?oi object-identifier)) (eq ?oi:id ?id)
+    (bson-append ?bf "object_id" ?oi:description)
+  )
+
+  (mongodb-insert "llsfrb.benchmark" ?bf)
+  (bson-destroy ?bf)
+)
+
+(defrule mongodb-fbm-run-timeout
+  (declare (salience ?*PRIORITY_HIGH*))
+  (benchmark-phase (id ?phase) (type FBM))
+  (benchmark-state (phase-id ?phase) (state RUNNING) (run ?run)
+      (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
+  =>
+  (bind ?bf (bson-create))
+  (bson-append-time ?bf "timestamp" (now))
+  (bson-append ?bf "run_counter" ?run)
+
+  (bson-append ?bf "action" "TIMEOUT")
+
+  (mongodb-insert "llsfrb.benchmark" ?bf)
+  (bson-destroy ?bf)
+)
+
