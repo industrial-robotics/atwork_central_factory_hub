@@ -49,8 +49,8 @@
   (bind ?selected-object (pick-random$ ?objects))
   (bind ?description (nth$ 1 (fact-slot-value ?selected-object description)))
 
-  (printout t "Place object " ?description " in front of the robot and continue the benchmark" crlf)
-  (assert (attention-message (text (str-cat "The robot should handle the object " ?description))))
+  (printout t "FBM: Place object " ?description " in front of the robot and continue the benchmark" crlf)
+  (assert (attention-message (text (str-cat "FBM: The robot should handle the object " ?description))))
 
   ; Make the selected object available e.g. for logging
   (assert (selected-object (object-id (fact-slot-value ?selected-object id))))

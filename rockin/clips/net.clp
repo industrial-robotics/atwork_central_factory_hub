@@ -490,6 +490,7 @@
 (defrule net-recv-DrillingMachineCommand
   ?mf <- (protobuf-msg (type "rockin_msgs.DrillingMachineCommand") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
+  (robot (name ?name) (team ?team) (host ?host))
   (have-feature DrillingMachine)
   =>
   (retract ?mf) ; message will be destroyed after rule completes
@@ -499,14 +500,14 @@
 
   (switch ?pb-command
     (case MOVE_UP then
-      (printout t "Host " ?host " commands drilling machine up" crlf)
-      (assert (attention-message (text (str-cat "Host " ?host " commands drilling machine up"))))
+      (printout t "Robot " ?name "/" ?team " commands drilling machine up" crlf)
+      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands drilling machine up"))))
       (drilling-machine-move-drill-up)
     )
 
     (case MOVE_DOWN then
-      (printout t "Host " ?host " commands drilling machine down" crlf)
-      (assert (attention-message (text (str-cat "Host " ?host " commands drilling machine down"))))
+      (printout t "Robot " ?name "/" ?team " commands drilling machine down" crlf)
+      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands drilling machine down"))))
       (drilling-machine-move-drill-down)
     )
   )
@@ -554,6 +555,7 @@
 (defrule net-recv-ConveyorBeltCommand
   ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
+  (robot (name ?name) (team ?team) (host ?host))
   (have-feature ConveyorBelt)
   =>
   (retract ?mf) ; message will be destroyed after rule completes
@@ -563,14 +565,14 @@
 
   (switch ?pb-command
     (case STOP then
-      (printout t "Host " ?host " commands conveyor belt to stop" crlf)
-      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to stop"))))
+      (printout t "Robot " ?name "/" ?team " commands conveyor belt to stop" crlf)
+      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands conveyor belt to stop"))))
       (conveyor-belt-stop-belt)
     )
 
     (case START then
-      (printout t "Host " ?host " commands conveyor belt to start" crlf)
-      (assert (attention-message (text (str-cat "Host " ?host " commands conveyor belt to start"))))
+      (printout t "Robot " ?name "/" ?team " commands conveyor belt to start" crlf)
+      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands conveyor belt to start"))))
       (conveyor-belt-start-belt)
     )
   )
@@ -614,13 +616,13 @@
 (defrule net-recv-CameraCommand
   ?mf <- (protobuf-msg (type "rockin_msgs.CameraCommand") (rcvd-from ?host ?port))
   (network-peer (group ?group) (id ?peer-id))
-  (robot (team ?group))
+  (robot (name ?name) (team ?team) (host ?host))
   (have-feature QualityControlCamera)
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  (printout t "Host " ?host " requests camera image" crlf)
-  (assert (attention-message (text (str-cat "Host " ?host " requests camera image"))))
+  (printout t "Robot " ?name "/" ?team " requests camera image" crlf)
+  (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " requests camera image"))))
 
   (quality-control-camera-send-image-to-peer ?peer-id)
 )
@@ -628,6 +630,7 @@
 (defrule net-recv-BenchmarkFeedback-fbm1-peer
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
           (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
+  (robot (name ?name) (team ?team) (host ?from-host))
   (benchmark-phase (id ?phase) (type FBM) (type-id 1))
   (benchmark-state (phase-id ?phase) (state RUNNING))
   =>
@@ -640,7 +643,12 @@
        (pb-has-field ?p "object_instance_name")
        (pb-has-field ?p "object_pose"))
    then
-    (printout t "Benchmark feedback valid" crlf)
+    (printout t "FBM: Robot " ?name "/" ?team
+        " recognized object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " recognized object instance" (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name")))))
 
     (bind ?pose (pb-field-value ?p "object_pose"))
     (bind ?position (pb-field-value ?pose "position"))
@@ -665,6 +673,7 @@
 (defrule net-recv-BenchmarkFeedback-fbm2-peer
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
           (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
+  (robot (name ?name) (team ?team) (host ?from-host))
   (benchmark-phase (id ?phase) (type FBM) (type-id 2))
   (benchmark-state (phase-id ?phase) (state RUNNING))
   =>
@@ -678,7 +687,12 @@
        (pb-has-field ?p "object_instance_name")
        (pb-has-field ?p "end_effector_pose"))
    then
-    (printout t "Benchmark feedback valid" crlf)
+    (printout t "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name")))))
 
     (bind ?pose (pb-field-value ?p "end_effector_pose"))
     (bind ?position (pb-field-value ?pose "position"))
