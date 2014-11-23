@@ -398,6 +398,11 @@
 
   (bind ?pb-inventory (net-create-Inventory))
   (pb-broadcast ?peer-id-public ?pb-inventory)
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?pb-inventory)
+  )
+
   (pb-destroy ?pb-inventory)
 )
 
@@ -462,6 +467,10 @@
 
   (bind ?oi (net-create-OrderInfo))
   (pb-broadcast ?peer-id-public ?oi)
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?oi)
+  )
 
   (pb-destroy ?oi)
 )
