@@ -281,7 +281,25 @@
 
   ; Orders
   (assert
-    ; Deliver 5 machined cover plates AX-07 (object-id 7) in file-card box EM-02-01 (container-id 31) to workstation WS-04 (destination-id 33)
-    (order (id 1) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 5) (destination-id 33))
+    ; Deliver 1 bearing box AX-01 (object-id 1) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 bearing AX-02 (object-id 2) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 axis AX-03 (object-id 3) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 shaft nut AX-04 (object-id 4) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 distance tube AX-05 (object-id 5) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 machined cover place AX-07 (object-id 7) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+
+    ; Deliver 1 motor with gear box AX-09 (object-id 9) into foam container EM-03-01 (container-id 41)
+    (order (id 1) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
   )
 )
