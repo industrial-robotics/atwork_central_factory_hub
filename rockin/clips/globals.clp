@@ -9,6 +9,7 @@
   ; network sending periods; seconds
   ?*BEACON-PERIOD* = 1.0
   ?*BENCHMARKSTATE-PERIOD* = 1.0
+  ?*ROBOTINFO-PERIOD* = 0.25
   ?*INVENTORY-PERIOD* = 1.0
   ?*DRILLING-MACHINE-PERIOD* = 0.1
   ?*CONVEYOR-BELT-PERIOD* = 0.1
