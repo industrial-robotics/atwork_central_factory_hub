@@ -141,14 +141,7 @@
 
 
 
-(defrule benchmark-tbm1-init
-  (benchmark-phase (id ?phase) (type TBM) (type-id 1))
-  ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
-  (not (benchmark-initialized))
-  =>
-  (assert (benchmark-initialized))
-  (benchmark-reset)
-
+(deffunction benchmark-tbm1-init ()
   ; Inventory
   (assert
     ;;;;;;;;;;;;;;;;;;;;
@@ -201,14 +194,7 @@
 )
 
 
-(defrule benchmark-tbm2-init
-  (benchmark-phase (id ?phase) (type TBM) (type-id 2))
-  ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
-  (not (benchmark-initialized))
-  =>
-  (assert (benchmark-initialized))
-  (benchmark-reset)
-
+(deffunction benchmark-tbm2-init ()
   ; Inventory
   (assert
     ;;;;;;;;;;;;;;
@@ -232,14 +218,7 @@
 )
 
 
-(defrule benchmark-tbm3-init
-  (benchmark-phase (id ?phase) (type TBM) (type-id 3))
-  ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
-  (not (benchmark-initialized))
-  =>
-  (assert (benchmark-initialized))
-  (benchmark-reset)
-
+(deffunction benchmark-tbm3-init ()
   ; Inventory
   (assert
     ;;;;;;;;;;
