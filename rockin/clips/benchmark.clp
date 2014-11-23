@@ -282,3 +282,48 @@
     (order (id 1) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
   )
 )
+
+
+
+; Initialize and directly transition to PAUSED state
+(defrule benchmark-tbm-init
+  (benchmark-phase (id ?phase) (type TBM) (type-id ?fbm-id))
+  ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
+  =>
+  (switch ?fbm-id
+    (case 1 then
+      (benchmark-tbm1-init)
+    )
+    (case 2 then
+      (benchmark-tbm2-init)
+    )
+    (case 3 then
+      (benchmark-tbm3-init)
+    )
+  )
+
+  (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*TBM-COUNT*) (max-time ?*TBM-TIME*) (run 1))
+)
+
+; When a command switches the state from PAUSED to RUNNING, setup the current run
+(defrule benchmark-tbm-run-start
+  (benchmark-phase (id ?phase) (type TBM))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (prev-state PAUSED))
+  =>
+  (modify ?bs (prev-state RUNNING) (start-time (now)) (benchmark-time 0.0))
+
+  (printout t "TBM: Start" crlf)
+  (assert (attention-message (text "TBM: Start") (time 15)))
+)
+
+; The current run has timed-out, switch to "run-over" state
+(defrule benchmark-tbm-run-timeout
+  (benchmark-phase (id ?phase) (type TBM))
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
+           (max-time ?max-time) (benchmark-time ?benchmark-time&:(>= ?benchmark-time ?max-time)))
+  =>
+  (modify ?bs (state FINISHED) (prev-state RUNNING))
+
+  (printout t "TBM: Benchmark over" crlf)
+  (assert (attention-message (text "TBM: Benchmark over") (time 15)))
+)
