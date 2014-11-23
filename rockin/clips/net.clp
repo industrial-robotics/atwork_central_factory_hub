@@ -717,7 +717,7 @@
 
 (defrule net-recv-BenchmarkFeedback-fbm2-client
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type CLIENT))
+          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type CLIENT|SERVER))
   (benchmark-phase (id ?phase) (type FBM) (type-id 2))
   (benchmark-state (phase-id ?phase) (state PAUSED|FINISHED))
   =>
@@ -727,7 +727,7 @@
    then
     (printout t "Benchmark feedback valid" crlf)
 
-    (if (pb-field-value ?p "grasp_notification")
+    (if (eq (pb-field-value ?p "grasp_notification") 1)
      then
       (assert (benchmark-feedback (source CLIENT) (time ?rcvd-at) (type SUCCESS)))
      else
