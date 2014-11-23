@@ -456,7 +456,6 @@
 
 (defrule net-send-OrderInfo
   (time $?now)
-  (benchmark-state (state RUNNING))
   ?sf <- (signal (type order-info) (seq ?seq) (count ?count)
      (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-ORDERINFO-BURST-COUNT*)
                  then ?*BC-ORDERINFO-PERIOD*
