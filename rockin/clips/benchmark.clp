@@ -69,6 +69,8 @@
   (benchmark-phase (id ?phase) (type FBM) (type-id ?fbm-id))
   ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
   =>
+  (benchmark-reset)
+
   (switch ?fbm-id
     (case 1 then
       (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*) (run 1))
@@ -290,6 +292,8 @@
   (benchmark-phase (id ?phase) (type TBM) (type-id ?fbm-id))
   ?bs <- (benchmark-state (phase-id ?phase) (state INIT))
   =>
+  (benchmark-reset)
+
   (switch ?fbm-id
     (case 1 then
       (benchmark-tbm1-init)
