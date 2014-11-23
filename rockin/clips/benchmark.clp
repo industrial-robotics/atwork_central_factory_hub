@@ -73,10 +73,12 @@
 
   (switch ?fbm-id
     (case 1 then
-      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM1-COUNT*) (max-time ?*FBM1-TIME*) (run 1))
+      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM1-COUNT*)
+          (max-time ?*FBM1-TIME*) (run 1) (benchmark-time 0.0))
     )
     (case 2 then
-      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM2-COUNT*) (max-time ?*FBM2-TIME*) (run 1))
+      (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*FBM2-COUNT*)
+          (max-time ?*FBM2-TIME*) (run 1) (benchmark-time 0.0))
     )
   )
 )
@@ -306,7 +308,8 @@
     )
   )
 
-  (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*TBM-COUNT*) (max-time ?*TBM-TIME*) (run 1))
+  (modify ?bs (state PAUSED) (prev-state INIT) (max-runs ?*TBM-COUNT*)
+      (max-time ?*TBM-TIME*) (run 1) (benchmark-time 0.0))
 )
 
 ; When a command switches the state from PAUSED to RUNNING, setup the current run
