@@ -602,6 +602,30 @@
   )
 )
 
+(defrule net-recv-ConveyorBeltCommand-client
+  ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  (network-client (id ?client-id) (host ?client-host) (port ?port))
+  (have-feature ConveyorBelt)
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  ; Get the command from the message
+  (bind ?pb-command (pb-field-value ?p "command"))
+
+  (switch ?pb-command
+    (case STOP then
+      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands conveyor belt to stop" crlf)
+      (conveyor-belt-stop-belt)
+    )
+
+    (case START then
+      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands conveyor belt to start" crlf)
+      (conveyor-belt-start-belt)
+    )
+  )
+)
+
 (deffunction net-create-ConveyorBeltStatus ()
   ; Instantiate a new status message
   (bind ?pb-status (pb-create "rockin_msgs.ConveyorBeltStatus"))
