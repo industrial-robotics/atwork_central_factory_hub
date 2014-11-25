@@ -150,7 +150,7 @@ void QualityControlCameraThread::clips_send_image_to_peer(long int peer_id)
 
             std::map<long int, protobuf_comm::ProtobufBroadcastPeer *> peers = protobuf_comm->peers();
             if (peers.find(peer_id) != peers.end())
-                peers[peer_id]->send(image_msg);
+                peers[peer_id]->send(device_image_to_image(image_msg));
             else
                 logger->log_error("QualityControlCamera", "Could not sent image to peer. Peer %d does not exist.", peer_id);
         }
