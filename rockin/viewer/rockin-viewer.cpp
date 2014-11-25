@@ -368,7 +368,7 @@ int main(int argc, char **argv)
   message_register.add_message_type<rockin_msgs::OrderInfo>();
 
 
-  Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.rockin");
+  Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.rockin.viewer");
   builder = Gtk::Builder::create_from_file(std::string(SRCDIR) + std::string("/rockin_viewer.glade"));
 
   Gtk::Window *window = 0;
