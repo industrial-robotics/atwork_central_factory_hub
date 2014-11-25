@@ -144,7 +144,7 @@ void QualityControlCameraThread::clips_send_image_to_peer(long int peer_id)
 
         logger->log_info("QualityControlCamera", "Send image request");
 
-        if (zmq_service_->recv(&request) || image_msg.ParseFromArray(request.data(), request.size()))
+        if (zmq_service_->recv(&request) && image_msg.ParseFromArray(request.data(), request.size()))
         {
             logger->log_info("QualityControlCamera", "Image received -> width: %d, height: %d", image_msg.width(), image_msg.height());
 
