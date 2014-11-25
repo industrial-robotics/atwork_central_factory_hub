@@ -89,5 +89,5 @@ llsfrb:
       UvA: randomkey
 
   shell:
-    refbox-host: localhost
+    refbox-host: !ipv4 192.168.1.100
     refbox-port: 4444
