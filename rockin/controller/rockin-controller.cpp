@@ -157,7 +157,7 @@ int main(int argc, char **argv)
   message_register.add_message_type<rockin_msgs::BenchmarkState>();
 
 
-  Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.rockin");
+  Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.rockin.controller");
   builder = Gtk::Builder::create_from_file(std::string(SRCDIR) + std::string("/rockin_controller.glade"));
 
   Gtk::Window *window = 0;
