@@ -162,32 +162,16 @@
     ; Assembly aid tray EM-01-01 (object-id 20) at workstation WS-01 (location-id 30)
     (item (id 1) (object-id 20) (location-id 30))
 
-    ; Assembly aid tray EM-01-02 (object-id 21) at workstation WS-01 (location-id 30)
-    (item (id 2) (object-id 21) (location-id 30))
-
-    ; Assembly aid tray EM-01-03 (object-id 22) at workstation WS-03 (location-id 32)
-    (item (id 3) (object-id 22) (location-id 32))
-
 
     ;;;;;;;;;;;;;;;
     ; Bearing boxes
     ;;;;;;;;;;;;;;;
 
-    ; 1 bearing box (object-id 1) at shelf SH-08 (location-id 8)
-    (item (id 10) (object-id 1) (location-id 8) (quantity 1))
+    ; 1 bearing box (object-id 1) at shelf SH-02 (location-id 2)
+    (item (id 10) (object-id 1) (location-id 2) (quantity 1))
 
-    ; 1 bearing box (object-id 1) at shelf SH-14 (location-id 14)
-    (item (id 11) (object-id 1) (location-id 14) (quantity 1))
-
-    ; 1 bearing box (object-id 1) at shelf SH-19 (location-id 19)
-    (item (id 12) (object-id 1) (location-id 19) (quantity 1))
-
-    ; 1 bearing box (object-id 1) at shelf SH-21 (location-id 21)
-    (item (id 13) (object-id 1) (location-id 21) (quantity 1))
-
-    ; 2 bearing boxes (object-id 1) at shelf SH-02 (location-id 2)
-    (item (id 14) (object-id 1) (location-id 2) (quantity 1))
-    (item (id 15) (object-id 1) (location-id 2) (quantity 1))
+    ; 1 bearing box (object-id 1) at shelf SH-20 (location-id 20)
+    (item (id 13) (object-id 1) (location-id 20) (quantity 1))
   )
 
 
@@ -195,12 +179,6 @@
   (assert
     ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 20)
     (order (id 1) (status OFFERED) (object-id 1) (container-id 20) (quantity-requested 2))
-
-    ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container 21)
-    (order (id 2) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
-
-    ; Deliver 2 items of AX-01 (object-id 1) to EM-01-03 (container 22)
-    (order (id 3) (status OFFERED) (object-id 1) (container-id 22) (quantity-requested 2))
   )
 )
 
