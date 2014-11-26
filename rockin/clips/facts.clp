@@ -214,7 +214,7 @@
   ; Object identifiers
   ;;;;;;;;;;;;;;;;;;;;
 
-  ; Bearing box (class)
+  ; Bearing box type A (class)
   (object-identifier (id  1) (type AX) (type-id 1) (description "AX-01"))
 
   ; Bearing (class)
