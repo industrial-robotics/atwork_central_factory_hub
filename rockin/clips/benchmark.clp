@@ -42,18 +42,25 @@
 
 (deffunction select-random-object ()
   (bind ?objects (create$))
-  (do-for-all-facts ((?o object-identifier)) (eq ?o:type AX)
+  (do-for-all-facts ((?o benchmark-object)) TRUE
     (bind ?objects (insert$ ?objects 1 ?o))
   )
 
   (bind ?selected-object (pick-random$ ?objects))
-  (bind ?description (nth$ 1 (fact-slot-value ?selected-object description)))
+  (bind ?benchmark-id (fact-slot-value ?selected-object benchmark-id))
+  (bind ?selected-object-id (fact-slot-value ?selected-object object-id))
 
-  (printout t "FBM: Place object " ?description " in front of the robot and continue the benchmark" crlf)
-  (assert (attention-message (text (str-cat "FBM: The robot should handle the object " ?description))))
+  (do-for-fact ((?o object-identifier)) (eq ?o:id ?selected-object-id)
+    (bind ?description (nth$ 1 (fact-slot-value ?o description)))
 
-  ; Make the selected object available e.g. for logging
-  (assert (selected-object (object-id (fact-slot-value ?selected-object id))))
+    (printout t "FBM: Place object " ?description " (" ?benchmark-id ") in front "
+        "of the robot and continue the benchmark" crlf)
+    (assert (attention-message (text (str-cat "FBM: The robot should handle the "
+        "object " ?description " (" ?benchmark-id ")"))))
+
+    ; Make the selected object available e.g. for logging
+    (assert (selected-object (object-id ?o:id)))
+  )
 )
 
 
