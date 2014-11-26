@@ -1,0 +1,9 @@
+message ImageRequest
+{
+}
+
+message CompressedImage
+{
+    required string format = 1;
+    required bytes data = 2;
+}
