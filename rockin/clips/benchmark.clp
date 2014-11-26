@@ -278,9 +278,6 @@
     ; 1 distance tube AX-05 (object-id 5) at shelf SH-15 (location-id 15)
     (item (id 5) (object-id 5) (location-id 15) (quantity 1))
 
-    ; 1 machined cover plate AX-07 (object-id 7) in container EM-02-01 (container-id 31)
-    (item (id 6) (object-id 7) (container-id 31) (quantity 1))
-
     ; 1 motor with gear box AX-09 (object-id 9) at shelf SH-21 (location-id 21)
     (item (id 7) (object-id 9) (location-id 21) (quantity 1))
 
@@ -312,9 +309,6 @@
 
     ; Deliver 1 distance tube AX-05 (object-id 5) into foam container EM-03-01 (container-id 41)
     (order (id 1) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
-
-    ; Deliver 1 machined cover place AX-07 (object-id 7) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 motor with gear box AX-09 (object-id 9) into foam container EM-03-01 (container-id 41)
     (order (id 1) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
