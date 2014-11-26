@@ -218,13 +218,40 @@
     (item (id 3) (object-id 15) (location-id 40) (quantity 1))
     (item (id 4) (object-id 15) (location-id 40) (quantity 1))
     (item (id 5) (object-id 15) (location-id 40) (quantity 1))
+
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ; Manipulation objects
+    ;;;;;;;;;;;;;;;;;;;;;;
+
+    ; File-card box EM-02-01 (object-id 31) in shelf SH-14 (location-id 14)
+    (item (id 6) (object-id 31) (location-id 14))
+
+    ; File-card box EM-02-01 (object-id 31) on robot (location-id 50)
+    (item (id 6) (object-id 31) (location-id 50))
+
+    ; Common shelf container ER-02-01 (object-id 61) in location CB-01 (location-id 32)
+    (item (id 7) (object-id 61) (location-id 32))
   )
 
 
   ; Orders
   (assert
-    ; Deliver 5 machined cover plates AX-07 (object-id 7) in file-card box EM-02-01 (container-id 31) to workstation WS-04 (destination-id 33)
-    (order (id 1) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 5) (destination-id 33))
+    ; Deliver file-card box EM-02-01 (container-id 31) to workstation WS-04 (destination-id 33)
+    (order (id  1) (status OFFERED) (object-id 31) (destination-id 33))
+
+    ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-01 (container-id 31)
+    (order (id  2) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+    (order (id  3) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+    (order (id  4) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+    (order (id  5) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+    (order (id  6) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+
+    ; Deliver 5 unusable cover plates AX-08 (object-id 8) into common shelf container (container-id 61)
+    (order (id  7) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
+    (order (id  8) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
+    (order (id  9) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
+    (order (id 10) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
+    (order (id 11) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
   )
 )
 
