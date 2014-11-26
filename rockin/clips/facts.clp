@@ -244,6 +244,9 @@
   ; Cover plate - unknown state (class)
   (object-identifier (id 15) (type AX) (type-id 15) (description "AX-15"))
 
+  ; Bearing box type B (class)
+  (object-identifier (id 16) (type AX) (type-id 16) (description "AX-16"))
+
 
   ; Assembly aid trays (instances)
   (object-identifier (id 20) (type EM) (type-id 1) (instance-id 1) (description "EM-01-01"))
