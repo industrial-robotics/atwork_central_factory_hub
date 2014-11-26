@@ -281,3 +281,27 @@
   (object-identifier (id 60) (type ER) (type-id 2) (instance-id  9) (description "ER-02-09"))
   (object-identifier (id 70) (type ER) (type-id 2) (instance-id 10) (description "ER-02-10"))
 )
+
+
+(deffacts fbm-objects
+  ; AX-01
+  (benchmark-object (object-id 1) (benchmark-id 4))
+
+  ; AX-16
+  (benchmark-object (object-id 16) (benchmark-id 3))
+
+  ; AX-02
+  (benchmark-object (object-id 2) (benchmark-id 6))
+
+  ; AX-03
+  (benchmark-object (object-id 3) (benchmark-id 5))
+
+  ; AX-09
+  (benchmark-object (object-id 9) (benchmark-id 7))
+
+  ; EM-01
+  (benchmark-object (object-id 20) (benchmark-id 1))
+
+  ; EM-02
+  (benchmark-object (object-id 31) (benchmark-id 2))
+)
