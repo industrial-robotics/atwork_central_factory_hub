@@ -129,7 +129,7 @@ void QualityControlCameraThread::clips_send_image_to_peer(long int peer_id)
         return;
 
     ImageRequest image_request;
-    Image image_msg;
+    CompressedImage image_msg;
     std::string serialized_string;
 
     zmq::message_t *query = NULL;
@@ -146,7 +146,7 @@ void QualityControlCameraThread::clips_send_image_to_peer(long int peer_id)
 
         if (zmq_service_->recv(&request) && image_msg.ParseFromArray(request.data(), request.size()))
         {
-            logger->log_info("QualityControlCamera", "Image received -> width: %d, height: %d", image_msg.width(), image_msg.height());
+            logger->log_info("QualityControlCamera", "Image received -> format: %s", image_msg.format().c_str());
 
             std::map<long int, protobuf_comm::ProtobufBroadcastPeer *> peers = protobuf_comm->peers();
             if (peers.find(peer_id) != peers.end())
