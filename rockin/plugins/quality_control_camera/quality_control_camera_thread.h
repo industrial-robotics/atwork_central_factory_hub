@@ -29,7 +29,7 @@
 #include <aspect/protobuf_comm.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <plugins/msgs/DeviceCamera.pb.h>
-#include <plugins/msgs/DeviceImage.pb.h>
+#include <plugins/msgs/DeviceCompressedImage.pb.h>
 #include <msgs/Image.pb.h>
 #include <zmq.hpp>
 
@@ -45,7 +45,7 @@ class QualityControlCameraThread: public fawkes::Thread, public fawkes::LoggingA
     private:
         void clips_send_image_to_peer(long int peer_id);
         int clips_is_device_connected();
-        std::shared_ptr<google::protobuf::Message> device_image_to_image(const Image &img) const;
+        std::shared_ptr<google::protobuf::Message> device_image_to_image(const CompressedImage &img) const;
 
         void receiveAndBufferStatusMsg();
 

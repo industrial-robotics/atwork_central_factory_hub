@@ -188,25 +188,19 @@ void QualityControlCameraThread::receiveAndBufferStatusMsg()
     }
 }
 
-std::shared_ptr<google::protobuf::Message> QualityControlCameraThread::device_image_to_image(const Image &img) const
+std::shared_ptr<google::protobuf::Message> QualityControlCameraThread::device_image_to_image(const CompressedImage &img) const
 {
   // We cannot link to the rockin_msgs directly, due to problems with the
   // static initialization of messages. Therefore, we create the message using
   // dynamic compilation and reflection to set up the message's fields.
-  std::string msg_name = "rockin_msgs.Image";
+  std::string msg_name = "rockin_msgs.CompressedImage";
   std::shared_ptr<google::protobuf::Message> msg = protobuf_comm->message_register().new_message_for(msg_name);
 
   const google::protobuf::Descriptor *desc = msg->GetDescriptor();
   const google::protobuf::Reflection *refl = msg->GetReflection();
-  const google::protobuf::FieldDescriptor* fd_height = desc->FindFieldByName("height");
-  const google::protobuf::FieldDescriptor* fd_width = desc->FindFieldByName("width");
-  const google::protobuf::FieldDescriptor* fd_encoding = desc->FindFieldByName("encoding");
-  const google::protobuf::FieldDescriptor* fd_step = desc->FindFieldByName("step");
+  const google::protobuf::FieldDescriptor* fd_format = desc->FindFieldByName("format");
   const google::protobuf::FieldDescriptor* fd_data = desc->FindFieldByName("data");
-  refl->SetUInt32(msg.get(), fd_height, img.height());
-  refl->SetUInt32(msg.get(), fd_width, img.width());
-  refl->SetUInt32(msg.get(), fd_encoding, img.encoding());
-  refl->SetUInt32(msg.get(), fd_step, img.step());
+  refl->SetString(msg.get(), fd_format, img.format());
   refl->SetString(msg.get(), fd_data, img.data());
 
   return msg;
