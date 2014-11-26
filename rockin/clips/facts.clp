@@ -78,6 +78,11 @@
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
+(deftemplate benchmark-object
+  (slot object-id (type INTEGER))     ; identifier of an object
+  (slot benchmark-id (type INTEGER))  ; identifier in the benchmarking system
+)
+
 (deftemplate benchmark-feedback
   (slot source (type SYMBOL))
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
