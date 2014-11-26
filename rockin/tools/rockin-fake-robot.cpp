@@ -47,7 +47,7 @@
 #include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/Camera.pb.h>
-#include <msgs/Image.pb.h>
+#include <msgs/CompressedImage.pb.h>
 #include <msgs/BenchmarkFeedback.pb.h>
 
 #include <boost/asio.hpp>
@@ -205,9 +205,9 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     std::cout << std::endl;
   }
 
-  std::shared_ptr<Image> img;
-  if ((img = std::dynamic_pointer_cast<Image>(msg))) {
-    std::cout << "Image received (width=" << img->width() << ", height=" << img->height() << ", step=" << img->step() <<")" << std::endl;
+  std::shared_ptr<CompressedImage> img;
+  if ((img = std::dynamic_pointer_cast<CompressedImage>(msg))) {
+    std::cout << "Image received (format=" << img->format() << ")" << std::endl;
   }
 }
 
@@ -303,7 +303,7 @@ main(int argc, char **argv)
   message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<ConveyorBeltStatus>();
-  message_register.add_message_type<Image>();
+  message_register.add_message_type<CompressedImage>();
   message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =
