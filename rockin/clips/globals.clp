@@ -33,9 +33,9 @@
   ?*BC-VERSIONINFO-COUNT* = 10
 
   ; Benchmark times; seconds
-  ?*TBM-TIME*     = 6000
+  ?*TBM-TIME*     =  600
   ?*FBM1-TIME*    =  120  ; per run
-  ?*FBM2-TIME*    =  480  ; per run
+  ?*FBM2-TIME*    =  240  ; per run
 
   ; Benchmark repetitions
   ?*TBM-COUNT*    =  1
