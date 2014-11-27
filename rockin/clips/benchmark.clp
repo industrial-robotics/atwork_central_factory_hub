@@ -91,13 +91,21 @@
 )
 
 ; Select an object when entering PAUSED state
-(defrule benchmark-fbm-switch-to-pause
-  (benchmark-phase (id ?phase) (type FBM))
+(defrule benchmark-fbm1-switch-to-pause
+  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
   ?bs <- (benchmark-state (phase-id ?phase) (state PAUSED) (prev-state ~PAUSED))
   =>
   (modify ?bs (prev-state PAUSED))
 
   (select-random-object)
+)
+
+; In FBM2 the RefBox does not select the object
+(defrule benchmark-fbm2-switch-to-pause
+  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
+  ?bs <- (benchmark-state (phase-id ?phase) (state PAUSED) (prev-state ~PAUSED))
+  =>
+  (modify ?bs (prev-state PAUSED))
 )
 
 ; When a command switches the state from PAUSED to RUNNING, setup the current run
