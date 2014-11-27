@@ -35,7 +35,7 @@ std::shared_ptr<rockin_msgs::DrillingMachineStatus> drilling_machine_state;
 std::shared_ptr<rockin_msgs::RobotInfo> robot_info;
 std::shared_ptr<rockin_msgs::Inventory> inventory;
 std::shared_ptr<rockin_msgs::OrderInfo> order_info;
-std::deque<std::string> attention_msgs(5);
+std::deque<std::string> attention_msgs(12);
 
 
 
@@ -126,7 +126,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
   std::shared_ptr<rockin_msgs::AttentionMessage> am;
   if ((am = std::dynamic_pointer_cast<rockin_msgs::AttentionMessage>(msg))) {
     attention_msgs.push_back(am->message());
-    if (attention_msgs.size() > 5) attention_msgs.pop_front();
+    if (attention_msgs.size() > 12) attention_msgs.pop_front();
   }
 }
 
