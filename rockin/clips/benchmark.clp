@@ -167,8 +167,8 @@
     ; Assembly aid trays
     ;;;;;;;;;;;;;;;;;;;;
 
-    ; Assembly aid tray EM-01-01 (object-id 20) at workstation WS-01 (location-id 30)
-    (item (id 1) (object-id 20) (location-id 30))
+    ; Assembly aid tray EM-01-02 (object-id 21) at shelf SH-08 (location-id 8)
+    (item (id 1) (object-id 21) (location-id 8))
 
 
     ;;;;;;;;;;;;;;;
@@ -185,8 +185,11 @@
 
   ; Orders
   (assert
-    ; Deliver 2 items of AX-01 (object-id 1) to EM-01-01 (container 20)
-    (order (id 1) (status OFFERED) (object-id 1) (container-id 20) (quantity-requested 2))
+    ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container-id 21)
+    (order (id 1) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
+
+    ; Deliver container EM-01-02 (object-id 21) to location WS-01 (location-id 30)
+    (order (id 2) (status OFFERED) (object-id 21) (destination-id 30))
   )
 )
 
@@ -209,35 +212,35 @@
     ; Manipulation objects
     ;;;;;;;;;;;;;;;;;;;;;;
 
-    ; File-card box EM-02-01 (object-id 31) in shelf SH-14 (location-id 14)
-    (item (id 6) (object-id 31) (location-id 14))
+    ; File-card box EM-02-02 (object-id 32) in shelf SH-14 (location-id 14)
+    (item (id 6) (object-id 32) (location-id 14))
 
-    ; File-card box EM-02-01 (object-id 31) on robot (location-id 50)
-    (item (id 6) (object-id 31) (location-id 50))
+    ; File-card box EM-02-02 (object-id 32) on robot (location-id 50)
+    (item (id 6) (object-id 32) (location-id 50))
 
-    ; Common shelf container ER-02-01 (object-id 61) in location CB-01 (location-id 32)
-    (item (id 7) (object-id 61) (location-id 32))
+    ; Common shelf container ER-02-04 (object-id 61) in location CB-01 (location-id 40)
+    (item (id 7) (object-id 64) (location-id 40))
   )
 
 
   ; Orders
   (assert
-    ; Deliver file-card box EM-02-01 (container-id 31) to workstation WS-04 (destination-id 33)
-    (order (id  1) (status OFFERED) (object-id 31) (destination-id 33))
+    ; Deliver file-card box EM-02-02 (container-id 32) to workstation WS-05 (destination-id 34)
+    (order (id  1) (status OFFERED) (object-id 32) (destination-id 34))
 
-    ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-01 (container-id 31)
-    (order (id  2) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
-    (order (id  3) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
-    (order (id  4) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
-    (order (id  5) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
-    (order (id  6) (status OFFERED) (object-id 7) (container-id 31) (quantity-requested 1))
+    ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-02 (container-id 32)
+    (order (id  2) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (order (id  3) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (order (id  4) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (order (id  5) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (order (id  6) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
 
-    ; Deliver 5 unusable cover plates AX-08 (object-id 8) into common shelf container (container-id 61)
-    (order (id  7) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
-    (order (id  8) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
-    (order (id  9) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
-    (order (id 10) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
-    (order (id 11) (status OFFERED) (object-id 8) (container-id 61) (quantity-requested 1))
+    ; Deliver 5 unusable cover plates AX-08 (object-id 8) into common shelf container ER-02-04 (container-id 64)
+    (order (id  7) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (order (id  8) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (order (id  9) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (order (id 10) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (order (id 11) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
   )
 )
 
@@ -267,37 +270,37 @@
     ; 1 motor with gear box AX-09 (object-id 9) at shelf SH-21 (location-id 21)
     (item (id 7) (object-id 9) (location-id 21) (quantity 1))
 
-    ; File card box EM-02-01 (object-id 31) at shelf SH-19 (location-id 19)
-    (item (id 8) (object-id 31) (location-id 19))
-
     ;;;;;;;;;;;;;;;;
     ; Foam container
     ;;;;;;;;;;;;;;;;
 
-    ; Foam container EM-03-01 (object-id 41) at workstation WS-04 (location-id 33)
-    (item (id 20) (object-id 41) (location-id 33))
+    ; Foam container EM-03-01 (object-id 41) at shelf SH-01 (location-id 1)
+    (item (id 20) (object-id 41) (location-id 1))
   )
 
 
   ; Orders
   (assert
+    ; Deliver foam container EM-03-01 (object-id 41) to workstation WS-04 (location-id 33)
+    (order (id 1) (status OFFERED) (object-id 41) (destination-id 33))
+
     ; Deliver 1 bearing box AX-01 (object-id 1) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+    (order (id 2) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 bearing AX-02 (object-id 2) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
+    (order (id 3) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 axis AX-03 (object-id 3) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
+    (order (id 4) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 shaft nut AX-04 (object-id 4) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
+    (order (id 5) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 distance tube AX-05 (object-id 5) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
+    (order (id 6) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 motor with gear box AX-09 (object-id 9) into foam container EM-03-01 (container-id 41)
-    (order (id 1) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
+    (order (id 7) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
   )
 )
 
