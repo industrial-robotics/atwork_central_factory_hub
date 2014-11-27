@@ -31,7 +31,7 @@
 
 /** Constructor. */
 ConveyorBeltThread::ConveyorBeltThread() :
-        Thread("ConveyorBeltThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("eth0")
+        Thread("ConveyorBeltThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("127.0.0.1")
 {
 }
 
@@ -75,7 +75,7 @@ void ConveyorBeltThread::init()
                 zmq_subscriber_->connect(host_status_port.c_str());
             }
         }
-    } catch (fawkes::Exception &e)
+    } catch (std::exception &e)
     {
         logger->log_warn("ConveyorBelt", "Cannot create communication for the conveyor belt: %s", e.what());
 
@@ -154,7 +154,7 @@ void ConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
 
     // prevent sending to many messages to the device
     time_diff = boost::posix_time::microsec_clock::local_time() - last_sent_command_timestamp_;
-    if (time_diff.total_milliseconds() < 200)
+    if (time_diff.total_milliseconds() < 1000)
         return;
 
     command_msg.set_mode(mode);
