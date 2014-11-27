@@ -35,7 +35,7 @@
   ; Benchmark times; seconds
   ?*TBM-TIME*     = 6000
   ?*FBM1-TIME*    =  120  ; per run
-  ?*FBM2-TIME*    =  240  ; per run
+  ?*FBM2-TIME*    =  480  ; per run
 
   ; Benchmark repetitions
   ?*TBM-COUNT*    =  1
