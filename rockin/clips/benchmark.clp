@@ -285,7 +285,7 @@
     (order (id 1) (status OFFERED) (object-id 41) (destination-id 33))
 
     ; Deliver 1 bearing box AX-01 (object-id 1) into foam container EM-03-01 (container-id 41)
-    (order (id 2) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+    (order (id 2) (status OFFERED) (object-id 1) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 bearing AX-02 (object-id 2) into foam container EM-03-01 (container-id 41)
     (order (id 3) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
