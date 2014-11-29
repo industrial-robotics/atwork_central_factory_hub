@@ -8,7 +8,7 @@
 (defglobal
   ; network sending periods; seconds
   ?*BEACON-PERIOD* = 1.0
-  ?*BENCHMARKSTATE-PERIOD* = 1.0
+  ?*BENCHMARKSTATE-PERIOD* = 0.1
   ?*ROBOTINFO-PERIOD* = 0.25
   ?*INVENTORY-PERIOD* = 1.0
   ?*DRILLING-MACHINE-PERIOD* = 0.1
