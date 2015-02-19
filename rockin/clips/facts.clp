@@ -134,16 +134,6 @@
   (multislot description (type STRING) (cardinality 0 1))
 )
 
-(deftemplate item
-  ; identifier which is used in CLIPS only
-  (slot id (type INTEGER))
-
-  (slot object-id (type INTEGER))                           ; object-identifier
-  (multislot container-id (type INTEGER) (cardinality 0 1)) ; object-identifier
-  (multislot location-id (type INTEGER) (cardinality 0 1))  ; location-identifier
-  (multislot quantity (type INTEGER) (cardinality 0 1))
-)
-
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
