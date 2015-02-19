@@ -6,6 +6,8 @@
 
 (defclass OrderInfo (is-a USER) (role concrete)
   ; The order info represents all currently existing orders in the system
+
+  (multislot orders (type INSTANCE) (allowed-classes Order))
 )
 
 (defmessage-handler OrderInfo create-msg ()
