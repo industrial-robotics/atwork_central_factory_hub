@@ -7,6 +7,9 @@
 ;---------------------------------------------------------------------------
 
 (deffunction benchmark-reset ()
+  ; Remove all items from the inventory
+  (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
+
   ; Retract all items
   (delayed-do-for-all-facts ((?i item)) TRUE
     (retract ?i)
