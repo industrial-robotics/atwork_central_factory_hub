@@ -374,43 +374,6 @@
   (pb-destroy ?pb-inventory)
 )
 
-(deffunction net-create-Order (?order-fact)
-  (bind ?o (pb-create "rockin_msgs.Order"))
-
-  (pb-set-field ?o "id" (fact-slot-value ?order-fact id))
-  (pb-set-field ?o "status" (fact-slot-value ?order-fact status))
-
-  (bind ?oi (net-create-ObjectIdentifier (fact-slot-value ?order-fact object-id)))
-  (pb-set-field ?o "object" ?oi)  ; destroys ?oi
-
-  (if (<> (length$ (fact-slot-value ?order-fact container-id)) 0) then
-    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 (fact-slot-value ?order-fact container-id))))
-    (pb-set-field ?o "container" ?ci)  ; destroys ?ci
-  )
-
-  (pb-set-field ?o "quantity_delivered" (fact-slot-value ?order-fact quantity-delivered))
-
-  (if (<> (length$ (fact-slot-value ?order-fact quantity-requested)) 0) then
-    (pb-set-field ?o "quantity_requested" (nth$ 1 (fact-slot-value ?order-fact quantity-requested)))
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact destination-id)) 0) then
-    (bind ?li (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact destination-id))))
-    (pb-set-field ?o "destination" ?li) ; destroys ?li
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact source-id)) 0) then
-    (bind ?si (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact source-id))))
-    (pb-set-field ?o "source" ?si) ; destroys ?si
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact processing-team)) 0) then
-    (pb-set-field ?o "processing_team" (nth$ 1 (fact-slot-value ?order-fact processing-team)))
-  )
-
-  (return ?o)
-)
-
 (defrule net-send-OrderInfo
   (time $?now)
   ?sf <- (signal (type order-info) (seq ?seq) (count ?count)
