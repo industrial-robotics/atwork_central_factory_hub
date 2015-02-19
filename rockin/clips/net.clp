@@ -411,17 +411,6 @@
   (return ?o)
 )
 
-(deffunction net-create-OrderInfo ()
-  (bind ?oi (pb-create "rockin_msgs.OrderInfo"))
-
-  (do-for-all-facts ((?order order)) TRUE
-    (bind ?o (net-create-Order ?order))
-    (pb-add-list ?oi "orders" ?o) ; destroys ?o
-  )
-
-  (return ?oi)
-)
-
 (defrule net-send-OrderInfo
   (time $?now)
   ?sf <- (signal (type order-info) (seq ?seq) (count ?count)
@@ -432,7 +421,7 @@
   =>
   (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
 
-  (bind ?oi (net-create-OrderInfo))
+  (bind ?oi (send [order-info] create-msg))
   (pb-broadcast ?peer-id-public ?oi)
 
   (do-for-all-facts ((?client network-client)) TRUE
