@@ -165,26 +165,24 @@
 
 (deffunction benchmark-tbm1-init ()
   ; Inventory
-  (assert
+  (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;;;;;;;
     ; Assembly aid trays
     ;;;;;;;;;;;;;;;;;;;;
 
     ; Assembly aid tray EM-01-02 (object-id 21) at shelf SH-08 (location-id 8)
-    (item (id 1) (object-id 21) (location-id 8))
-
+    (make-instance of Item (object-id 21) (location-id 8))
 
     ;;;;;;;;;;;;;;;
     ; Bearing boxes
     ;;;;;;;;;;;;;;;
 
     ; 1 bearing box (object-id 1) at shelf SH-02 (location-id 2)
-    (item (id 10) (object-id 1) (location-id 2) (quantity 1))
+    (make-instance of Item (object-id 1) (location-id 2) (quantity 1))
 
     ; 1 bearing box (object-id 1) at shelf SH-20 (location-id 20)
-    (item (id 13) (object-id 1) (location-id 20) (quantity 1))
+    (make-instance of Item (object-id 1) (location-id 20) (quantity 1))
   )
-
 
   ; Orders
   (assert
@@ -199,32 +197,30 @@
 
 (deffunction benchmark-tbm2-init ()
   ; Inventory
-  (assert
+  (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;
     ; Cover plates
     ;;;;;;;;;;;;;;
 
     ; 5 cover plates with unknown state (object-id 15) on conveyor belt CB-01 (location-id 32)
-    (item (id 1) (object-id 15) (location-id 40) (quantity 1))
-    (item (id 2) (object-id 15) (location-id 40) (quantity 1))
-    (item (id 3) (object-id 15) (location-id 40) (quantity 1))
-    (item (id 4) (object-id 15) (location-id 40) (quantity 1))
-    (item (id 5) (object-id 15) (location-id 40) (quantity 1))
+    (make-instance of Item (object-id 15) (location-id 40) (quantity 1))
+    (make-instance of Item (object-id 15) (location-id 40) (quantity 1))
+    (make-instance of Item (object-id 15) (location-id 40) (quantity 1))
+    (make-instance of Item (object-id 15) (location-id 40) (quantity 1))
 
     ;;;;;;;;;;;;;;;;;;;;;;
     ; Manipulation objects
     ;;;;;;;;;;;;;;;;;;;;;;
 
     ; File-card box EM-02-02 (object-id 32) in shelf SH-14 (location-id 14)
-    (item (id 6) (object-id 32) (location-id 14))
+    (make-instance of Item (object-id 32) (location-id 14) (quantity 1))
 
     ; File-card box EM-02-02 (object-id 32) on robot (location-id 50)
-    (item (id 6) (object-id 32) (location-id 50))
+    (make-instance of Item (object-id 32) (location-id 50) (quantity 1))
 
     ; Common shelf container ER-02-04 (object-id 61) in location CB-01 (location-id 40)
-    (item (id 7) (object-id 64) (location-id 40))
+    (make-instance of Item (object-id 64) (location-id 40) (quantity 1))
   )
-
 
   ; Orders
   (assert
@@ -250,35 +246,35 @@
 
 (deffunction benchmark-tbm3-init ()
   ; Inventory
-  (assert
+  (slot-insert$ [inventory] items 1
     ;;;;;;;;;;
     ; Objects
     ;;;;;;;;;;
 
     ; 1 bearing box AX-01 (object-id 1) at shelf SH-02 (location-id 2)
-    (item (id 1) (object-id 1) (location-id 2) (quantity 1))
+    (make-instance of Item (object-id 1) (location-id 2) (quantity 1))
 
     ; 1 bearing AX-02 (object-id 2) at shelf SH-07 (location-id 7)
-    (item (id 2) (object-id 2) (location-id 7) (quantity 1))
+    (make-instance of Item (object-id 2) (location-id 7) (quantity 1))
 
     ; 1 axis AX-03 (object-id 3) at shelf SH-09 (location-id 9)
-    (item (id 3) (object-id 3) (location-id 9) (quantity 1))
+    (make-instance of Item (object-id 3) (location-id 9) (quantity 1))
 
     ; 1 shaft nut AX-04 (object-id 4) at shelf SH-13 (location-id 13)
-    (item (id 4) (object-id 4) (location-id 13) (quantity 1))
+    (make-instance of Item (object-id 4) (location-id 13) (quantity 1))
 
     ; 1 distance tube AX-05 (object-id 5) at shelf SH-15 (location-id 15)
-    (item (id 5) (object-id 5) (location-id 15) (quantity 1))
+    (make-instance of Item (object-id 5) (location-id 15) (quantity 1))
 
     ; 1 motor with gear box AX-09 (object-id 9) at shelf SH-21 (location-id 21)
-    (item (id 7) (object-id 9) (location-id 21) (quantity 1))
+    (make-instance of Item (object-id 9) (location-id 21) (quantity 1))
 
     ;;;;;;;;;;;;;;;;
     ; Foam container
     ;;;;;;;;;;;;;;;;
 
     ; Foam container EM-03-01 (object-id 41) at shelf SH-01 (location-id 1)
-    (item (id 20) (object-id 41) (location-id 1))
+    (make-instance of Item (object-id 41) (location-id 21) (quantity 1))
   )
 
 
