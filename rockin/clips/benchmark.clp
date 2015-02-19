@@ -179,13 +179,14 @@
     (make-instance of Item (object-id 1) (location-id 20) (quantity 1))
   )
 
+
   ; Orders
-  (assert
+  (slot-insert$ [order-info] orders 1
     ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container-id 21)
-    (order (id 1) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
+    (make-instance of Order (id 1) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
 
     ; Deliver container EM-01-02 (object-id 21) to location WS-01 (location-id 30)
-    (order (id 2) (status OFFERED) (object-id 21) (destination-id 30))
+    (make-instance of Order (id 1) (status OFFERED) (object-id 21) (destination-id 30))
   )
 )
 
@@ -217,24 +218,25 @@
     (make-instance of Item (object-id 64) (location-id 40) (quantity 1))
   )
 
+
   ; Orders
-  (assert
+  (slot-insert$ [order-info] orders 1
     ; Deliver file-card box EM-02-02 (container-id 32) to workstation WS-05 (destination-id 34)
-    (order (id  1) (status OFFERED) (object-id 32) (destination-id 34))
+    (make-instance of Order (id 1) (status OFFERED) (object-id 32) (destination-id 34))
 
     ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-02 (container-id 32)
-    (order (id  2) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (order (id  3) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (order (id  4) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (order (id  5) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (order (id  6) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (make-instance of Order (id  2) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (make-instance of Order (id  3) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (make-instance of Order (id  4) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (make-instance of Order (id  5) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    (make-instance of Order (id  6) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
 
     ; Deliver 5 unusable cover plates AX-08 (object-id 8) into common shelf container ER-02-04 (container-id 64)
-    (order (id  7) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (order (id  8) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (order (id  9) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (order (id 10) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (order (id 11) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (make-instance of Order (id  7) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (make-instance of Order (id  8) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (make-instance of Order (id  9) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (make-instance of Order (id 10) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    (make-instance of Order (id 11) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
   )
 )
 
@@ -274,27 +276,27 @@
 
 
   ; Orders
-  (assert
+  (slot-insert$ [order-info] orders 1
     ; Deliver foam container EM-03-01 (object-id 41) to workstation WS-04 (location-id 33)
-    (order (id 1) (status OFFERED) (object-id 41) (destination-id 33))
+    (make-instance of Order (id 1) (status OFFERED) (object-id 41) (destination-id 33))
 
     ; Deliver 1 bearing box AX-01 (object-id 1) into foam container EM-03-01 (container-id 41)
-    (order (id 2) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 2) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 bearing AX-02 (object-id 2) into foam container EM-03-01 (container-id 41)
-    (order (id 3) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 3) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 axis AX-03 (object-id 3) into foam container EM-03-01 (container-id 41)
-    (order (id 4) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 4) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 shaft nut AX-04 (object-id 4) into foam container EM-03-01 (container-id 41)
-    (order (id 5) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 5) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 distance tube AX-05 (object-id 5) into foam container EM-03-01 (container-id 41)
-    (order (id 6) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 6) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
 
     ; Deliver 1 motor with gear box AX-09 (object-id 9) into foam container EM-03-01 (container-id 41)
-    (order (id 7) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
+    (make-instance of Order (id 7) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
   )
 )
 
