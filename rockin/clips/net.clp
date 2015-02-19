@@ -357,38 +357,6 @@
   (return ?pb-location-identifier)
 )
 
-(deffunction net-create-Inventory ()
-  ; Instantiate a new inventory
-  (bind ?pb-inventory (pb-create "rockin_msgs.Inventory"))
-
-  ; Iterate over all asserted items (which form the inventory)
-  (do-for-all-facts ((?item item)) TRUE
-    ; Instantiate a new item for the protobuf message
-    (bind ?pb-item (pb-create "rockin_msgs.Inventory.Item"))
-
-    (pb-set-field ?pb-item "object" (net-create-ObjectIdentifier ?item:object-id))
-
-    ; Only set the location if is available
-    (if (<> (length$ ?item:location-id) 0) then
-      (pb-set-field ?pb-item "location" (net-create-LocationIdentifier (nth$ 1 ?item:location-id)))
-    )
-
-    ; Only set the container if it is available
-    (if (<> (length$ ?item:container-id) 0) then
-      (pb-set-field ?pb-item "container" (net-create-ObjectIdentifier (nth$ 1 ?item:container-id)))
-    )
-
-    ; Only set the quantity if it is available
-    (if (<> (length$ ?item:quantity) 0) then
-      (pb-set-field ?pb-item "quantity" (nth$ 1 ?item:quantity))
-    )
-
-    (pb-add-list ?pb-inventory "items" ?pb-item)
-  )
-
-  (return ?pb-inventory)
-)
-
 (defrule net-send-Inventory
   (time $?now)
   ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
@@ -396,7 +364,7 @@
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
 
-  (bind ?pb-inventory (net-create-Inventory))
+  (bind ?pb-inventory (send [inventory] create-msg))
   (pb-broadcast ?peer-id-public ?pb-inventory)
 
   (do-for-all-facts ((?client network-client)) TRUE

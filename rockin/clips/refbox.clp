@@ -5,6 +5,7 @@
 ;---------------------------------------------------------------------------
 
 (load* (resolve-file net.clp))
+(load* (resolve-file inventory.clp))
 (load* (resolve-file robots.clp))
 (load* (resolve-file orders.clp))
 (load* (resolve-file benchmark.clp))
