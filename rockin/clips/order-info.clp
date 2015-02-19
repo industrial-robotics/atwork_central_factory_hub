@@ -15,9 +15,8 @@
 
   (bind ?oi (pb-create "rockin_msgs.OrderInfo"))
 
-  (do-for-all-facts ((?order order)) TRUE
-    (bind ?o (net-create-Order ?order))
-    (pb-add-list ?oi "orders" ?o) ; destroys ?o
+  (foreach ?order ?self:orders
+    (pb-add-list ?oi "orders" (send ?order create-msg))
   )
 
   (return ?oi)
