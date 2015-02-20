@@ -8,9 +8,15 @@
 
 (deffunction benchmark-reset ()
   ; Remove all items from the inventory
+  (foreach ?item (send [inventory] get-items)
+    (unmake-instance ?item)
+  )
   (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
 
   ; Remove all orders from the order info
+  (foreach ?order (send [order-info] get-orders)
+    (unmake-instance ?order)
+  )
   (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
 )
 
