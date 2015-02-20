@@ -314,30 +314,6 @@
   (pb-destroy ?ri)
 )
 
-(deffunction net-create-ObjectIdentifier (?object-id)
-  "Create a ProtoBuf message of an ObjectIdentifier which is referenced by its
-   ID as specified in the ?object-id parameter"
-
-  (bind ?pb-object-identifier (pb-create "rockin_msgs.ObjectIdentifier"))
-
-  (do-for-fact ((?object object-identifier)) (eq ?object-id ?object:id)
-    (pb-set-field ?pb-object-identifier "type" ?object:type)
-    (pb-set-field ?pb-object-identifier "type_id" ?object:type-id)
-
-    ; Only set the instance id if it is available
-    (if (<> (length$ ?object:instance-id) 0) then
-      (pb-set-field ?pb-object-identifier "instance_id" ?object:instance-id)
-    )
-
-    ; Only set the description if it is available
-    (if (<> (length$ ?object:description) 0) then
-      (pb-set-field ?pb-object-identifier "description" ?object:description)
-    )
-  )
-
-  (return ?pb-object-identifier)
-)
-
 (defrule net-send-Inventory
   (time $?now)
   ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
