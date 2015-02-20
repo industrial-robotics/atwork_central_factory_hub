@@ -5,8 +5,8 @@
 ;---------------------------------------------------------------------------
 
 (defclass Item (is-a USER) (role concrete)
-  (slot object-id (type INTEGER))                           ; object-identifier
-  (multislot container-id (type INTEGER) (cardinality 0 1)) ; object-identifier
+  (slot object-id (type INSTANCE) (allowed-classes ObjectIdentifier))
+  (multislot container-id (type INSTANCE) (allowed-classes ObjectIdentifier) (cardinality 0 1))
   (multislot location-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot quantity (type INTEGER) (cardinality 0 1))
 )
@@ -17,7 +17,7 @@
   ; Instantiate a new item for the protobuf message
   (bind ?pb-item (pb-create "rockin_msgs.Inventory.Item"))
 
-  (pb-set-field ?pb-item "object" (net-create-ObjectIdentifier ?self:object-id))
+  (pb-set-field ?pb-item "object" (send ?self:object-id create-msg))
 
   ; Only set the location if it is available
   (if (<> (length$ ?self:location-id) 0) then
@@ -27,7 +27,8 @@
 
   ; Only set the container if it is available
   (if (<> (length$ ?self:container-id) 0) then
-    (pb-set-field ?pb-item "container" (net-create-ObjectIdentifier (nth$ 1 ?self:container-id)))
+    (bind ?container (nth$ 1 ?self:container-id))
+    (pb-set-field ?pb-item "container" (send ?container create-msg))
   )
 
   ; Only set the quantity if it is available

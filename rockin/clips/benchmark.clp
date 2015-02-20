@@ -169,18 +169,18 @@
     ; Assembly aid trays
     ;;;;;;;;;;;;;;;;;;;;
 
-    ; Assembly aid tray EM-01-02 (object-id 21) at shelf SH-08
-    (make-instance of Item (object-id 21) (location-id [shelf-08]))
+    ; Assembly aid tray EM-01-02 at shelf SH-08
+    (make-instance of Item (object-id [em-01-02]) (location-id [shelf-08]))
 
     ;;;;;;;;;;;;;;;
     ; Bearing boxes
     ;;;;;;;;;;;;;;;
 
-    ; 1 bearing box (object-id 1) at shelf SH-02
-    (make-instance of Item (object-id 1) (location-id [shelf-02]) (quantity 1))
+    ; 1 bearing box at shelf SH-02
+    (make-instance of Item (object-id [ax-01]) (location-id [shelf-02]) (quantity 1))
 
-    ; 1 bearing box (object-id 1) at shelf SH-20
-    (make-instance of Item (object-id 1) (location-id [shelf-20]) (quantity 1))
+    ; 1 bearing box at shelf SH-20
+    (make-instance of Item (object-id [ax-01]) (location-id [shelf-20]) (quantity 1))
   )
 
 
@@ -252,30 +252,30 @@
     ; Objects
     ;;;;;;;;;;
 
-    ; 1 bearing box AX-01 (object-id 1) at shelf SH-02
-    (make-instance of Item (object-id 1) (location-id [shelf-02]) (quantity 1))
+    ; 1 bearing box AX-01 at shelf SH-02
+    (make-instance of Item (object-id [ax-01]) (location-id [shelf-02]) (quantity 1))
 
-    ; 1 bearing AX-02 (object-id 2) at shelf SH-07
-    (make-instance of Item (object-id 2) (location-id [shelf-07]) (quantity 1))
+    ; 1 bearing AX-02 at shelf SH-07
+    (make-instance of Item (object-id [ax-02]) (location-id [shelf-07]) (quantity 1))
 
-    ; 1 axis AX-03 (object-id 3) at shelf SH-09
-    (make-instance of Item (object-id 3) (location-id [shelf-09]) (quantity 1))
+    ; 1 axis AX-03 at shelf SH-09
+    (make-instance of Item (object-id [ax-03]) (location-id [shelf-09]) (quantity 1))
 
-    ; 1 shaft nut AX-04 (object-id 4) at shelf SH-13
-    (make-instance of Item (object-id 4) (location-id [shelf-13]) (quantity 1))
+    ; 1 shaft nut AX-04 at shelf SH-13
+    (make-instance of Item (object-id [ax-04]) (location-id [shelf-13]) (quantity 1))
 
-    ; 1 distance tube AX-05 (object-id 5) at shelf SH-15
-    (make-instance of Item (object-id 5) (location-id [shelf-15]) (quantity 1))
+    ; 1 distance tube AX-05 at shelf SH-15
+    (make-instance of Item (object-id [ax-05]) (location-id [shelf-15]) (quantity 1))
 
-    ; 1 motor with gear box AX-09 (object-id 9) at shelf SH-21
-    (make-instance of Item (object-id 9) (location-id [shelf-21]) (quantity 1))
+    ; 1 motor with gear box AX-09 at shelf SH-21
+    (make-instance of Item (object-id [ax-09]) (location-id [shelf-21]) (quantity 1))
 
     ;;;;;;;;;;;;;;;;
     ; Foam container
     ;;;;;;;;;;;;;;;;
 
-    ; Foam container EM-03-01 (object-id 41) at shelf SH-01
-    (make-instance of Item (object-id 41) (location-id [shelf-01]) (quantity 1))
+    ; Foam container EM-03-01 at shelf SH-01
+    (make-instance of Item (object-id [em-03-01]) (location-id [shelf-01]) (quantity 1))
   )
 
 
