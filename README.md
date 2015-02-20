@@ -9,7 +9,7 @@ To install the RoCKIn referee box, please install the prerequisites of the LLSF 
 
 Additionally, the following debian packages need to be installed:
 
-    sudo apt-get install libssl-dev libelf-dev mongodb-dev mongodb-clients mongodb
+    sudo apt-get install libssl-dev libelf-dev mongodb-dev mongodb-clients mongodb libzmq
   
 ## Compiling the RoCKIn@Work Referee Box
 ### Cloning the Git repository:
