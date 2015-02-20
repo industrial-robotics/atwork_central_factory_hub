@@ -190,7 +190,7 @@
     (make-instance of Order (id 1) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
 
     ; Deliver container EM-01-02 (object-id 21) to location WS-01 (location-id 30)
-    (make-instance of Order (id 1) (status OFFERED) (object-id 21) (destination-id 30))
+    (make-instance of Order (id 2) (status OFFERED) (object-id 21) (destination-id 30))
   )
 )
 
@@ -226,7 +226,7 @@
   ; Orders
   (slot-insert$ [order-info] orders 1
     ; Deliver file-card box EM-02-02 (container-id 32) to workstation WS-05 (destination-id 34)
-    (make-instance of Order (id 1) (status OFFERED) (object-id 32) (destination-id 34))
+    (make-instance of Order (id  1) (status OFFERED) (object-id 32) (destination-id 34))
 
     ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-02 (container-id 32)
     (make-instance of Order (id  2) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
