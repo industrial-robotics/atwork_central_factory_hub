@@ -10,10 +10,8 @@
   ; Remove all items from the inventory
   (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
 
-  ; Retract all orders
-  (delayed-do-for-all-facts ((?o order)) TRUE
-    (retract ?o)
-  )
+  ; Remove all orders from the order info
+  (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
 )
 
 (defrule benchmark-update-benchmark-time
