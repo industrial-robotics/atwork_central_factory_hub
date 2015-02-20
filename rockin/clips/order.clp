@@ -7,8 +7,8 @@
 (defclass Order (is-a USER) (role concrete)
   (slot id (type INTEGER))
   (slot status (type SYMBOL) (allowed-values OFFERED TIMEOUT IN_PROGRESS PAUSED ABORTED FINISHED))
-  (slot object-id (type INTEGER))                             ; id of an object identifier
-  (multislot container-id (type INTEGER) (cardinality 0 1))   ; id of an object identifier
+  (slot object-id (type INSTANCE) (allowed-classes ObjectIdentifier))
+  (multislot container-id (type INSTANCE) (allowed-classes ObjectIdentifier) (cardinality 0 1))
   (slot quantity-delivered (type INTEGER) (default 0))
   (multislot quantity-requested (type INTEGER) (cardinality 0 1))
   (multislot destination-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
@@ -24,11 +24,11 @@
   (pb-set-field ?o "id" ?self:id)
   (pb-set-field ?o "status" ?self:status)
 
-  (bind ?oi (net-create-ObjectIdentifier ?self:object-id))
+  (bind ?oi (send ?self:object-id create-msg))
   (pb-set-field ?o "object" ?oi)  ; destroys ?oi
 
   (if (<> (length$ ?self:container-id) 0) then
-    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 ?self:container-id)))
+    (bind ?ci (send (nth$ 1 ?self:container-id) create-msg))
     (pb-set-field ?o "container" ?ci)  ; destroys ?ci
   )
 

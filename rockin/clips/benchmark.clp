@@ -186,11 +186,11 @@
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-    ; Deliver 2 items of AX-01 (object-id 1) to EM-01-02 (container-id 21)
-    (make-instance of Order (id 1) (status OFFERED) (object-id 1) (container-id 21) (quantity-requested 2))
+    ; Deliver 2 items of AX-01 to EM-01-02
+    (make-instance of Order (id 1) (status OFFERED) (object-id [ax-01]) (container-id [em-01-02]) (quantity-requested 2))
 
-    ; Deliver container EM-01-02 (object-id 21) to location WS-01
-    (make-instance of Order (id 2) (status OFFERED) (object-id 21) (destination-id [workstation-01]))
+    ; Deliver container EM-01-02 to location WS-01
+    (make-instance of Order (id 2) (status OFFERED) (object-id [em-01-02]) (destination-id [workstation-01]))
   )
 )
 
@@ -202,45 +202,45 @@
     ; Cover plates
     ;;;;;;;;;;;;;;
 
-    ; 5 cover plates with unknown state (object-id 15) on conveyor belt CB-01
-    (make-instance of Item (object-id 15) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id 15) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id 15) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id 15) (location-id [conveyor_belt-01]) (quantity 1))
+    ; 5 cover plates with unknown state on conveyor belt CB-01
+    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
+    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
+    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
+    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
 
     ;;;;;;;;;;;;;;;;;;;;;;
     ; Manipulation objects
     ;;;;;;;;;;;;;;;;;;;;;;
 
-    ; File-card box EM-02-02 (object-id 32) in shelf SH-14
-    (make-instance of Item (object-id 32) (location-id [shelf-14]) (quantity 1))
+    ; File-card box EM-02-02 in shelf SH-14
+    (make-instance of Item (object-id [em-02-02]) (location-id [shelf-14]) (quantity 1))
 
-    ; File-card box EM-02-02 (object-id 32) on robot
-    (make-instance of Item (object-id 32) (location-id [robot]) (quantity 1))
+    ; File-card box EM-02-02 on robot
+    (make-instance of Item (object-id [em-02-02]) (location-id [robot]) (quantity 1))
 
-    ; Common shelf container ER-02-04 (object-id 61) in location CB-01
-    (make-instance of Item (object-id 64) (location-id [conveyor_belt-01]) (quantity 1))
+    ; Common shelf container ER-02-04 in location CB-01
+    (make-instance of Item (object-id [er-02-04]) (location-id [conveyor_belt-01]) (quantity 1))
   )
 
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-    ; Deliver file-card box EM-02-02 (container-id 32) to workstation WS-05
-    (make-instance of Order (id  1) (status OFFERED) (object-id 32) (destination-id [workstation-05]))
+    ; Deliver file-card box EM-02-02 to workstation WS-05
+    (make-instance of Order (id  1) (status OFFERED) (object-id [em-02-02]) (destination-id [workstation-05]))
 
-    ; Deliver 5 machined cover plates AX-07 (object-id 7) into file-card box EM-02-02 (container-id 32)
-    (make-instance of Order (id  2) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (make-instance of Order (id  3) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (make-instance of Order (id  4) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (make-instance of Order (id  5) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
-    (make-instance of Order (id  6) (status OFFERED) (object-id 7) (container-id 32) (quantity-requested 1))
+    ; Deliver 5 machined cover plates AX-07 into file-card box EM-02-02
+    (make-instance of Order (id  2) (status OFFERED) (object-id [ax-07]) (container-id [em-02-02]) (quantity-requested 1))
+    (make-instance of Order (id  3) (status OFFERED) (object-id [ax-07]) (container-id [em-02-02]) (quantity-requested 1))
+    (make-instance of Order (id  4) (status OFFERED) (object-id [ax-07]) (container-id [em-02-02]) (quantity-requested 1))
+    (make-instance of Order (id  5) (status OFFERED) (object-id [ax-07]) (container-id [em-02-02]) (quantity-requested 1))
+    (make-instance of Order (id  6) (status OFFERED) (object-id [ax-07]) (container-id [em-02-02]) (quantity-requested 1))
 
-    ; Deliver 5 unusable cover plates AX-08 (object-id 8) into common shelf container ER-02-04 (container-id 64)
-    (make-instance of Order (id  7) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (make-instance of Order (id  8) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (make-instance of Order (id  9) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (make-instance of Order (id 10) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
-    (make-instance of Order (id 11) (status OFFERED) (object-id 8) (container-id 64) (quantity-requested 1))
+    ; Deliver 5 unusable cover plates AX-08 into common shelf container ER-02-04
+    (make-instance of Order (id  7) (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
+    (make-instance of Order (id  8) (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
+    (make-instance of Order (id  9) (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
+    (make-instance of Order (id 10) (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
+    (make-instance of Order (id 11) (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
   )
 )
 
@@ -281,26 +281,26 @@
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-    ; Deliver foam container EM-03-01 (object-id 41) to workstation WS-04
-    (make-instance of Order (id 1) (status OFFERED) (object-id 41) (destination-id [workstation-04]))
+    ; Deliver foam container EM-03-01 to workstation WS-04
+    (make-instance of Order (id 1) (status OFFERED) (object-id [em-03-01]) (destination-id [workstation-04]))
 
-    ; Deliver 1 bearing box AX-01 (object-id 1) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 2) (status OFFERED) (object-id 7) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 bearing box AX-01 into foam container EM-03-01
+    (make-instance of Order (id 2) (status OFFERED) (object-id [ax-01]) (container-id [em-03-01]) (quantity-requested 1))
 
-    ; Deliver 1 bearing AX-02 (object-id 2) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 3) (status OFFERED) (object-id 2) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 bearing AX-02 into foam container EM-03-01
+    (make-instance of Order (id 3) (status OFFERED) (object-id [ax-02]) (container-id [em-03-01]) (quantity-requested 1))
 
-    ; Deliver 1 axis AX-03 (object-id 3) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 4) (status OFFERED) (object-id 3) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 axis AX-03 into foam container EM-03-01
+    (make-instance of Order (id 4) (status OFFERED) (object-id [ax-03]) (container-id [em-03-01]) (quantity-requested 1))
 
-    ; Deliver 1 shaft nut AX-04 (object-id 4) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 5) (status OFFERED) (object-id 4) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 shaft nut AX-04 into foam container EM-03-01
+    (make-instance of Order (id 5) (status OFFERED) (object-id [ax-04]) (container-id [em-03-01]) (quantity-requested 1))
 
-    ; Deliver 1 distance tube AX-05 (object-id 5) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 6) (status OFFERED) (object-id 5) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 distance tube AX-05 into foam container EM-03-01
+    (make-instance of Order (id 6) (status OFFERED) (object-id [ax-05]) (container-id [em-03-01]) (quantity-requested 1))
 
-    ; Deliver 1 motor with gear box AX-09 (object-id 9) into foam container EM-03-01 (container-id 41)
-    (make-instance of Order (id 7) (status OFFERED) (object-id 9) (container-id 41) (quantity-requested 1))
+    ; Deliver 1 motor with gear box AX-09 into foam container EM-03-01
+    (make-instance of Order (id 7) (status OFFERED) (object-id [ax-09]) (container-id [em-03-01]) (quantity-requested 1))
   )
 )
 
