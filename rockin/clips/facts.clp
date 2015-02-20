@@ -111,17 +111,6 @@
   (multislot description (type STRING) (cardinality 0 1))
 )
 
-(deftemplate location-identifier
-  ; identifier which is used in CLIPS only
-  (slot id (type INTEGER))
-
-  ; a location id, such as SHELF-01 consists of *type* and *instance-id*
-  (slot type (type SYMBOL) (allowed-values SH WS CB ROBOT))
-  (slot instance-id (type INTEGER))
-
-  (multislot description (type STRING) (cardinality 0 1))
-)
-
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
@@ -147,52 +136,6 @@
 
 
 (deffacts inventory
-  ;;;;;;;;;;;
-  ; Locations
-  ;;;;;;;;;;;
-
-  ; Shelves
-  (location-identifier (id  1) (type SH) (instance-id  1) (description "SHELF-01"))
-  (location-identifier (id  2) (type SH) (instance-id  2) (description "SHELF-02"))
-  (location-identifier (id  3) (type SH) (instance-id  3) (description "SHELF-03"))
-  (location-identifier (id  4) (type SH) (instance-id  4) (description "SHELF-04"))
-  (location-identifier (id  5) (type SH) (instance-id  5) (description "SHELF-05"))
-  (location-identifier (id  6) (type SH) (instance-id  6) (description "SHELF-06"))
-  (location-identifier (id  7) (type SH) (instance-id  7) (description "SHELF-07"))
-  (location-identifier (id  8) (type SH) (instance-id  8) (description "SHELF-08"))
-  (location-identifier (id  9) (type SH) (instance-id  9) (description "SHELF-09"))
-  (location-identifier (id 10) (type SH) (instance-id 10) (description "SHELF-10"))
-  (location-identifier (id 11) (type SH) (instance-id 11) (description "SHELF-11"))
-  (location-identifier (id 12) (type SH) (instance-id 12) (description "SHELF-12"))
-  (location-identifier (id 13) (type SH) (instance-id 13) (description "SHELF-13"))
-  (location-identifier (id 14) (type SH) (instance-id 14) (description "SHELF-14"))
-  (location-identifier (id 15) (type SH) (instance-id 15) (description "SHELF-15"))
-  (location-identifier (id 16) (type SH) (instance-id 16) (description "SHELF-16"))
-  (location-identifier (id 17) (type SH) (instance-id 17) (description "SHELF-17"))
-  (location-identifier (id 18) (type SH) (instance-id 18) (description "SHELF-18"))
-  (location-identifier (id 19) (type SH) (instance-id 19) (description "SHELF-19"))
-  (location-identifier (id 20) (type SH) (instance-id 20) (description "SHELF-20"))
-  (location-identifier (id 21) (type SH) (instance-id 21) (description "SHELF-21"))
-  (location-identifier (id 22) (type SH) (instance-id 22) (description "SHELF-22"))
-  (location-identifier (id 23) (type SH) (instance-id 23) (description "SHELF-23"))
-  (location-identifier (id 24) (type SH) (instance-id 24) (description "SHELF-24"))
-
-  ; Workstations
-  (location-identifier (id 30) (type WS) (instance-id 1) (description "WORKSTATION-01"))
-  (location-identifier (id 31) (type WS) (instance-id 2) (description "WORKSTATION-02"))
-  (location-identifier (id 32) (type WS) (instance-id 3) (description "WORKSTATION-03"))
-  (location-identifier (id 33) (type WS) (instance-id 4) (description "WORKSTATION-04"))
-  (location-identifier (id 34) (type WS) (instance-id 5) (description "WORKSTATION-05"))
-  (location-identifier (id 35) (type WS) (instance-id 6) (description "WORKSTATION-06"))
-  (location-identifier (id 36) (type WS) (instance-id 7) (description "WORKSTATION-07"))
-
-  ; Conveyor belt
-  (location-identifier (id 40) (type CB) (instance-id 1) (description "CONVEYOR_BELT-01"))
-
-  ; Robot
-  (location-identifier (id 50) (type ROBOT) (instance-id 1) (description "ROBOT"))
-
-
   ;;;;;;;;;;;;;;;;;;;;
   ; Object identifiers
   ;;;;;;;;;;;;;;;;;;;;

@@ -338,25 +338,6 @@
   (return ?pb-object-identifier)
 )
 
-(deffunction net-create-LocationIdentifier (?location-id)
-  "Create a ProtoBuf message of a LocationIdentifier which is referenced by its
-   ID as specified in the ?location-id parameter"
-
-  (bind ?pb-location-identifier (pb-create "rockin_msgs.LocationIdentifier"))
-
-  (do-for-fact ((?location location-identifier)) (eq ?location-id ?location:id)
-    (pb-set-field ?pb-location-identifier "type" ?location:type)
-    (pb-set-field ?pb-location-identifier "instance_id" ?location:instance-id)
-
-    ; Only set the description if it is available
-    (if (<> (length$ ?location:description) 0) then
-      (pb-set-field ?pb-location-identifier "description" ?location:description)
-    )
-  )
-
-  (return ?pb-location-identifier)
-)
-
 (defrule net-send-Inventory
   (time $?now)
   ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
