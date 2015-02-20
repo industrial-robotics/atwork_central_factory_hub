@@ -11,8 +11,8 @@
   (multislot container-id (type INTEGER) (cardinality 0 1))   ; id of an object identifier
   (slot quantity-delivered (type INTEGER) (default 0))
   (multislot quantity-requested (type INTEGER) (cardinality 0 1))
-  (multislot destination-id (type INTEGER) (cardinality 0 1))  ; id of a location identifier
-  (multislot source-id (type INTEGER) (cardinality 0 1))       ; id of a location identifier
+  (multislot destination-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
+  (multislot source-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot processing-team (type STRING) (cardinality 0 1))
 )
 
@@ -39,12 +39,12 @@
   )
 
   (if (<> (length$ ?self:destination-id) 0) then
-    (bind ?li (net-create-LocationIdentifier (nth$ 1 ?self:destination-id)))
+    (bind ?li (send (nth$ 1 ?self:destination-id) create-msg))
     (pb-set-field ?o "destination" ?li) ; destroys ?li
   )
 
   (if (<> (length$ ?self:source-id) 0) then
-    (bind ?si (net-create-LocationIdentifier (nth$ 1 ?self:source-id)))
+    (bind ?si (send (nth$ 1 ?self:source-id) create-msg))
     (pb-set-field ?o "source" ?si) ; destroys ?si
   )
 
