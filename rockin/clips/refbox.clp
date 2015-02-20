@@ -11,5 +11,4 @@
 (load* (resolve-file order.clp))
 (load* (resolve-file order-info.clp))
 (load* (resolve-file robots.clp))
-(load* (resolve-file orders.clp))
 (load* (resolve-file benchmark.clp))

@@ -41,18 +41,6 @@
   (slot time (type INTEGER) (default 5))
 )
 
-(deftemplate order
-  (slot id (type INTEGER))
-  (slot status (type SYMBOL) (allowed-values OFFERED TIMEOUT IN_PROGRESS PAUSED ABORTED FINISHED))
-  (slot object-id (type INTEGER))                             ; id of an object identifier
-  (multislot container-id (type INTEGER) (cardinality 0 1))   ; id of an object identifier
-  (slot quantity-delivered (type INTEGER) (default 0))
-  (multislot quantity-requested (type INTEGER) (cardinality 0 1))
-  (multislot destination-id (type INTEGER) (cardinality 0 1))  ; id of a location identifier
-  (multislot source-id (type INTEGER) (cardinality 0 1))       ; id of a location identifier
-  (multislot processing-team (type STRING) (cardinality 0 1))
-)
-
 (deftemplate benchmark-phase
   (slot id (type INTEGER))
   (slot type (type SYMBOL) (allowed-values NONE TBM FBM))  ; No benchmark running, task benchmark, functionality benchmark
