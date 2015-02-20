@@ -6,6 +6,7 @@
 
 (load* (resolve-file net.clp))
 (load* (resolve-file location.clp))
+(load* (resolve-file object-identifier.clp))
 (load* (resolve-file item.clp))
 (load* (resolve-file inventory.clp))
 (load* (resolve-file order.clp))
