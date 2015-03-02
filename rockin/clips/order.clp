@@ -5,6 +5,8 @@
 ;---------------------------------------------------------------------------
 
 (defclass Order (is-a USER) (role concrete)
+  (slot next-id (type INTEGER) (storage shared) (default 0))
+
   (slot id (type INTEGER))
   (slot status (type SYMBOL) (allowed-values OFFERED TIMEOUT IN_PROGRESS PAUSED ABORTED FINISHED))
   (slot object-id (type INSTANCE) (allowed-classes ObjectIdentifier))
@@ -14,6 +16,14 @@
   (multislot destination-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot source-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot processing-team (type STRING) (cardinality 0 1))
+)
+
+(defmessage-handler Order init ()
+  ; first, initialize the other slots
+  (call-next-handler)
+
+  ; then, overwrite the id slot from the class variable and increase the next id
+  (modify-instance ?self (id ?self:next-id) (next-id (+ ?self:next-id 1)))
 )
 
 (defmessage-handler Order create-msg ()
@@ -53,4 +63,13 @@
   )
 
   (return ?o)
+)
+
+
+; When all instances of a class are deleted, the shared slots are reset.
+; Prevent this by creating a dummy order, which does not get deleted.
+(defrule make-dummy-order
+  (init)
+  =>
+  (make-instance [dummy] of Order)
 )
