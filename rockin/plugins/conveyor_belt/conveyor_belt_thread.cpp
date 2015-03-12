@@ -31,7 +31,7 @@
 
 /** Constructor. */
 ConveyorBeltThread::ConveyorBeltThread() :
-        Thread("ConveyorBeltThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("127.0.0.1")
+        Thread("ConveyorBeltThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("eth0")
 {
 }
 
