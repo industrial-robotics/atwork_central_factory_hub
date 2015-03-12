@@ -59,9 +59,10 @@ void QualityControlCameraThread::init()
             {
                 host_ip_address = config->get_string("/llsfrb/quality-control-camera/host");
                 host_service_port = "tcp://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/quality-control-camera/service_port"));
-                host_status_port = "tcp://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/quality-control-camera/status_port"));
+                host_status_port = "epgm://eth0:" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/quality-control-camera/status_port"));
 
                 zmq_context_ = new zmq::context_t(1);
+                int msg_limit = 1;
 
                 // add publisher to send status messages
                 logger->log_info("QualityControlCamera", "Connecting to the service port: %s", host_service_port.c_str());
@@ -72,6 +73,7 @@ void QualityControlCameraThread::init()
                 logger->log_info("QualityControlCamera", "Connecting to the status port: %s", host_status_port.c_str());
                 zmq_subscriber_ = new zmq::socket_t(*zmq_context_, ZMQ_SUB);
                 zmq_subscriber_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+                zmq_subscriber_->setsockopt(ZMQ_CONFLATE, &msg_limit, sizeof(msg_limit));
                 zmq_subscriber_->connect(host_status_port.c_str());
             }
         }
