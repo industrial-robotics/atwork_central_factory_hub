@@ -108,3 +108,33 @@ message SetBenchmarkPhase {
   // The new desired phase
   required BenchmarkPhase phase = 1;
 }
+
+
+// Message to control the benchmark state machine by requesting transitions
+message SetBenchmarkTransitionEvent {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 103;
+  }
+
+  enum Event {
+    // Transition from any state to STOPPED state and re-initialize the
+    // benchmark phase (e.g. after setting a new benchmark phase)
+    RESET = 0;
+
+    // Transition from STOPPED to RUNNING state
+    START = 1;
+
+    // Transition from RUNNING to STOPPED state
+    STOP = 2;
+
+    // Transition from RUNNING to PAUSED state
+    PAUSE = 3;
+
+    // Transition from PAUSED to RUNNING state
+    CONTINUE = 4;
+  }
+
+  // The requested transition
+  required Event event = 1;
+}
