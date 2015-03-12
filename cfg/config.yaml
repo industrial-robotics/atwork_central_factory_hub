@@ -13,7 +13,7 @@ llsfrb:
 
   conveyor-belt:
     enable: false
-    host: !ipv4 192.168.1.101
+    host: !ipv4 eth0
     command_port: !tcp-port 55502
     status_port: !tcp-port 55501
 
@@ -25,7 +25,7 @@ llsfrb:
 
   drilling-machine:
     enable: false
-    host: !ipv4 192.168.1.103
+    host: !ipv4 eth0
     command_port: !tcp-port 55512
     status_port: !tcp-port 55511
 
