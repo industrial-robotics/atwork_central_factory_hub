@@ -28,6 +28,12 @@ llsfrb:
     host: !ipv4 eth0
     command_port: !tcp-port 55512
     status_port: !tcp-port 55511
+    
+  force-fitting-machine:
+    enable: false
+    host: !ipv4 eth0
+    command_port: !tcp-port 55532
+    status_port: !tcp-port 55531
 
   clips:
     dir: "@BASEDIR@/rockin/clips"
