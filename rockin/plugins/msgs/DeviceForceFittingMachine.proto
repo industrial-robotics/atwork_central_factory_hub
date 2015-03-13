@@ -1,0 +1,25 @@
+message ForceFittingMachineCommand
+{
+	enum Command
+	{
+		MOVE_DOWN = 0;
+		MOVE_UP = 1;
+	}
+
+	required Command command = 1;
+}
+
+message ForceFittingMachineStatus
+{
+	enum State
+	{
+		AT_TOP = 0;
+		AT_BOTTOM = 1;
+		MOVING_UP = 2;
+		MOVING_DOWN = 3;
+		UNKNOWN = 4;
+	}
+
+	required bool is_device_connected = 1;
+	optional State state = 2;
+}
