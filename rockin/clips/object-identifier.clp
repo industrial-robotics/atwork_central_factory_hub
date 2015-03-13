@@ -71,6 +71,21 @@
   ; Bearing box type B (class)
   (make-instance [ax-16] of ObjectIdentifier (type AX) (type-id 16) (description "AX-16"))
 
+  ; Assembly aid tray (class)
+  (make-instance [em-01] of ObjectIdentifier (type EM) (type-id 1) (description "EM-01"))
+
+  ; File card box (class)
+  (make-instance [em-02] of ObjectIdentifier (type EM) (type-id 2) (description "EM-02"))
+
+  ; Foam container (class)
+  (make-instance [em-03] of ObjectIdentifier (type EM) (type-id 3) (description "EM-03"))
+
+  ; Tray rack (class)
+  (make-instance [er-01] of ObjectIdentifier (type ER) (type-id 1) (description "ER-01"))
+
+  ; Common shelf container (class)
+  (make-instance [er-02] of ObjectIdentifier (type ER) (type-id 2) (description "ER-02"))
+
 
   ; Assembly aid trays (instances)
   (make-instance [em-01-01] of ObjectIdentifier (type EM) (type-id 1) (instance-id 1) (description "EM-01-01"))
