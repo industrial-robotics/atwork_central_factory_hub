@@ -159,7 +159,7 @@
                 "@" ?from-port ")"))))
   )
 
-  (if (and (eq ?team "LLSF") (eq ?name "RefBox"))
+  (if (and (eq ?team "RoCKIn") (eq ?name "RefBox"))
    then
     (printout warn "Detected another RefBox at " ?from-host ":" ?from-port crlf)
     (assert (attention-message (text (str-cat "Detected another RefBox at "
