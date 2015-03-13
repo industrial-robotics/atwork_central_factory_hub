@@ -30,9 +30,15 @@
 
 
 
+(defclass FbmStoppedState (is-a StoppedState))
+
+(defmessage-handler FbmStoppedState on-enter (?prev-state)
+  (select-random-object)
+)
+
 (deffunction functionality-benchmarks-fbm1-init ()
   (make-instance [init-state] of InitState)
-  (make-instance [stopped-state] of StoppedState)
+  (make-instance [stopped-state] of FbmStoppedState)
   (make-instance [running-state] of RunningState)
   (make-instance [paused-state] of PausedState)
   (make-instance [check-runs-state] of CheckRunsState (max-runs *FBM1-COUNT*))
@@ -61,7 +67,7 @@
 
 (deffunction functionality-benchmarks-fbm2-init ()
   (make-instance [init-state] of InitState)
-  (make-instance [stopped-state] of StoppedState)
+  (make-instance [stopped-state] of FbmStoppedState)
   (make-instance [running-state] of RunningState)
   (make-instance [paused-state] of PausedState)
   (make-instance [check-runs-state] of CheckRunsState (max-runs *FBM2-COUNT*))
