@@ -66,11 +66,6 @@
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
-(deftemplate benchmark-object
-  (slot object-id (type INTEGER))     ; identifier of an object
-  (slot benchmark-id (type INTEGER))  ; identifier in the benchmarking system
-)
-
 (deftemplate benchmark-feedback
   (slot source (type SYMBOL))
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
@@ -132,28 +127,4 @@
   (benchmark-phase (id 5) (type FBM)  (type-id 2) (description "Visual Servoing Functionality"))
 
   (benchmark-state)
-)
-
-
-(deffacts fbm-objects
-  ; AX-01
-  (benchmark-object (object-id 1) (benchmark-id 4))
-
-  ; AX-16
-  (benchmark-object (object-id 16) (benchmark-id 3))
-
-  ; AX-02
-  (benchmark-object (object-id 2) (benchmark-id 6))
-
-  ; AX-03
-  (benchmark-object (object-id 3) (benchmark-id 5))
-
-  ; AX-09
-  (benchmark-object (object-id 9) (benchmark-id 7))
-
-  ; EM-01
-  (benchmark-object (object-id 20) (benchmark-id 1))
-
-  ; EM-02
-  (benchmark-object (object-id 31) (benchmark-id 2))
 )
