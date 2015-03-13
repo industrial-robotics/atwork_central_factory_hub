@@ -63,6 +63,8 @@
     (current-state [init-state])
     (states [init-state] [stopped-state] [running-state] [paused-state] [check-runs-state] [finished-state])
   )
+
+  (send [sm] process-event VALID_BENCHMARK)
 )
 
 (deffunction functionality-benchmarks-fbm2-init ()
@@ -92,5 +94,7 @@
     (current-state [init-state])
     (states [init-state] [stopped-state] [running-state] [paused-state] [check-runs-state] [finished-state])
   )
+
+  (send [sm] process-event VALID_BENCHMARK)
 )
 
