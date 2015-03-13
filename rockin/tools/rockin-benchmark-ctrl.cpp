@@ -78,17 +78,19 @@ void handle_connected()
 
 int main(int argc, char **argv)
 {
-  ArgumentParser argp(argc, argv, "s:p:");
+  ArgumentParser argp(argc, argv, "s:p:e:");
 
-  if (argp.num_items() > 3) {
-    std::cout << "Usage: " << argv[0] << " [-s <state>]  [-p <phase>]" << std::endl;
+  if (argp.num_items() > 4) {
+    std::cout << "Usage: " << argv[0] << " [-s <state>]  [-p <phase>]  [-e <event>]" << std::endl;
     exit(1);
   }
 
   bool has_state = false;
   bool has_phase = false;
+  bool has_event = false;
   std::string state = "";
   std::string phase = "";
+  std::string event = "";
 
   if (argp.has_arg("s")) {
     state = argp.arg("s");
@@ -100,6 +102,12 @@ int main(int argc, char **argv)
     phase = argp.arg("p");
     has_phase = true;
     std::transform(phase.begin(), phase.end(), phase.begin(), ::tolower);
+  }
+
+  if (argp.has_arg("e")) {
+    event = argp.arg("e");
+    has_event = true;
+    std::transform(event.begin(), event.end(), event.begin(), ::tolower);
   }
 
   llsfrb::YamlConfiguration config(CONFDIR);
@@ -127,6 +135,19 @@ int main(int argc, char **argv)
       else if (state == "paused") cmd.set_state(rockin_msgs::BenchmarkState::PAUSED);
       else if (state == "finished") cmd.set_state(rockin_msgs::BenchmarkState::FINISHED);
       else break;
+
+      client.send(cmd);
+      quit_ = true;
+    }
+
+    if (has_event) {
+      rockin_msgs::SetBenchmarkTransitionEvent cmd;
+
+      if (event == "reset") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::RESET);
+      if (event == "start") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
+      if (event == "stop") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::STOP);
+      if (event == "pause") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::PAUSE);
+      if (event == "continue") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::CONTINUE);
 
       client.send(cmd);
       quit_ = true;
