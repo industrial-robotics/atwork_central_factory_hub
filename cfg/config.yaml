@@ -3,7 +3,7 @@
 # Main configuration document
 
 llsfrb:
-  plugins: "drilling_machine,conveyor_belt,quality_control_camera"
+  plugins: "drilling_machine,conveyor_belt,quality_control_camera,force_fitting_machine"
 
   log:
     level: info
