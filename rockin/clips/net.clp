@@ -184,22 +184,6 @@
   (pb-destroy ?attmsg)
 )
 
-(defrule net-recv-SetBenchmarkState
-  ?sf <- (benchmark-state (state ?state))
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p) (rcvd-via STREAM))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-  (modify ?sf (state (sym-cat (pb-field-value ?p "state"))) (prev-state ?state))
-)
-
-(defrule net-recv-SetBenchmarkState-illegal
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p)
-           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-  (printout warn "Illegal SetBenchmarkState message received from host " ?host crlf)
-)
-
 (defrule net-recv-SetBenchmarkPhase
   ?sf <- (benchmark-state (phase-id ?phase-id))
   ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
