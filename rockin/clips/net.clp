@@ -247,6 +247,14 @@
   )
 )
 
+(defrule net-recv-SetBenchmarkTransitionEvent-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkTransitionEvent") (ptr ?p)
+           (rcvd-via BROADCAST) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+  (printout warn "Illegal SetBenchmarkTransitionEvent message received from host " ?host crlf)
+)
+
 (deffunction net-create-BenchmarkState (?bs)
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
