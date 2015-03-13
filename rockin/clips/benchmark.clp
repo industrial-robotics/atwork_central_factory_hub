@@ -136,14 +136,15 @@
 (defrule benchmark-fbm-loop
   ?ro <- (benchmark-run-over)
   (benchmark-phase (id ?phase) (type FBM))
-  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING)
+  ?bs <- (benchmark-state (phase-id ?phase) (state RUNNING) (benchmark-time ?time)
            (max-runs ?max-runs) (run ?run&:(< ?run ?max-runs)))
   =>
   (retract ?ro)   ; Reset for the next run
-  (modify ?bs (state PAUSED) (prev-state RUNNING) (end-time (now)) (run (+ ?run 1)) (benchmark-time 0.0))
 
-  (printout t "FBM: Run " ?run " over" crlf)
-  (assert (attention-message (text (str-cat "FBM: Run " ?run " over")) (time 15)))
+  (printout t "FBM: Run " ?run " over after " ?time " seconds" crlf)
+  (assert (attention-message (text (str-cat "FBM: Run " ?run " over after " ?time " seconds")) (time 15)))
+
+  (modify ?bs (state PAUSED) (prev-state RUNNING) (end-time (now)) (run (+ ?run 1)) (benchmark-time 0.0))
 )
 
 ; All runs over, so finish
