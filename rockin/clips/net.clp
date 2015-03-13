@@ -225,6 +225,28 @@
   (printout warn "Illegal SetBenchmarkPhase message received from host " ?host crlf)
 )
 
+(defrule net-recv-SetBenchmarkTransitionEvent
+  ?sf <- (benchmark-state (phase-id ?phase-id))
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkTransitionEvent") (ptr ?p)
+           (rcvd-via STREAM) (rcvd-from ?host ?port))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (bind ?pb-event (pb-field-value ?p "event"))
+
+  (if (eq ?pb-event RESET) then
+    (do-for-fact ((?phase benchmark-phase)) (eq ?phase:id ?phase-id)
+      (if (and (eq ?phase:type FBM) (eq ?phase:type-id 1)) then (functionality-benchmarks-fbm1-init))
+      (if (and (eq ?phase:type FBM) (eq ?phase:type-id 2)) then (functionality-benchmarks-fbm2-init))
+      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 1)) then (task-benchmarks-tbm1-init))
+      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 2)) then (task-benchmarks-tbm2-init))
+      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 3)) then (task-benchmarks-tbm3-init))
+    )
+  else
+    (send [sm] process-event ?pb-event)
+  )
+)
+
 (deffunction net-create-BenchmarkState (?bs)
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
