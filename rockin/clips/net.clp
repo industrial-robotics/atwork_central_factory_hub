@@ -273,7 +273,10 @@
     (pb-add-list ?benchmarkstate "known_teams" ?team:name)
   )
 
-  (pb-set-field ?benchmarkstate "state" (fact-slot-value ?bs state))
+  ; Set the benchmark state (e.g. PAUSED or RUNNING) based on the state machine
+  (bind ?current-state (send [sm] get-current-state))
+  (bind ?robot-state (send ?current-state to-robot-state))
+  (pb-set-field ?benchmarkstate "state" ?robot-state)
 
   (return ?benchmarkstate)
 )
