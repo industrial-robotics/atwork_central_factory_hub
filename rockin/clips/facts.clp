@@ -48,16 +48,6 @@
   (slot description (type STRING))
 )
 
-(deftemplate benchmark-state
-  (slot refbox-mode (type SYMBOL) (allowed-values STANDALONE) (default STANDALONE))
-  (slot state (type SYMBOL) (allowed-values INIT RUNNING PAUSED FINISHED) (default INIT))
-  (slot prev-state (type SYMBOL) (allowed-values INIT RUNNING PAUSED FINISHED) (default INIT))
-  (slot phase-id (type INTEGER) (default 0))        ; identifier of a phase
-  (slot prev-phase-id (type INTEGER) (default 0))   ; identifier of a phase
-
-  (slot max-time (type FLOAT) (default 0.0))
-)
-
 (deftemplate benchmark-feedback
   (slot source (type SYMBOL))
   (multislot time (type INTEGER) (cardinality 2 2) (default (create$ 0 0)))
