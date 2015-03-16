@@ -31,6 +31,10 @@
 (defclass Benchmark (is-a USER)
   (slot current-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
   (slot requested-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
+
+  ; cardinality 2: sec msec
+  (multislot start-time (type INTEGER) (cardinality 2 2) (default 0 0))
+  (multislot end-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
 
 (defmessage-handler Benchmark switch-phase ()

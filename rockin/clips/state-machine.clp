@@ -97,10 +97,7 @@
   (assert (attention-message (text "Starting benchmark") (time 15)))
 
   ; reset the start time of the benchmark
-  (bind ?now (now))
-  (do-for-all-facts ((?bs benchmark-state)) TRUE
-    (modify ?bs (start-time ?now))
-  )
+  (send [benchmark] put-start-time (now))
 )
 
 (defmessage-handler StoppedState to-robot-state ()
@@ -145,11 +142,13 @@
 
 
 (defmessage-handler CheckRunsState on-enter (?prev-state)
+  (send [benchmark] put-end-time (now))
+
   (do-for-fact ((?bs benchmark-state)) TRUE
     (printout t "Run " ?self:run " over after " ?bs:time " seconds" crlf)
     (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?bs:time " seconds")) (time 15)))
 
-    (modify ?bs (end-time (now)) (run (+ ?self:run 1)) (benchmark-time 0.0))
+    (modify ?bs (run (+ ?self:run 1)) (benchmark-time 0.0))
   )
 )
 
