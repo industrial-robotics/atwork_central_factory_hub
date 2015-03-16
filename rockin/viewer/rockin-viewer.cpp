@@ -134,6 +134,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
 bool idle_handler() {
   if ((std::chrono::system_clock::now() - last_gui_update) < std::chrono::milliseconds(100)) {
+    usleep(10000);
     return true;
   }
   last_gui_update = std::chrono::system_clock::now();
