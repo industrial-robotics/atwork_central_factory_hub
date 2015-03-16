@@ -228,7 +228,7 @@
   (printout warn "Illegal SetBenchmarkTransitionEvent message received from host " ?host crlf)
 )
 
-(deffunction net-create-BenchmarkState (?bs)
+(deffunction net-create-BenchmarkState ()
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
 
@@ -260,12 +260,11 @@
 
 (defrule net-send-BenchmarkState
   (time $?now)
-  ?bs <- (benchmark-state (refbox-mode ?refbox-mode))
   ?f <- (signal (type benchmark-state) (time $?t&:(timeout ?now ?t ?*BENCHMARKSTATE-PERIOD*)) (seq ?seq))
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
-  (bind ?benchmark-state (net-create-BenchmarkState ?bs))
+  (bind ?benchmark-state (net-create-BenchmarkState))
 
   (pb-broadcast ?peer-id-public ?benchmark-state)
 
