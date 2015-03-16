@@ -123,7 +123,7 @@ message SetBenchmarkTransitionEvent {
     // benchmark phase (e.g. after setting a new benchmark phase)
     RESET = 0;
 
-    // Transition from STOPPED to RUNNING state
+    // Transition from STOPPED or PAUSED to RUNNING state
     START = 1;
 
     // Transition from RUNNING to STOPPED state
@@ -131,9 +131,6 @@ message SetBenchmarkTransitionEvent {
 
     // Transition from RUNNING to PAUSED state
     PAUSE = 3;
-
-    // Transition from PAUSED to RUNNING state
-    CONTINUE = 4;
   }
 
   // The requested transition

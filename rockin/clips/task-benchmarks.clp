@@ -15,7 +15,7 @@
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [finished-state])
   (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition CONTINUE        [running-state])
+  (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
   (make-instance [sm] of StateMachine
@@ -69,7 +69,7 @@
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [finished-state])
   (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition CONTINUE        [running-state])
+  (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
   (make-instance [sm] of StateMachine
@@ -140,7 +140,7 @@
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [finished-state])
   (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition CONTINUE        [running-state])
+  (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
   (make-instance [sm] of StateMachine

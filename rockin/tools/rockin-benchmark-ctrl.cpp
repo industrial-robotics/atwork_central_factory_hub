@@ -148,7 +148,6 @@ int main(int argc, char **argv)
       if (event == "start") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
       if (event == "stop") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::STOP);
       if (event == "pause") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::PAUSE);
-      if (event == "continue") cmd.set_event(rockin_msgs::SetBenchmarkTransitionEvent::CONTINUE);
 
       client.send(cmd);
       quit_ = true;
