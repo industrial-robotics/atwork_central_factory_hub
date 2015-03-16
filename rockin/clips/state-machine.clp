@@ -62,6 +62,8 @@
 (defclass InitState (is-a State) (role concrete))
 (defclass StoppedState (is-a State) (role concrete))
 (defclass RunningState (is-a State) (role concrete)
+  (slot max-time (type FLOAT) (default 0.0))
+
   ; cardinality 2: sec msec
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
 )
@@ -118,6 +120,11 @@
   (bind ?benchmark-time (send [benchmark] get-benchmark-time))
   (send [benchmark] put-benchmark-time (+ ?benchmark-time ?timediff))
   (bind ?self:last-time ?now)
+
+  ; check if the time is up
+  (if (>= ?benchmark-time ?self:max-time) then
+    (send [sm] process-event TIMEOUT)
+  )
 )
 
 (defmessage-handler RunningState to-robot-state ()
