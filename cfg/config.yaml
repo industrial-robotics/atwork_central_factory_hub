@@ -39,7 +39,7 @@ llsfrb:
     # debug levels: 0 ~ none, 1 ~ minimal, 2 ~ more, 3 ~ maximum
     debug-level: 2
     unwatch-facts: [time, signal, benchmark-state]
-    unwatch-rules: [retract-time, benchmark-update-last-time,
+    unwatch-rules: [retract-time,
                     net-send-beacon, net-send-BenchmarkState, net-send-OrderInfo,
                     net-send-Inventory, net-send-VersionInfo,
                     net-send-DrillingMachineStatus, net-send-ConveyorBeltStatus]
