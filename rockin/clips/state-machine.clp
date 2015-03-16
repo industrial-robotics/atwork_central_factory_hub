@@ -114,11 +114,10 @@
 (defmessage-handler RunningState on-update ()
   ; continuously update the benchmark time
   (bind ?now (now))
-  (do-for-all-facts ((?bs benchmark-state)) TRUE
-    (bind ?timediff (time-diff-sec ?now ?self:last-time))
-    (modify ?bs (benchmark-time (+ ?bs:benchmark-time ?timediff)))
-    (bind ?self:last-time ?now)
-  )
+  (bind ?timediff (time-diff-sec ?now ?self:last-time))
+  (bind ?benchmark-time (send [benchmark] get-benchmark-time))
+  (send [benchmark] put-benchmark-time (+ ?benchmark-time ?timediff))
+  (bind ?self:last-time ?now)
 )
 
 (defmessage-handler RunningState to-robot-state ()
@@ -145,12 +144,11 @@
   (send [benchmark] put-end-time (now))
   (bind ?self:run (+ ?self:run 1))
 
-  (do-for-fact ((?bs benchmark-state)) TRUE
-    (printout t "Run " ?self:run " over after " ?bs:time " seconds" crlf)
-    (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?bs:time " seconds")) (time 15)))
+  (bind ?time (send [benchmark] get-benchmark-time))
+  (printout t "Run " ?self:run " over after " ?time " seconds" crlf)
+  (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?time " seconds")) (time 15)))
 
-    (modify ?bs (benchmark-time 0.0))
-  )
+  (send [benchmark] put-benchmark-time 0.0)
 )
 
 (defmessage-handler CheckRunsState on-update ()

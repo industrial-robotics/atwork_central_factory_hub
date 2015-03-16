@@ -31,6 +31,7 @@
 (defclass Benchmark (is-a USER)
   (slot current-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
   (slot requested-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
+  (slot benchmark-time (type FLOAT) (default 0.0))
 
   ; cardinality 2: sec msec
   (multislot start-time (type INTEGER) (cardinality 2 2) (default 0 0))

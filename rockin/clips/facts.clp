@@ -54,7 +54,6 @@
   (slot prev-state (type SYMBOL) (allowed-values INIT RUNNING PAUSED FINISHED) (default INIT))
   (slot phase-id (type INTEGER) (default 0))        ; identifier of a phase
   (slot prev-phase-id (type INTEGER) (default 0))   ; identifier of a phase
-  (slot benchmark-time (type FLOAT) (default 0.0))
 
   (slot max-time (type FLOAT) (default 0.0))
 )

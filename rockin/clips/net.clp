@@ -234,7 +234,7 @@
 
   ; Set the benchmark time (in seconds)
   (if (eq (type ?benchmarkstate-time) EXTERNAL-ADDRESS) then
-    (bind ?gt (time-from-sec (fact-slot-value ?bs benchmark-time)))
+    (bind ?gt (time-from-sec (send [benchmark] get-benchmark-time)))
     (pb-set-field ?benchmarkstate-time "sec" (nth$ 1 ?gt))
     (pb-set-field ?benchmarkstate-time "nsec" (integer (* (nth$ 2 ?gt) 1000)))
     (pb-set-field ?benchmarkstate "benchmark_time" ?benchmarkstate-time) ; destroys ?benchmarkstate-time!
