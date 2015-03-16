@@ -42,7 +42,6 @@
 )
 
 (deftemplate benchmark-phase
-  (slot id (type INTEGER))
   (slot type (type SYMBOL) (allowed-values NONE TBM FBM))  ; No benchmark running, task benchmark, functionality benchmark
   (slot type-id (type INTEGER))
   (slot description (type STRING))
@@ -85,12 +84,12 @@
 )
 
 (deffacts benchmarks
-  (benchmark-phase (id 0) (type NONE) (type-id 0) (description "No benchmark running"))
-  (benchmark-phase (id 1) (type TBM)  (type-id 1) (description "Prepare Assembly Aid Tray for Force Fitting"))
-  (benchmark-phase (id 2) (type TBM)  (type-id 2) (description "Plate Drilling"))
-  (benchmark-phase (id 3) (type TBM)  (type-id 3) (description "Fill a Box with Parts for Manual Assembly"))
-  (benchmark-phase (id 4) (type FBM)  (type-id 1) (description "Object Perception Functionality"))
-  (benchmark-phase (id 5) (type FBM)  (type-id 2) (description "Visual Servoing Functionality"))
+  (benchmark-phase (type NONE) (type-id 0) (description "No benchmark running"))
+  (benchmark-phase (type TBM)  (type-id 1) (description "Prepare Assembly Aid Tray for Force Fitting"))
+  (benchmark-phase (type TBM)  (type-id 2) (description "Plate Drilling"))
+  (benchmark-phase (type TBM)  (type-id 3) (description "Fill a Box with Parts for Manual Assembly"))
+  (benchmark-phase (type FBM)  (type-id 1) (description "Object Perception Functionality"))
+  (benchmark-phase (type FBM)  (type-id 2) (description "Visual Servoing Functionality"))
 
   (benchmark-state)
 )
