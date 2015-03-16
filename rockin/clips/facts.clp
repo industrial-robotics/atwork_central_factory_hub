@@ -85,22 +85,6 @@
   (slot end-effector-pose-orientation-z (type FLOAT) (default 0.0))
 )
 
-(deftemplate selected-object
-  (slot object-id (type INTEGER))
-)
-
-(deftemplate object-identifier
-  ; identifier which is used in CLIPS only
-  (slot id (type INTEGER))
-
-  ; the object id (see rulebook), such as AX-01 consists of *type* and *type-id*
-  (slot type (type SYMBOL) (allowed-values EM AX ER))
-  (slot type-id (type INTEGER))
-
-  (multislot instance-id (type INTEGER) (cardinality 0 1))
-  (multislot description (type STRING) (cardinality 0 1))
-)
-
 
 (deffacts startup
   (signal (type version-info) (time (create$ 0 0)) (seq 1))
