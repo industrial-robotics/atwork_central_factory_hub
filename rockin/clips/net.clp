@@ -265,7 +265,6 @@
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
-  (if (debug 3) then (printout t "Sending BenchmarkState" crlf))
   (bind ?benchmark-state (net-create-BenchmarkState ?bs))
 
   (pb-broadcast ?peer-id-public ?benchmark-state)
