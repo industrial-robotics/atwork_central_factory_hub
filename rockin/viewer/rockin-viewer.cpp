@@ -10,6 +10,7 @@
 #include <protobuf_comm/client.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/DrillingMachine.pb.h>
+#include <msgs/ForceFittingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/RobotInfo.pb.h>
 #include <msgs/AttentionMessage.pb.h>
@@ -32,6 +33,7 @@ boost::mutex mutex;
 std::shared_ptr<rockin_msgs::BenchmarkState> benchmark_state;
 std::shared_ptr<rockin_msgs::ConveyorBeltStatus> conveyor_belt_state;
 std::shared_ptr<rockin_msgs::DrillingMachineStatus> drilling_machine_state;
+std::shared_ptr<rockin_msgs::ForceFittingMachineStatus> force_fitting_machine_state;
 std::shared_ptr<rockin_msgs::RobotInfo> robot_info;
 std::shared_ptr<rockin_msgs::Inventory> inventory;
 std::shared_ptr<rockin_msgs::OrderInfo> order_info;
@@ -109,6 +111,10 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
   if (std::dynamic_pointer_cast<rockin_msgs::DrillingMachineStatus>(msg)) {
     drilling_machine_state = std::dynamic_pointer_cast<rockin_msgs::DrillingMachineStatus>(msg);
+  }
+
+  if (std::dynamic_pointer_cast<rockin_msgs::ForceFittingMachineStatus>(msg)) {
+    force_fitting_machine_state = std::dynamic_pointer_cast<rockin_msgs::ForceFittingMachineStatus>(msg);
   }
 
   if (std::dynamic_pointer_cast<rockin_msgs::RobotInfo>(msg)) {
@@ -264,6 +270,30 @@ bool idle_handler() {
       break;
       case rockin_msgs::DrillingMachineStatus::UNKNOWN:
         label_drilling_machine->set_text("Unknown");
+      break;
+    }
+  }
+
+
+  if (force_fitting_machine_state) {
+    Gtk::Label *label_force_fitting_machine = 0;
+    builder->get_widget("label_force_fitting_machine", label_force_fitting_machine);
+
+    switch (force_fitting_machine_state->state()) {
+      case rockin_msgs::ForceFittingMachineStatus::AT_BOTTOM:
+        label_force_fitting_machine->set_text("At bottom");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::AT_TOP:
+        label_force_fitting_machine->set_text("At top");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::MOVING_DOWN:
+        label_force_fitting_machine->set_text("Moving down");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::MOVING_UP:
+        label_force_fitting_machine->set_text("Moving up");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::UNKNOWN:
+        label_force_fitting_machine->set_text("Unknown");
       break;
     }
   }
