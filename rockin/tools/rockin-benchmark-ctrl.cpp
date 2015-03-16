@@ -51,6 +51,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
       case rockin_msgs::BenchmarkState::RUNNING: std::cout << "RUNNING"; break;
       case rockin_msgs::BenchmarkState::PAUSED: std::cout << "PAUSED"; break;
       case rockin_msgs::BenchmarkState::FINISHED: std::cout << "FINISHED"; break;
+      case rockin_msgs::BenchmarkState::STOPPED: std::cout << "STOPPED"; break;
     }
     std::cout << std::endl;
 

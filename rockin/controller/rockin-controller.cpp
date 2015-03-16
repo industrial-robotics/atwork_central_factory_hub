@@ -60,17 +60,17 @@ bool idle_handler() {
     builder->get_widget("button_success", button_success);
     builder->get_widget("button_fail", button_fail);
 
-    // Only activate in PAUSED state
-    if (benchmark_state->state() == rockin_msgs::BenchmarkState::PAUSED) {
+    // Only activate in STOPPED state
+    if (benchmark_state->state() == rockin_msgs::BenchmarkState::STOPPED) {
       button_start->set_sensitive(true);
     } else {
       button_start->set_sensitive(false);
     }
 
-    // Only activate in FBM2 during PAUSED or FINISHED state
+    // Only activate in FBM2 during STOPPED or FINISHED state
     if ((benchmark_state->phase().type() == rockin_msgs::BenchmarkPhase::FBM)
         && (benchmark_state->phase().type_id() == 2)
-        && ((benchmark_state->state() == rockin_msgs::BenchmarkState::PAUSED)
+        && ((benchmark_state->state() == rockin_msgs::BenchmarkState::STOPPED)
          || benchmark_state->state() == rockin_msgs::BenchmarkState::FINISHED)) {
       button_success->set_sensitive(true);
       button_fail->set_sensitive(true);

@@ -91,7 +91,7 @@
 )
 
 (defmessage-handler StoppedState to-robot-state ()
-  (return PAUSED)
+  (return STOPPED)
 )
 
 
@@ -157,7 +157,7 @@
 )
 
 (defmessage-handler CheckRunsState to-robot-state ()
-  (return PAUSED)
+  (return STOPPED)
 )
 
 
