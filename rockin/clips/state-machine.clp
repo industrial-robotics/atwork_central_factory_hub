@@ -61,7 +61,10 @@
 
 (defclass InitState (is-a State) (role concrete))
 (defclass StoppedState (is-a State) (role concrete))
-(defclass RunningState (is-a State) (role concrete))
+(defclass RunningState (is-a State) (role concrete)
+  ; cardinality 2: sec msec
+  (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
+)
 (defclass PausedState (is-a State) (role concrete))
 (defclass CheckRunsState (is-a State) (role concrete)
   (slot run (type INTEGER) (default 0))             ; how often the specific benchmark has been executed already
@@ -108,17 +111,16 @@
 (defmessage-handler RunningState on-enter (?prev-state)
   ; reset the time of the last update when entering the running state
   (bind ?now (now))
-  (do-for-all-facts ((?bs benchmark-state)) TRUE
-    (modify ?bs (last-time ?now))
-  )
+  (bind ?self:last-time ?now)
 )
 
 (defmessage-handler RunningState on-update ()
   ; continuously update the benchmark time
   (bind ?now (now))
   (do-for-all-facts ((?bs benchmark-state)) TRUE
-    (bind ?timediff (time-diff-sec ?now ?bs:last-time))
-    (modify ?bs (benchmark-time (+ ?bs:benchmark-time ?timediff)) (last-time ?now))
+    (bind ?timediff (time-diff-sec ?now ?self:last-time))
+    (modify ?bs (benchmark-time (+ ?bs:benchmark-time ?timediff)))
+    (bind ?self:last-time ?now)
   )
 )
 
