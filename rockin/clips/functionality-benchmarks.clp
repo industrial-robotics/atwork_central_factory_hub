@@ -12,9 +12,6 @@
   (bind ?description (nth$ 1 (send ?selected-object get-description)))
   (printout t "Place object " ?description " in front of the robot and start the benchmark" crlf)
   (assert (attention-message (text (str-cat "The robot should handle the object " ?description))))
-
-  ; Make the selected object available e.g. for logging
-  (assert (selected-object (object-id ?o:id)))
 )
 
 
