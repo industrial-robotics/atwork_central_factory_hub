@@ -185,7 +185,6 @@
 )
 
 (defrule net-recv-SetBenchmarkPhase
-  ?sf <- (benchmark-state (phase-id ?phase-id))
   ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
@@ -195,10 +194,7 @@
   (bind ?pb-phase-type (pb-field-value ?pb-phase "type"))
   (bind ?pb-phase-type-id (pb-field-value ?pb-phase "type_id"))
 
-  ; When a phase was found, that matches the type and ID in the message, update the current and previous phase ID
-  (do-for-fact ((?phase benchmark-phase)) (and (eq ?phase:type ?pb-phase-type) (eq ?phase:type-id ?pb-phase-type-id))
-    (modify ?sf (phase-id ?phase:id) (prev-phase-id ?phase-id))
-  )
+  (send [benchmark] set-requested-phase ?pb-phase-type ?pb-phase-type-id)
 )
 
 (defrule net-recv-SetBenchmarkPhase-illegal
@@ -210,7 +206,6 @@
 )
 
 (defrule net-recv-SetBenchmarkTransitionEvent
-  ?sf <- (benchmark-state (phase-id ?phase-id))
   ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkTransitionEvent") (ptr ?p)
            (rcvd-via STREAM) (rcvd-from ?host ?port))
   =>
@@ -219,13 +214,7 @@
   (bind ?pb-event (pb-field-value ?p "event"))
 
   (if (eq ?pb-event RESET) then
-    (do-for-fact ((?phase benchmark-phase)) (eq ?phase:id ?phase-id)
-      (if (and (eq ?phase:type FBM) (eq ?phase:type-id 1)) then (functionality-benchmarks-fbm1-init))
-      (if (and (eq ?phase:type FBM) (eq ?phase:type-id 2)) then (functionality-benchmarks-fbm2-init))
-      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 1)) then (task-benchmarks-tbm1-init))
-      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 2)) then (task-benchmarks-tbm2-init))
-      (if (and (eq ?phase:type TBM) (eq ?phase:type-id 3)) then (task-benchmarks-tbm3-init))
-    )
+    (send [benchmark] switch-phase)
   else
     (send [sm] process-event ?pb-event)
   )
@@ -242,7 +231,6 @@
 (deffunction net-create-BenchmarkState (?bs)
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
-  (bind ?benchmarkstate-phase (pb-field-value ?benchmarkstate "phase"))
 
   ; Set the benchmark time (in seconds)
   (if (eq (type ?benchmarkstate-time) EXTERNAL-ADDRESS) then
@@ -252,13 +240,10 @@
     (pb-set-field ?benchmarkstate "benchmark_time" ?benchmarkstate-time) ; destroys ?benchmarkstate-time!
   )
 
-  ; Add the current phase of the benchmark
-  (do-for-fact ((?phase benchmark-phase)) (eq ?phase:id (fact-slot-value ?bs phase-id))
-    (pb-set-field ?benchmarkstate-phase "type" ?phase:type)
-    (pb-set-field ?benchmarkstate-phase "type_id" ?phase:type-id)
-    (pb-set-field ?benchmarkstate-phase "description" ?phase:description)
-  )
-  (pb-set-field ?benchmarkstate "phase" ?benchmarkstate-phase)
+  ; Add the current phase (e.g. TBM1 or FBM2) of the benchmark
+  (bind ?current-phase (send [benchmark] get-current-phase))
+  (bind ?pb-benchmark-phase (send ?current-phase create-msg))
+  (pb-set-field ?benchmarkstate "phase" ?pb-benchmark-phase)
 
   ; Add all known teams
   (do-for-all-facts ((?team known-team)) TRUE
