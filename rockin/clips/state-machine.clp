@@ -98,8 +98,9 @@
   (printout t "Starting benchmark " crlf)
   (assert (attention-message (text "Starting benchmark") (time 15)))
 
-  ; reset the start time of the benchmark
+  ; reset the times of the benchmark
   (send [benchmark] put-start-time (now))
+  (send [benchmark] put-benchmark-time 0.0)
 )
 
 (defmessage-handler StoppedState to-robot-state ()
