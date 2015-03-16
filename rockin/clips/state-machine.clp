@@ -152,14 +152,12 @@
 )
 
 (defmessage-handler CheckRunsState on-update ()
-  (do-for-all-facts ((?bs benchmark-state)) TRUE
-    (if (>= ?self:run ?self:max-runs) then
-      (printout t "Benchmark over" crlf)
-      (assert (attention-message (text "Benchmark over") (time 15)))
-      (send [sm] process-event FINISH)
-    else
-      (send [sm] process-event REPEAT)
-    )
+  (if (>= ?self:run ?self:max-runs) then
+    (printout t "Benchmark over" crlf)
+    (assert (attention-message (text "Benchmark over") (time 15)))
+    (send [sm] process-event FINISH)
+  else
+    (send [sm] process-event REPEAT)
   )
 )
 
