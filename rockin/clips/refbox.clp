@@ -13,6 +13,6 @@
 (load* (resolve-file state-machine.clp))
 (load* (resolve-file task-benchmarks.clp))
 (load* (resolve-file functionality-benchmarks.clp))
+(load* (resolve-file benchmark.clp))
 (load* (resolve-file net.clp))
 (load* (resolve-file robots.clp))
-(load* (resolve-file benchmark.clp))
