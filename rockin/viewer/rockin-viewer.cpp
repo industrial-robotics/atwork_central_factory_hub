@@ -134,6 +134,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
 bool idle_handler() {
   if ((std::chrono::system_clock::now() - last_gui_update) < std::chrono::milliseconds(100)) {
+    usleep(10000);
     return true;
   }
   last_gui_update = std::chrono::system_clock::now();
@@ -182,6 +183,11 @@ bool idle_handler() {
       case rockin_msgs::BenchmarkState::FINISHED:
         fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
         label_state->set_text("Finished");
+      break;
+
+      case rockin_msgs::BenchmarkState::STOPPED:
+        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        label_state->set_text("Stopped");
       break;
     }
     attr_list.insert(fg_color);

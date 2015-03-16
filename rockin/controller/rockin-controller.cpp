@@ -44,6 +44,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
 bool idle_handler() {
   if ((std::chrono::system_clock::now() - last_gui_update) < std::chrono::milliseconds(100)) {
+    usleep(10000);
     return true;
   }
   last_gui_update = std::chrono::system_clock::now();
@@ -54,23 +55,52 @@ bool idle_handler() {
 
   if (benchmark_state) {
     Gtk::Button *button_start = 0;
+    Gtk::Button *button_pause = 0;
+    Gtk::Button *button_stop = 0;
     Gtk::Button *button_success = 0;
     Gtk::Button *button_fail = 0;
     builder->get_widget("button_start", button_start);
+    builder->get_widget("button_pause", button_pause);
+    builder->get_widget("button_stop", button_stop);
     builder->get_widget("button_success", button_success);
     builder->get_widget("button_fail", button_fail);
 
-    // Only activate in PAUSED state
-    if (benchmark_state->state() == rockin_msgs::BenchmarkState::PAUSED) {
-      button_start->set_sensitive(true);
-    } else {
-      button_start->set_sensitive(false);
+    switch (benchmark_state->state()) {
+      case rockin_msgs::BenchmarkState::INIT:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::STOPPED:
+        button_start->set_sensitive(true);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::RUNNING:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(true);
+        button_stop->set_sensitive(true);
+      break;
+
+      case rockin_msgs::BenchmarkState::PAUSED:
+        button_start->set_sensitive(true);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::FINISHED:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
     }
 
-    // Only activate in FBM2 during PAUSED or FINISHED state
+    // Only activate in FBM2 during STOPPED or FINISHED state
     if ((benchmark_state->phase().type() == rockin_msgs::BenchmarkPhase::FBM)
         && (benchmark_state->phase().type_id() == 2)
-        && ((benchmark_state->state() == rockin_msgs::BenchmarkState::PAUSED)
+        && ((benchmark_state->state() == rockin_msgs::BenchmarkState::STOPPED)
          || benchmark_state->state() == rockin_msgs::BenchmarkState::FINISHED)) {
       button_success->set_sensitive(true);
       button_fail->set_sensitive(true);
@@ -93,14 +123,38 @@ void handle_disconnect(const boost::system::error_code &error)
 
 void on_start_click()
 {
-  rockin_msgs::SetBenchmarkState cmd_state;
-  cmd_state.set_state(rockin_msgs::BenchmarkState::RUNNING);
-  client.send(cmd_state);
+  if (!client.connected()) return;
+
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
+  client.send(cmd_event);
+}
+
+
+void on_pause_click()
+{
+  if (!client.connected()) return;
+
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::PAUSE);
+  client.send(cmd_event);
+}
+
+
+void on_stop_click()
+{
+  if (!client.connected()) return;
+
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::STOP);
+  client.send(cmd_event);
 }
 
 
 void on_reset_click()
 {
+  if (!client.connected()) return;
+
   Gtk::ComboBoxText *combobox_benchmark = 0;
   builder->get_widget("combobox_benchmark", combobox_benchmark);
   std::string phase = combobox_benchmark->get_active_text();
@@ -128,14 +182,16 @@ void on_reset_click()
   client.send(cmd_phase);
 
 
-  rockin_msgs::SetBenchmarkState cmd_state;
-  cmd_state.set_state(rockin_msgs::BenchmarkState::INIT);
-  client.send(cmd_state);
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::RESET);
+  client.send(cmd_event);
 }
 
 
 void on_success_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(true);
   client.send(msg);
@@ -144,6 +200,8 @@ void on_success_click()
 
 void on_fail_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(false);
   client.send(msg);
@@ -152,6 +210,8 @@ void on_fail_click()
 
 void on_cb_start_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::ConveyorBeltCommand msg;
   msg.set_command(rockin_msgs::START);
   client.send(msg);
@@ -160,6 +220,8 @@ void on_cb_start_click()
 
 void on_cb_stop_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::ConveyorBeltCommand msg;
   msg.set_command(rockin_msgs::STOP);
   client.send(msg);
@@ -168,6 +230,8 @@ void on_cb_stop_click()
 
 void on_dm_down_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::DrillingMachineCommand msg;
   msg.set_command(rockin_msgs::DrillingMachineCommand::MOVE_DOWN);
   client.send(msg);
@@ -176,6 +240,8 @@ void on_dm_down_click()
 
 void on_dm_up_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::DrillingMachineCommand msg;
   msg.set_command(rockin_msgs::DrillingMachineCommand::MOVE_UP);
   client.send(msg);
@@ -200,6 +266,8 @@ int main(int argc, char **argv)
   window->show_all();
 
   Gtk::Button *button_start = 0;
+  Gtk::Button *button_pause = 0;
+  Gtk::Button *button_stop = 0;
   Gtk::Button *button_success = 0;
   Gtk::Button *button_fail = 0;
   Gtk::Button *button_reset = 0;
@@ -208,6 +276,8 @@ int main(int argc, char **argv)
   Gtk::Button *button_dm_up = 0;
   Gtk::Button *button_dm_down = 0;
   builder->get_widget("button_start", button_start);
+  builder->get_widget("button_pause", button_pause);
+  builder->get_widget("button_stop", button_stop);
   builder->get_widget("button_success", button_success);
   builder->get_widget("button_fail", button_fail);
   builder->get_widget("button_reset", button_reset);
@@ -218,6 +288,8 @@ int main(int argc, char **argv)
 
   Glib::signal_idle().connect(sigc::ptr_fun(&idle_handler));
   button_start->signal_clicked().connect(sigc::ptr_fun(&on_start_click));
+  button_pause->signal_clicked().connect(sigc::ptr_fun(&on_pause_click));
+  button_stop->signal_clicked().connect(sigc::ptr_fun(&on_stop_click));
   button_success->signal_clicked().connect(sigc::ptr_fun(&on_success_click));
   button_fail->signal_clicked().connect(sigc::ptr_fun(&on_fail_click));
   button_reset->signal_clicked().connect(sigc::ptr_fun(&on_reset_click));

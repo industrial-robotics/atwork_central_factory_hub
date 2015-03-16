@@ -4,7 +4,15 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
+(load* (resolve-file location.clp))
+(load* (resolve-file object-identifier.clp))
+(load* (resolve-file item.clp))
+(load* (resolve-file inventory.clp))
+(load* (resolve-file order.clp))
+(load* (resolve-file order-info.clp))
+(load* (resolve-file state-machine.clp))
+(load* (resolve-file task-benchmarks.clp))
+(load* (resolve-file functionality-benchmarks.clp))
+(load* (resolve-file benchmark.clp))
 (load* (resolve-file net.clp))
 (load* (resolve-file robots.clp))
-(load* (resolve-file orders.clp))
-(load* (resolve-file benchmark.clp))
