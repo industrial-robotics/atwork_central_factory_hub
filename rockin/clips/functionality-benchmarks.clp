@@ -28,7 +28,7 @@
   (make-instance [stopped-state] of FbmStoppedState)
   (make-instance [running-state] of RunningState)
   (make-instance [paused-state] of PausedState)
-  (make-instance [check-runs-state] of CheckRunsState (max-runs *FBM1-COUNT*))
+  (make-instance [check-runs-state] of CheckRunsState (max-runs ?*FBM1-COUNT*))
   (make-instance [finished-state] of FinishedState)
 
   (send [init-state]       add-transition VALID_BENCHMARK [stopped-state])
@@ -59,7 +59,7 @@
   (make-instance [stopped-state] of FbmStoppedState)
   (make-instance [running-state] of RunningState)
   (make-instance [paused-state] of PausedState)
-  (make-instance [check-runs-state] of CheckRunsState (max-runs *FBM2-COUNT*))
+  (make-instance [check-runs-state] of CheckRunsState (max-runs ?*FBM2-COUNT*))
   (make-instance [finished-state] of FinishedState)
 
   (send [init-state]       add-transition VALID_BENCHMARK [stopped-state])
