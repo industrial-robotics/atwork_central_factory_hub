@@ -55,9 +55,7 @@
   (slot phase-id (type INTEGER) (default 0))        ; identifier of a phase
   (slot prev-phase-id (type INTEGER) (default 0))   ; identifier of a phase
   (slot benchmark-time (type FLOAT) (default 0.0))
-  (slot run (type INTEGER) (default 0))             ; how often the specific benchmark has been executed already
 
-  (slot max-runs (type INTEGER) (default 1))
   (slot max-time (type FLOAT) (default 0.0))
 )
 

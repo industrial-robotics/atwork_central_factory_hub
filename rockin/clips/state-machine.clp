@@ -143,12 +143,13 @@
 
 (defmessage-handler CheckRunsState on-enter (?prev-state)
   (send [benchmark] put-end-time (now))
+  (bind ?self:run (+ ?self:run 1))
 
   (do-for-fact ((?bs benchmark-state)) TRUE
     (printout t "Run " ?self:run " over after " ?bs:time " seconds" crlf)
     (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?bs:time " seconds")) (time 15)))
 
-    (modify ?bs (run (+ ?self:run 1)) (benchmark-time 0.0))
+    (modify ?bs (benchmark-time 0.0))
   )
 )
 
