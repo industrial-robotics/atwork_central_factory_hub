@@ -43,7 +43,7 @@
 (deffunction task-benchmarks-tbm1-init ()
   (make-instance [init-state] of Tbm1InitState)
   (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState)
+  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState)
   (make-instance [finished-state] of FinishedState)
 
@@ -125,7 +125,7 @@
 (deffunction task-benchmarks-tbm2-init ()
   (make-instance [init-state] of Tbm2InitState)
   (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState)
+  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState)
   (make-instance [finished-state] of FinishedState)
 
@@ -217,7 +217,7 @@
 (deffunction task-benchmarks-tbm3-init ()
   (make-instance [init-state] of Tbm3InitState)
   (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState)
+  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState)
   (make-instance [finished-state] of FinishedState)
 
