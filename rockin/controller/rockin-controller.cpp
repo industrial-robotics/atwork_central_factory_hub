@@ -123,6 +123,8 @@ void handle_disconnect(const boost::system::error_code &error)
 
 void on_start_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
   client.send(cmd_event);
@@ -131,6 +133,8 @@ void on_start_click()
 
 void on_pause_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::PAUSE);
   client.send(cmd_event);
@@ -139,6 +143,8 @@ void on_pause_click()
 
 void on_stop_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::STOP);
   client.send(cmd_event);
@@ -147,6 +153,8 @@ void on_stop_click()
 
 void on_reset_click()
 {
+  if (!client.connected()) return;
+
   Gtk::ComboBoxText *combobox_benchmark = 0;
   builder->get_widget("combobox_benchmark", combobox_benchmark);
   std::string phase = combobox_benchmark->get_active_text();
@@ -182,6 +190,8 @@ void on_reset_click()
 
 void on_success_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(true);
   client.send(msg);
@@ -190,6 +200,8 @@ void on_success_click()
 
 void on_fail_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(false);
   client.send(msg);
@@ -198,6 +210,8 @@ void on_fail_click()
 
 void on_cb_start_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::ConveyorBeltCommand msg;
   msg.set_command(rockin_msgs::START);
   client.send(msg);
@@ -206,6 +220,8 @@ void on_cb_start_click()
 
 void on_cb_stop_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::ConveyorBeltCommand msg;
   msg.set_command(rockin_msgs::STOP);
   client.send(msg);
@@ -214,6 +230,8 @@ void on_cb_stop_click()
 
 void on_dm_down_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::DrillingMachineCommand msg;
   msg.set_command(rockin_msgs::DrillingMachineCommand::MOVE_DOWN);
   client.send(msg);
@@ -222,6 +240,8 @@ void on_dm_down_click()
 
 void on_dm_up_click()
 {
+  if (!client.connected()) return;
+
   rockin_msgs::DrillingMachineCommand msg;
   msg.set_command(rockin_msgs::DrillingMachineCommand::MOVE_UP);
   client.send(msg);
