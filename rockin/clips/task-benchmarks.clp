@@ -4,9 +4,26 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass Tbm1InitState (is-a InitState))
+(deffunction task-benchmarks-tbm1-init ()
+  (make-instance [stopped-state] of StoppedState)
+  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState)
+  (make-instance [finished-state] of FinishedState)
 
-(defmessage-handler Tbm1InitState on-update ()
+  (send [stopped-state]    add-transition START           [running-state])
+  (send [running-state]    add-transition STOP            [stopped-state])
+  (send [running-state]    add-transition PAUSE           [paused-state])
+  (send [running-state]    add-transition TIMEOUT         [finished-state])
+  (send [running-state]    add-transition FINISH          [finished-state])
+  (send [paused-state]     add-transition CONTINUE        [running-state])
+  (send [paused-state]     add-transition STOP            [stopped-state])
+
+  (make-instance [sm] of StateMachine
+    (current-state [stopped-state])
+    (states [stopped-state] [running-state] [paused-state] [finished-state])
+  )
+
+
   ; Inventory
   (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;;;;;;;
@@ -36,42 +53,31 @@
     ; Deliver container EM-01-02 to location WS-01
     (make-instance of Order (status OFFERED) (object-id [em-01-02]) (destination-id [workstation-01]))
   )
-
-  (send [sm] process-event VALID_BENCHMARK)
 )
 
-(deffunction task-benchmarks-tbm1-init ()
-  (make-instance [init-state] of Tbm1InitState)
+
+
+
+(deffunction task-benchmarks-tbm2-init ()
   (make-instance [stopped-state] of StoppedState)
   (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState)
   (make-instance [finished-state] of FinishedState)
 
-  (send [init-state]       add-transition VALID_BENCHMARK [stopped-state])
-  (send [stopped-state]    add-transition RESET           [init-state])
   (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition RESET           [init-state])
   (send [running-state]    add-transition STOP            [stopped-state])
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [finished-state])
   (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition RESET           [init-state])
   (send [paused-state]     add-transition CONTINUE        [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
-  (send [finished-state]   add-transition RESET           [init-state])
 
   (make-instance [sm] of StateMachine
-    (current-state [init-state])
-    (states [init-state] [stopped-state] [running-state] [paused-state] [finished-state])
+    (current-state [stopped-state])
+    (states [stopped-state] [running-state] [paused-state] [finished-state])
   )
-)
 
 
-
-
-(defclass Tbm2InitState (is-a InitState))
-
-(defmessage-handler Tbm2InitState on-update ()
   ; Inventory
   (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;
@@ -118,42 +124,31 @@
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-04]) (quantity-requested 1))
   )
-
-  (send [sm] process-event VALID_BENCHMARK)
 )
 
-(deffunction task-benchmarks-tbm2-init ()
-  (make-instance [init-state] of Tbm2InitState)
+
+
+
+(deffunction task-benchmarks-tbm3-init ()
   (make-instance [stopped-state] of StoppedState)
   (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState)
   (make-instance [finished-state] of FinishedState)
 
-  (send [init-state]       add-transition VALID_BENCHMARK [stopped-state])
-  (send [stopped-state]    add-transition RESET           [init-state])
   (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition RESET           [init-state])
   (send [running-state]    add-transition STOP            [stopped-state])
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [finished-state])
   (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition RESET           [init-state])
   (send [paused-state]     add-transition CONTINUE        [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
-  (send [finished-state]   add-transition RESET           [init-state])
 
   (make-instance [sm] of StateMachine
-    (current-state [init-state])
-    (states [init-state] [stopped-state] [running-state] [paused-state] [finished-state])
+    (current-state [stopped-state])
+    (states [stopped-state] [running-state] [paused-state] [finished-state])
   )
-)
 
 
-
-
-(defclass Tbm3InitState (is-a InitState))
-
-(defmessage-handler Tbm3InitState on-update ()
   ; Inventory
   (slot-insert$ [inventory] items 1
     ;;;;;;;;;;
@@ -210,33 +205,4 @@
     ; Deliver 1 motor with gear box AX-09 into foam container EM-03-01
     (make-instance of Order (status OFFERED) (object-id [ax-09]) (container-id [em-03-01]) (quantity-requested 1))
   )
-
-  (send [sm] process-event VALID_BENCHMARK)
 )
-
-(deffunction task-benchmarks-tbm3-init ()
-  (make-instance [init-state] of Tbm3InitState)
-  (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [finished-state] of FinishedState)
-
-  (send [init-state]       add-transition VALID_BENCHMARK [stopped-state])
-  (send [stopped-state]    add-transition RESET           [init-state])
-  (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition RESET           [init-state])
-  (send [running-state]    add-transition STOP            [stopped-state])
-  (send [running-state]    add-transition PAUSE           [paused-state])
-  (send [running-state]    add-transition TIMEOUT         [finished-state])
-  (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition RESET           [init-state])
-  (send [paused-state]     add-transition CONTINUE        [running-state])
-  (send [paused-state]     add-transition STOP            [stopped-state])
-  (send [finished-state]   add-transition RESET           [init-state])
-
-  (make-instance [sm] of StateMachine
-    (current-state [init-state])
-    (states [init-state] [stopped-state] [running-state] [paused-state] [finished-state])
-  )
-)
-

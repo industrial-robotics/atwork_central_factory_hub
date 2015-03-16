@@ -75,19 +75,6 @@
 (defclass FinishedState (is-a State) (role concrete))
 
 
-(defmessage-handler InitState on-enter (?prev-state)
-  ; Remove all items from the inventory
-  (foreach ?item (send [inventory] get-items)
-    (unmake-instance ?item)
-  )
-  (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
-
-  ; Remove all orders from the order info
-  (foreach ?order (send [order-info] get-orders)
-    (unmake-instance ?order)
-  )
-  (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
-)
 
 (defmessage-handler InitState to-robot-state ()
   (return INIT)

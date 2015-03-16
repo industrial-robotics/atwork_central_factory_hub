@@ -44,6 +44,20 @@
   (bind ?phase-type (send ?self:current-phase get-type))
   (bind ?phase-type-id (send ?self:current-phase get-type-id))
 
+
+  ; Remove all items from the inventory
+  (foreach ?item (send [inventory] get-items)
+    (unmake-instance ?item)
+  )
+  (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
+
+  ; Remove all orders from the order info
+  (foreach ?order (send [order-info] get-orders)
+    (unmake-instance ?order)
+  )
+  (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
+
+
   (if (and (eq ?phase-type FBM) (eq ?phase-type-id 1)) then (functionality-benchmarks-fbm1-init))
   (if (and (eq ?phase-type FBM) (eq ?phase-type-id 2)) then (functionality-benchmarks-fbm2-init))
   (if (and (eq ?phase-type TBM) (eq ?phase-type-id 1)) then (task-benchmarks-tbm1-init))
