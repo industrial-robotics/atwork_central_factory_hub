@@ -54,17 +54,46 @@ bool idle_handler() {
 
   if (benchmark_state) {
     Gtk::Button *button_start = 0;
+    Gtk::Button *button_pause = 0;
+    Gtk::Button *button_stop = 0;
     Gtk::Button *button_success = 0;
     Gtk::Button *button_fail = 0;
     builder->get_widget("button_start", button_start);
+    builder->get_widget("button_pause", button_pause);
+    builder->get_widget("button_stop", button_stop);
     builder->get_widget("button_success", button_success);
     builder->get_widget("button_fail", button_fail);
 
-    // Only activate in STOPPED state
-    if (benchmark_state->state() == rockin_msgs::BenchmarkState::STOPPED) {
-      button_start->set_sensitive(true);
-    } else {
-      button_start->set_sensitive(false);
+    switch (benchmark_state->state()) {
+      case rockin_msgs::BenchmarkState::INIT:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::STOPPED:
+        button_start->set_sensitive(true);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::RUNNING:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(true);
+        button_stop->set_sensitive(true);
+      break;
+
+      case rockin_msgs::BenchmarkState::PAUSED:
+        button_start->set_sensitive(true);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
+
+      case rockin_msgs::BenchmarkState::FINISHED:
+        button_start->set_sensitive(false);
+        button_pause->set_sensitive(false);
+        button_stop->set_sensitive(false);
+      break;
     }
 
     // Only activate in FBM2 during STOPPED or FINISHED state
@@ -95,6 +124,22 @@ void on_start_click()
 {
   rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
+  client.send(cmd_event);
+}
+
+
+void on_pause_click()
+{
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::PAUSE);
+  client.send(cmd_event);
+}
+
+
+void on_stop_click()
+{
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::STOP);
   client.send(cmd_event);
 }
 
@@ -200,6 +245,8 @@ int main(int argc, char **argv)
   window->show_all();
 
   Gtk::Button *button_start = 0;
+  Gtk::Button *button_pause = 0;
+  Gtk::Button *button_stop = 0;
   Gtk::Button *button_success = 0;
   Gtk::Button *button_fail = 0;
   Gtk::Button *button_reset = 0;
@@ -208,6 +255,8 @@ int main(int argc, char **argv)
   Gtk::Button *button_dm_up = 0;
   Gtk::Button *button_dm_down = 0;
   builder->get_widget("button_start", button_start);
+  builder->get_widget("button_pause", button_pause);
+  builder->get_widget("button_stop", button_stop);
   builder->get_widget("button_success", button_success);
   builder->get_widget("button_fail", button_fail);
   builder->get_widget("button_reset", button_reset);
@@ -218,6 +267,8 @@ int main(int argc, char **argv)
 
   Glib::signal_idle().connect(sigc::ptr_fun(&idle_handler));
   button_start->signal_clicked().connect(sigc::ptr_fun(&on_start_click));
+  button_pause->signal_clicked().connect(sigc::ptr_fun(&on_pause_click));
+  button_stop->signal_clicked().connect(sigc::ptr_fun(&on_stop_click));
   button_success->signal_clicked().connect(sigc::ptr_fun(&on_success_click));
   button_fail->signal_clicked().connect(sigc::ptr_fun(&on_fail_click));
   button_reset->signal_clicked().connect(sigc::ptr_fun(&on_reset_click));
