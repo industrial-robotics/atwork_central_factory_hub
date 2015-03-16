@@ -93,9 +93,9 @@ void handle_disconnect(const boost::system::error_code &error)
 
 void on_start_click()
 {
-  rockin_msgs::SetBenchmarkState cmd_state;
-  cmd_state.set_state(rockin_msgs::BenchmarkState::RUNNING);
-  client.send(cmd_state);
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::START);
+  client.send(cmd_event);
 }
 
 
@@ -128,9 +128,9 @@ void on_reset_click()
   client.send(cmd_phase);
 
 
-  rockin_msgs::SetBenchmarkState cmd_state;
-  cmd_state.set_state(rockin_msgs::BenchmarkState::INIT);
-  client.send(cmd_state);
+  rockin_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(rockin_msgs::SetBenchmarkTransitionEvent::RESET);
+  client.send(cmd_event);
 }
 
 
