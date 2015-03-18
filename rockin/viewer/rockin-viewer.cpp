@@ -364,6 +364,8 @@ bool idle_handler() {
       if (order.has_destination()) sstr << order.destination().description();
       else if (order.has_container()) sstr << order.container().description();
 
+      if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
+
       sstr << std::endl;
     }
 
