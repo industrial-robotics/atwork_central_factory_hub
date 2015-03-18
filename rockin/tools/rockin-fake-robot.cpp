@@ -49,6 +49,7 @@
 #include <msgs/Camera.pb.h>
 #include <msgs/CompressedImage.pb.h>
 #include <msgs/BenchmarkFeedback.pb.h>
+#include <msgs/RobotCapability.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -259,6 +260,20 @@ handle_timer(const boost::system::error_code& error)
     bf.set_object_class_name("aluminium");
     bf.set_grasp_notification(true);
     peer_public_->send(bf);
+
+
+    // Send robot capability
+    RobotCapabilityInfo capability_info;
+    RobotCapability *capability;
+    capability = capability_info.add_capabilities();
+    capability->set_capability(RobotCapability::TASK);
+    capability->set_functionality("SchedulerComponent");
+    capability->set_meta_data("Task execution active");
+    capability = capability_info.add_capabilities();
+    capability->set_capability(RobotCapability::NAVIGATION);
+    capability->set_functionality("NavigationPlanner");
+    capability->set_meta_data("Planning a path for the base");
+    peer_public_->send(capability_info);
 
 
     timer_->expires_at(timer_->expires_at()
