@@ -1,0 +1,23 @@
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "RobotActivityProtos";
+
+
+message RobotCapability {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 601;
+  }
+
+  enum Capability {
+    NAVIGATION   = 0;
+    MANIPULATION = 1;
+    PERCEPTION   = 2;
+    TASK         = 3;
+  }
+
+  optional Capability capability = 1;
+  optional string functionality  = 2;
+  optional string meta_data      = 3;
+}

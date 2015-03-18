@@ -640,3 +640,38 @@
 
   (pb-destroy ?ds)
 )
+
+(defrule net-recv-RobotCapability
+  ?mf <- (protobuf-msg (type "rockin_msgs.RobotCapability") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  (robot (name ?name) (team ?team) (host ?host))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (bind ?msg (str-cat "Message (" ?name "/" ?team "): "))
+  (bind ?has-data FALSE)
+  (printout t ?msg crlf)
+
+  (if (pb-has-field ?p "functionality") then
+    (bind ?pb-functionality (pb-field-value ?p "functionality"))
+    (bind ?msg (str-cat ?msg ?pb-functionality))
+    (bind ?has-data TRUE)
+  )
+
+  (if (pb-has-field ?p "capability") then
+    (bind ?pb-capability (pb-field-value ?p "capability"))
+    (bind ?msg (str-cat ?msg " [" ?pb-capability "]"))
+    (bind ?has-data TRUE)
+  )
+
+  (if (pb-has-field ?p "meta_data") then
+    (bind ?pb-meta-data (pb-field-value ?p "meta_data"))
+    (bind ?msg (str-cat ?msg ": " ?pb-meta-data))
+    (bind ?has-data TRUE)
+  )
+
+  (if (eq ?has-data TRUE) then
+    (printout t ?msg crlf)
+    (assert (attention-message (text ?msg)))
+  )
+)
