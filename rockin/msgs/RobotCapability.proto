@@ -11,13 +11,38 @@ message RobotCapability {
   }
 
   enum Capability {
-    NAVIGATION   = 0;
+    // Navigation (e.g. planning or execution)
+    NAVIGATION = 0;
+
+    // Manipulation (e.g. grasp planning/execution, arm motion
+    // planning/execution)
     MANIPULATION = 1;
-    PERCEPTION   = 2;
-    TASK         = 3;
+
+    // Perception (e.g. RGB or depth image processing)
+    PERCEPTION = 2;
+
+    // Task planning or task execution
+    TASK = 3;
   }
 
+
+  // The currently active capability
   optional Capability capability = 1;
-  optional string functionality  = 2;
-  optional string meta_data      = 3;
+
+  // The functionality which provides the above capability (e.g. a software
+  // component)
+  optional string functionality = 2;
+
+  // Arbitrary information to further describe the capability (e.g. error codes
+  // or detected objects).
+  optional string meta_data = 3;
+}
+
+message RobotCapabilityInfo {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 602;
+  }
+
+  repeated RobotCapability capabilities = 1;
 }
