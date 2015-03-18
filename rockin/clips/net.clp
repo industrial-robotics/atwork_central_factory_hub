@@ -351,6 +351,35 @@
   (pb-destroy ?oi)
 )
 
+(defrule net-recv-OrderAcceptance
+  ?mf <- (protobuf-msg (type "rockin_msgs.OrderAcceptance") (ptr ?p) (rcvd-at $?rcvd-at)
+           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
+  ?rf <- (robot (name ?name) (host ?from-host) (port ?from-port) (team ?team))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (bind ?pb-order-ids (pb-field-list ?p "id"))
+
+  (foreach ?id ?pb-order-ids
+    (do-for-all-instances ((?order Order)) (eq ?order:id ?id)
+      (bind ?processing-team (send ?order get-processing-team))
+
+      ; Check if any team is already processing the order
+      (if (eq (length$ ?processing-team) 0) then
+        (printout t ?name "/" ?team " accepts order " ?id crlf)
+        (slot-insert$ ?order processing-team 1 ?team)
+      else
+        (bind ?processing-team (nth$ 1 ?processing-team))
+
+        ; Check if the requesting team is processing the order
+        (if (neq (str-compare ?processing-team ?team) 0) then
+          (printout t ?name "/" ?team " tries to accept order " ?id ", but the order is already processed by " ?processing-team crlf)
+        )
+      )
+    )
+  )
+)
+
 (defrule net-send-VersionInfo
   (time $?now)
   ?sf <- (signal (type version-info) (seq ?seq)
