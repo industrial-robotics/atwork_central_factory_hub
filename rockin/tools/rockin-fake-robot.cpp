@@ -276,6 +276,12 @@ handle_timer(const boost::system::error_code& error)
     peer_public_->send(capability_info);
 
 
+    // Accept an order
+    OrderAcceptance acceptance;
+    acceptance.add_id(1);
+    peer_team_->send(acceptance);
+
+
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));
     timer_->async_wait(handle_timer);
