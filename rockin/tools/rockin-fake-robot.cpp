@@ -49,7 +49,7 @@
 #include <msgs/Camera.pb.h>
 #include <msgs/CompressedImage.pb.h>
 #include <msgs/BenchmarkFeedback.pb.h>
-#include <msgs/RobotCapability.pb.h>
+#include <msgs/RobotStatusReport.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -262,18 +262,18 @@ handle_timer(const boost::system::error_code& error)
     peer_public_->send(bf);
 
 
-    // Send robot capability
-    RobotCapabilityInfo capability_info;
-    RobotCapability *capability;
-    capability = capability_info.add_capabilities();
-    capability->set_capability(RobotCapability::TASK);
-    capability->set_functionality("SchedulerComponent");
-    capability->set_meta_data("Task execution active");
-    capability = capability_info.add_capabilities();
-    capability->set_capability(RobotCapability::NAVIGATION);
-    capability->set_functionality("NavigationPlanner");
-    capability->set_meta_data("Planning a path for the base");
-    peer_public_->send(capability_info);
+    // Send robot status report
+    RobotStatusReport report;
+    RobotStatus *status;
+    status = report.add_status();
+    status->set_capability(RobotStatus::TASK);
+    status->set_functionality("SchedulerComponent");
+    status->set_meta_data("Task execution active");
+    status = report.add_status();
+    status->set_capability(RobotStatus::NAVIGATION);
+    status->set_functionality("NavigationPlanner");
+    status->set_meta_data("Planning a path for the base");
+    peer_public_->send(report);
 
 
     // Accept an order

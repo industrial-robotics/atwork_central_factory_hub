@@ -670,8 +670,8 @@
   (pb-destroy ?ds)
 )
 
-(deffunction print-RobotCapability (?name ?team ?p)
-  (bind ?msg (str-cat "Message (" ?name "/" ?team "): "))
+(deffunction print-RobotStatus (?name ?team ?p)
+  (bind ?msg (str-cat "Status (" ?name "/" ?team "): "))
   (bind ?has-data FALSE)
 
   (if (pb-has-field ?p "functionality") then
@@ -698,15 +698,15 @@
   )
 )
 
-(defrule net-recv-RobotCapabilityInfo
-  ?mf <- (protobuf-msg (type "rockin_msgs.RobotCapabilityInfo") (ptr ?p)
+(defrule net-recv-RobotStatusReport
+  ?mf <- (protobuf-msg (type "rockin_msgs.RobotStatusReport") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
   (robot (name ?name) (team ?team) (host ?host))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  (bind ?pb-capabilities (pb-field-list ?p "capabilities"))
-  (foreach ?pb-capability ?pb-capabilities
-    (print-RobotCapability ?name ?team ?pb-capability)
+  (bind ?pb-report (pb-field-list ?p "status"))
+  (foreach ?pb-status ?pb-report
+    (print-RobotStatus ?name ?team ?pb-status)
   )
 )

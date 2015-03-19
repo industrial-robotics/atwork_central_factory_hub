@@ -1,10 +1,10 @@
 package rockin_msgs;
 
 option java_package = "org.rockin.common_msgs";
-option java_outer_classname = "RobotActivityProtos";
+option java_outer_classname = "RobotStatusReportProtos";
 
 
-message RobotCapability {
+message RobotStatus {
   enum CompType {
     COMP_ID  = 2000;
     MSG_TYPE = 601;
@@ -38,11 +38,11 @@ message RobotCapability {
   optional string meta_data = 3;
 }
 
-message RobotCapabilityInfo {
+message RobotStatusReport {
   enum CompType {
     COMP_ID  = 2000;
     MSG_TYPE = 602;
   }
 
-  repeated RobotCapability capabilities = 1;
+  repeated RobotStatus status = 1;
 }
