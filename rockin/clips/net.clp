@@ -710,3 +710,13 @@
     (print-RobotStatus ?name ?team ?pb-status)
   )
 )
+
+(defrule net-recv-BenchmarkFeedback
+  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
+         (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
+  (robot (name ?name) (team ?team) (host ?from-host))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (send [sm] process-event FINISH)
+)
