@@ -711,12 +711,65 @@
   )
 )
 
+(deffunction net-handle-fbm1-feedback (?p ?name ?team)
+  (if (and
+       (pb-has-field ?p "object_class_name")
+       (pb-has-field ?p "object_instance_name")
+       (pb-has-field ?p "object_pose"))
+   then
+    (printout t "FBM: Robot " ?name "/" ?team
+        " recognized object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " recognized object instance" (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name")))))
+   else
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
+  )
+)
+
+(deffunction net-handle-fbm2-feedback (?p ?name ?team)
+  (if (and
+       (pb-has-field ?p "grasp_notification")
+       (pb-has-field ?p "object_class_name")
+       (pb-has-field ?p "object_instance_name")
+       (pb-has-field ?p "end_effector_pose"))
+   then
+    (printout t "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?p "object_instance_name")
+        " of class " (pb-field-value ?p "object_class_name")))))
+   else
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
+  )
+)
+
 (defrule net-recv-BenchmarkFeedback
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-         (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
-  (robot (name ?name) (team ?team) (host ?from-host))
+         (rcvd-from ?host ?port) (client-type PEER))
+  (robot (name ?name) (team ?team) (host ?host))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
+  (bind ?state-pre (send [sm] get-current-state))
   (send [sm] process-event FINISH)
+  (bind ?state-post (send [sm] get-current-state))
+
+  (if (neq ?state-pre ?state-post) then
+    (bind ?phase (send [benchmark] get-current-phase))
+    (bind ?phase-type (send ?phase get-type))
+    (bind ?phase-type-id (send ?phase get-type-id))
+
+    ; Not relevant in the TBMs
+    (if (eq ?phase-type TBM) then
+      (return)
+    )
+
+    (switch ?phase-type-id
+      (case 1 then (net-handle-fbm1-feedback ?p ?name ?team))
+      (case 2 then (net-handle-fbm2-feedback ?p ?name ?team))
+    )
+  )
 )
