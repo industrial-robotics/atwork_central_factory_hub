@@ -712,6 +712,22 @@
   )
 )
 
+(defrule net-recv-LoggingStatus
+  ?mf <- (protobuf-msg (type "rockin_msgs.LoggingStatus") (ptr ?p)
+         (rcvd-via ?via) (rcvd-from ?host ?port))
+  ?robot <- (robot (host ?host))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (bind ?is-logging (pb-field-value ?p "is_logging"))
+  (if (eq ?is-logging 1) then
+    (modify ?robot (is-logging TRUE))
+  else
+    (modify ?robot (is-logging FALSE))
+  )
+)
+
+
 (deffunction net-handle-fbm1-feedback (?p ?name ?team)
   (if (and
        (pb-has-field ?p "object_class_name")
