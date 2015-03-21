@@ -54,6 +54,10 @@ message Robot {
 
   // Timestamp in UTC when a BeaconSignal was received last from this robot
   required Time last_seen = 4;
+
+  // An optional flag to determine if the robot is logging offline benchmarking
+  // data.
+  optional bool is_logging = 5;
 }
 
 message RobotInfo {
