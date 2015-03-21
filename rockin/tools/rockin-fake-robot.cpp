@@ -50,6 +50,7 @@
 #include <msgs/CompressedImage.pb.h>
 #include <msgs/BenchmarkFeedback.pb.h>
 #include <msgs/RobotStatusReport.pb.h>
+#include <msgs/LoggingStatus.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -274,6 +275,12 @@ handle_timer(const boost::system::error_code& error)
     status->set_functionality("NavigationPlanner");
     status->set_meta_data("Planning a path for the base");
     peer_public_->send(report);
+
+
+    // Send if the robot is logging offline benchmarking data
+    LoggingStatus logging;
+    logging.set_is_logging(true);
+    peer_team_->send(logging);
 
 
     // Accept an order
