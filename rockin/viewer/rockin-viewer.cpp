@@ -325,6 +325,11 @@ bool idle_handler() {
       sstr_host << robot_info->robots(i).host() << std::endl;
       sstr_host << (is_robot_lost ? "Lost" : "Active");
 
+      if (robot_info->robots(i).has_is_logging()) {
+        bool is_logging = robot_info->robots(i).is_logging();
+        sstr_host << ", " << (is_logging ? "Logging" : "Not Logging");
+      }
+
       RobotInfoFrame *frame = new RobotInfoFrame(sstr_name.str(), sstr_host.str(), is_robot_lost);
       box_robots->pack_end(*frame);
 
