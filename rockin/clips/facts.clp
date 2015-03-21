@@ -15,6 +15,7 @@
   (slot port (type INTEGER))
   (multislot last-seen (type INTEGER) (cardinality 2 2))
   (slot warning-sent (type SYMBOL) (allowed-values TRUE FALSE) (default FALSE))
+  (slot is-logging (type SYMBOL) (allowed-values TRUE FALSE) (default FALSE))
 )
 
 (deftemplate signal
