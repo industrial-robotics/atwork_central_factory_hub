@@ -292,6 +292,7 @@
     (pb-set-field ?r "name" ?robot:name)
     (pb-set-field ?r "team" ?robot:team)
     (pb-set-field ?r "host" ?robot:host)
+    (pb-set-field ?r "is_logging" ?robot:is-logging)
 
     (pb-add-list ?ri "robots" ?r) ; destroys ?r
   )
