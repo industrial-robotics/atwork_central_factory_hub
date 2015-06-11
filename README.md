@@ -15,7 +15,7 @@ Additionally, the following debian packages need to be installed:
 ### Cloning the Git repository:
 
     git clone https://github.com/rockin-robot-challenge/at_work_central_factory_hub.git
-    cd rockin-refbox
+    cd at_work_central_factory_hub
     git checkout rockin
 
 
