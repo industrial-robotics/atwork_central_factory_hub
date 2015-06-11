@@ -14,7 +14,7 @@ Additionally, the following debian packages need to be installed:
 ## Compiling the RoCKIn@Work Referee Box
 ### Cloning the Git repository:
 
-    git clone https://github.com/mas-group/rockin-refbox
+    git clone https://github.com/rockin-robot-challenge/at_work_central_factory_hub.git
     cd rockin-refbox
     git checkout rockin
 
