@@ -788,5 +788,10 @@
       (case 1 then (net-handle-fbm1-feedback ?p ?name ?team))
       (case 2 then (net-handle-fbm2-feedback ?p ?name ?team))
     )
+
+    ; Forward the feedback to all clients
+    (do-for-all-facts ((?client network-client)) TRUE
+      (pb-send ?client:id ?p)
+    )
   )
 )
