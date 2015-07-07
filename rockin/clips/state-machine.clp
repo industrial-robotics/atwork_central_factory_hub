@@ -15,6 +15,14 @@
   (slot next-state (type INSTANCE) (allowed-classes State))
 )
 
+(defmessage-handler StateMachine init ()
+  ; first, initialize the other slots
+  (call-next-handler)
+
+  ; then, enter the initial state
+  (send ?self:current-state on-enter ?self:current-state)
+)
+
 (defmessage-handler StateMachine set-state (?state)
   ; TODO: Check that state is part of the state machine
 
