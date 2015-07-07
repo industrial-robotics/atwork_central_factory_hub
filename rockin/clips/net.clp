@@ -277,6 +277,30 @@
   (pb-destroy ?benchmark-state)
 )
 
+(deffunction net-create-BenchmarkInfo (?info)
+  (bind ?bi (pb-create "rockin_msgs.BenchmarkInfo"))
+
+  (pb-set-field ?bi "object" (fact-slot-value ?info object))
+
+  (return ?bi)
+)
+
+(defrule net-send-BenchmarkInfo
+  (time $?now)
+  ?f <- (signal (type benchmark-info) (time $?t&:(timeout ?now ?t ?*BENCHMARKINFO-PERIOD*)) (seq ?seq))
+  ;(benchmark-info ?info)
+  ?info <- (benchmark-info)
+  =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+  (bind ?benchmark-info (net-create-BenchmarkInfo ?info))
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?benchmark-info)
+  )
+
+  (pb-destroy ?benchmark-info)
+)
+
 (deffunction net-create-RobotInfo ()
   (bind ?ri (pb-create "rockin_msgs.RobotInfo"))
 
