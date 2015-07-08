@@ -79,7 +79,7 @@
   (make-instance [finished-state] of FinishedState)
 
   (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition STOP            [stopped-state])
+  (send [running-state]    add-transition STOP            [check-runs-state])
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [check-runs-state])
   (send [running-state]    add-transition FINISH          [check-runs-state])
@@ -102,7 +102,7 @@
   (make-instance [finished-state] of FinishedState)
 
   (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition STOP            [stopped-state])
+  (send [running-state]    add-transition STOP            [check-runs-state])
   (send [running-state]    add-transition PAUSE           [paused-state])
   (send [running-state]    add-transition TIMEOUT         [check-runs-state])
   (send [running-state]    add-transition FINISH          [check-runs-state])
