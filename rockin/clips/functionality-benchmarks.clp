@@ -72,11 +72,11 @@
 
 
 (deffunction functionality-benchmarks-fbm1-init ()
-  (make-instance [stopped-state] of FbmStoppedState)
-  (make-instance [running-state] of FbmRunningState (max-time ?*FBM1-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [check-runs-state] of CheckRunsState (max-runs ?*FBM1-COUNT*))
-  (make-instance [finished-state] of FinishedState)
+  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION))
+  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (max-time ?*FBM1-TIME*))
+  (make-instance [paused-state] of PausedState (phase EXECUTION))
+  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (max-runs ?*FBM1-COUNT*))
+  (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [check-runs-state])
@@ -88,6 +88,7 @@
   (send [check-runs-state] add-transition REPEAT          [stopped-state])
   (send [check-runs-state] add-transition FINISH          [finished-state])
 
+
   (make-instance [sm] of StateMachine
     (current-state [stopped-state])
     (states [stopped-state] [running-state] [paused-state] [check-runs-state] [finished-state])
@@ -95,11 +96,11 @@
 )
 
 (deffunction functionality-benchmarks-fbm2-init ()
-  (make-instance [stopped-state] of FbmStoppedState)
-  (make-instance [running-state] of FbmRunningState (max-time ?*FBM2-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [check-runs-state] of CheckRunsState (max-runs ?*FBM2-COUNT*))
-  (make-instance [finished-state] of FinishedState)
+  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION))
+  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (max-time ?*FBM2-TIME*))
+  (make-instance [paused-state] of PausedState (phase EXECUTION))
+  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (max-runs ?*FBM2-COUNT*))
+  (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [check-runs-state])

@@ -5,10 +5,10 @@
 ;---------------------------------------------------------------------------
 
 (deffunction task-benchmarks-tbm1-init ()
-  (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [finished-state] of FinishedState)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState (phase EXECUTION))
+  (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])
@@ -59,10 +59,10 @@
 
 
 (deffunction task-benchmarks-tbm2-init ()
-  (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [finished-state] of FinishedState)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState (phase EXECUTION))
+  (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])
@@ -131,10 +131,10 @@
 
 
 (deffunction task-benchmarks-tbm3-init ()
-  (make-instance [stopped-state] of StoppedState)
-  (make-instance [running-state] of RunningState (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState)
-  (make-instance [finished-state] of FinishedState)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState (phase EXECUTION))
+  (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])

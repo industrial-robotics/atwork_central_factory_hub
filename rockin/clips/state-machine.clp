@@ -55,12 +55,16 @@
 
 (defclass State (is-a USER) (role abstract)
   (multislot transitions (type INSTANCE) (allowed-classes Transition))
+  (slot phase (type SYMBOL))
 )
 
 (defmessage-handler State on-enter (?prev-state))
 (defmessage-handler State on-update ())
 (defmessage-handler State on-exit (?next-state))
 (defmessage-handler State to-robot-state ())
+(defmessage-handler State to-robot-phase ()
+  (return ?self:phase)
+)
 (defmessage-handler State add-transition (?input ?next-state)
   (bind ?t (make-instance of Transition (input ?input) (next-state ?next-state)))
   (slot-insert$ ?self transitions 1 ?t)
