@@ -202,8 +202,8 @@
 
 (defrule state-machine-update
   (time $?now)
-  (object (is-a StateMachine))
+  ?sm <- (object (is-a StateMachine))
   =>
-  (send [sm] update)
+  (send ?sm update)
 )
 
