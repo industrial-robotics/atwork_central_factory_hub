@@ -73,11 +73,11 @@
 )
 
 
-(deffunction functionality-benchmarks-fbm1-init ()
-  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION))
-  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (max-time ?*FBM1-TIME*))
+(deffunction functionality-benchmarks-fbm1-init (?time)
+  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION) (time ?time))
+  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (time ?time) (max-time ?*FBM1-TIME*))
   (make-instance [paused-state] of PausedState (phase EXECUTION))
-  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (max-runs ?*FBM1-COUNT*))
+  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (time ?time) (max-runs ?*FBM1-COUNT*))
   (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])
@@ -97,11 +97,11 @@
   )
 )
 
-(deffunction functionality-benchmarks-fbm2-init ()
-  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION))
-  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (max-time ?*FBM2-TIME*))
+(deffunction functionality-benchmarks-fbm2-init (?time)
+  (make-instance [stopped-state] of FbmStoppedState (phase EXECUTION) (time ?time))
+  (make-instance [running-state] of FbmRunningState (phase EXECUTION) (time ?time) (max-time ?*FBM2-TIME*))
   (make-instance [paused-state] of PausedState (phase EXECUTION))
-  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (max-runs ?*FBM2-COUNT*))
+  (make-instance [check-runs-state] of CheckRunsState (phase EXECUTION) (time ?time) (max-runs ?*FBM2-COUNT*))
   (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
   (send [stopped-state]    add-transition START           [running-state])

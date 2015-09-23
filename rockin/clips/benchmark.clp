@@ -31,11 +31,9 @@
 (defclass Benchmark (is-a USER)
   (slot current-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
   (slot requested-phase (type INSTANCE) (allowed-classes BenchmarkPhase))
-  (slot benchmark-time (type FLOAT) (default 0.0))
 
-  ; cardinality 2: sec msec
-  (multislot start-time (type INTEGER) (cardinality 2 2) (default 0 0))
-  (multislot end-time (type INTEGER) (cardinality 2 2) (default 0 0))
+  ; time that the benchmark is running
+  (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
 )
 
 (defmessage-handler Benchmark switch-phase ()
@@ -58,11 +56,11 @@
   (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
 
 
-  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 1)) then (functionality-benchmarks-fbm1-init))
-  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 2)) then (functionality-benchmarks-fbm2-init))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 1)) then (task-benchmarks-tbm1-init))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 2)) then (task-benchmarks-tbm2-init))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 3)) then (task-benchmarks-tbm3-init))
+  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 1)) then (functionality-benchmarks-fbm1-init ?self:time))
+  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 2)) then (functionality-benchmarks-fbm2-init ?self:time))
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 1)) then (task-benchmarks-tbm1-init ?self:time))
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 2)) then (task-benchmarks-tbm2-init ?self:time))
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 3)) then (task-benchmarks-tbm3-init ?self:time))
 )
 
 (defmessage-handler Benchmark set-requested-phase (?type ?type-id)
@@ -77,5 +75,6 @@
   (make-instance [benchmark] of Benchmark
     (current-phase (make-instance of BenchmarkPhase))
     (requested-phase (make-instance of BenchmarkPhase))
+    (time (make-instance of BenchmarkTime))
   )
 )

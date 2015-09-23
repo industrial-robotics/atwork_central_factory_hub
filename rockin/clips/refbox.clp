@@ -10,6 +10,7 @@
 (load* (resolve-file inventory.clp))
 (load* (resolve-file order.clp))
 (load* (resolve-file order-info.clp))
+(load* (resolve-file benchmark-time.clp))
 (load* (resolve-file state-machine.clp))
 (load* (resolve-file task-benchmarks.clp))
 (load* (resolve-file functionality-benchmarks.clp))

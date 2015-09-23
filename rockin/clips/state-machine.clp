@@ -72,9 +72,17 @@
 
 
 (defclass InitState (is-a State) (role concrete))
-(defclass StoppedState (is-a State) (role concrete))
+
+(defclass StoppedState (is-a State) (role concrete)
+  ; benchmark time is shared between several states
+  (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
+)
+
 (defclass RunningState (is-a State) (role concrete)
   (slot max-time (type FLOAT) (default 0.0))
+
+  ; benchmark time is shared between several states
+  (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
 
   ; cardinality 2: sec msec
   (multislot last-time (type INTEGER) (cardinality 2 2) (default 0 0))
@@ -83,6 +91,9 @@
 (defclass CheckRunsState (is-a State) (role concrete)
   (slot run (type INTEGER) (default 0))             ; how often the specific benchmark has been executed already
   (slot max-runs (type INTEGER) (default 1))
+
+  ; benchmark time is shared between several states
+  (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
 )
 (defclass FinishedState (is-a State) (role concrete))
 
@@ -98,8 +109,8 @@
   (assert (attention-message (text "Starting benchmark") (time 15)))
 
   ; reset the times of the benchmark
-  (send [benchmark] put-start-time (now))
-  (send [benchmark] put-benchmark-time 0.0)
+  (send ?self:time put-start-time (now))
+  (send ?self:time put-timer 0.0)
 )
 
 (defmessage-handler StoppedState to-robot-state ()
@@ -117,12 +128,12 @@
   ; continuously update the benchmark time
   (bind ?now (now))
   (bind ?timediff (time-diff-sec ?now ?self:last-time))
-  (bind ?benchmark-time (send [benchmark] get-benchmark-time))
-  (send [benchmark] put-benchmark-time (+ ?benchmark-time ?timediff))
+  (bind ?time (send ?self:time get-timer))
+  (send ?self:time put-timer (+ ?time ?timediff))
   (bind ?self:last-time ?now)
 
   ; check if the time is up
-  (if (>= ?benchmark-time ?self:max-time) then
+  (if (>= ?time ?self:max-time) then
     (send [sm] process-event TIMEOUT)
   )
 )
@@ -148,14 +159,14 @@
 
 
 (defmessage-handler CheckRunsState on-enter (?prev-state)
-  (send [benchmark] put-end-time (now))
+  (send ?self:time put-end-time (now))
   (bind ?self:run (+ ?self:run 1))
 
-  (bind ?time (send [benchmark] get-benchmark-time))
-  (printout t "Run " ?self:run " over after " ?time " seconds" crlf)
-  (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?time " seconds")) (time 15)))
+  (bind ?t (send ?self:time get-timer))
+  (printout t "Run " ?self:run " over after " ?t " seconds" crlf)
+  (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?t " seconds")) (time 15)))
 
-  (send [benchmark] put-benchmark-time 0.0)
+  (send ?self:time put-timer 0.0)
 )
 
 (defmessage-handler CheckRunsState on-update ()

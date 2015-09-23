@@ -4,9 +4,9 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(deffunction task-benchmarks-tbm1-init ()
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+(deffunction task-benchmarks-tbm1-init (?time)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState (phase EXECUTION))
   (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
@@ -58,9 +58,9 @@
 
 
 
-(deffunction task-benchmarks-tbm2-init ()
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+(deffunction task-benchmarks-tbm2-init (?time)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState (phase EXECUTION))
   (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
@@ -130,9 +130,9 @@
 
 
 
-(deffunction task-benchmarks-tbm3-init ()
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (max-time ?*TBM-TIME*))
+(deffunction task-benchmarks-tbm3-init (?time)
+  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
+  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
   (make-instance [paused-state] of PausedState (phase EXECUTION))
   (make-instance [finished-state] of FinishedState (phase EXECUTION))
 
