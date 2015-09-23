@@ -52,8 +52,10 @@
   ; Call the parent function
   (call-next-handler)
 
-  ; TODO: Validate that ?prev-state is a FbmStoppedState
-  (bind ?self:selected-object (send ?prev-state get-selected-object))
+  ; If we enter from an FbmStoppedState, remember the selected object
+  (do-for-instance ((?s FbmStoppedState)) (eq ?s ?prev-state)
+    (bind ?self:selected-object (send ?prev-state get-selected-object))
+  )
 
   ; Store the selected object so that it can be streamed to the clients
   ; continuously during the benchmark execution
