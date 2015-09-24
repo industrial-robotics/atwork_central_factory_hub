@@ -10,6 +10,7 @@
   ; FBM: functionality benchmark
   (slot type (type SYMBOL) (allowed-values NONE TBM FBM) (default NONE))
   (slot type-id (type INTEGER) (default 0))
+  (slot description (type STRING) (default ""))
 )
 
 (defmessage-handler BenchmarkScenario create-msg ()
@@ -19,10 +20,7 @@
  
   (pb-set-field ?pb-benchmark-scenario "type" ?self:type)
   (pb-set-field ?pb-benchmark-scenario "type_id" ?self:type-id)
-
-  (do-for-fact ((?scenario benchmark-scenario)) (and (eq ?scenario ?self:type) (eq ?scenario:type-id ?self:type-id))
-    (pb-set-field ?pb-benchmark-scenario "description" ?scenario)
-  )
+  (pb-set-field ?pb-benchmark-scenario "description" ?self:description)
 
   (return ?pb-benchmark-scenario)
 )
@@ -42,9 +40,6 @@
 (defmessage-handler Benchmark switch-scenario ()
   (bind ?self:current-scenario ?self:requested-scenario)
 
-  (bind ?scenario-type (send ?self:current-scenario get-type))
-  (bind ?scenario-type-id (send ?self:current-scenario get-type-id))
-
 
   ; Remove all items from the inventory
   (foreach ?item (send [inventory] get-items)
@@ -61,37 +56,50 @@
 
   ; TODO: Remove all states and their transitions
 
-  (if (and (eq ?scenario-type FBM) (eq ?scenario-type-id 1)) then
+  (if (eq ?self:current-scenario [FBM1]) then
     (functionality-benchmarks-fbm1-init ?self:time ?self:state-machine)
   )
-  (if (and (eq ?scenario-type FBM) (eq ?scenario-type-id 2)) then
+  (if (eq ?self:current-scenario [FBM2]) then
     (functionality-benchmarks-fbm2-init ?self:time ?self:state-machine)
   )
-  (if (and (eq ?scenario-type TBM) (eq ?scenario-type-id 1)) then
+  (if (eq ?self:current-scenario [TBM1]) then
     (task-benchmarks-tbm1-init ?self:time ?self:state-machine)
   )
-  (if (and (eq ?scenario-type TBM) (eq ?scenario-type-id 2)) then
+  (if (eq ?self:current-scenario [TBM2]) then
     (task-benchmarks-tbm2-init ?self:time ?self:state-machine)
   )
-  (if (and (eq ?scenario-type TBM) (eq ?scenario-type-id 3)) then
+  (if (eq ?self:current-scenario [TBM3]) then
     (task-benchmarks-tbm3-init ?self:time ?self:state-machine)
   )
 )
 
-(defmessage-handler Benchmark set-requested-scenario (?type ?type-id)
+(defmessage-handler Benchmark request-scenario (?type ?type-id)
   (send ?self:requested-scenario put-type ?type)
   (send ?self:requested-scenario put-type-id ?type-id)
+
+  (if (and (eq ?type FBM) (eq ?type-id 1)) then (send ?self put-requested-scenario [FBM1]))
+  (if (and (eq ?type FBM) (eq ?type-id 2)) then (send ?self put-requested-scenario [FBM2]))
+  (if (and (eq ?type TBM) (eq ?type-id 1)) then (send ?self put-requested-scenario [TBM1]))
+  (if (and (eq ?type TBM) (eq ?type-id 2)) then (send ?self put-requested-scenario [TBM2]))
+  (if (and (eq ?type TBM) (eq ?type-id 3)) then (send ?self put-requested-scenario [TBM3]))
 )
 
 
 (defrule init-benchmark
   (init)
   =>
+  (make-instance [NONE] of BenchmarkScenario (type NONE) (type-id 0) (description "No benchmark running"))
+  (make-instance [TBM1] of BenchmarkScenario (type TBM)  (type-id 1) (description "Prepare Assembly Aid Tray for Force Fitting"))
+  (make-instance [TBM2] of BenchmarkScenario (type TBM)  (type-id 2) (description "Plate Drilling"))
+  (make-instance [TBM3] of BenchmarkScenario (type TBM)  (type-id 3) (description "Fill a Box with Parts for Manual Assembly"))
+  (make-instance [FBM1] of BenchmarkScenario (type FBM)  (type-id 1) (description "Object Perception Functionality"))
+  (make-instance [FBM2] of BenchmarkScenario (type FBM)  (type-id 2) (description "Visual Servoing Functionality"))
+
   (make-instance [init-state] of InitState)
 
   (make-instance [benchmark] of Benchmark
-    (current-scenario (make-instance of BenchmarkScenario))
-    (requested-scenario (make-instance of BenchmarkScenario))
+    (current-scenario [NONE])
+    (requested-scenario [NONE])
     (time (make-instance of BenchmarkTime))
     (state-machine
       (make-instance of StateMachine

@@ -194,7 +194,7 @@
   (bind ?pb-scenario-type (pb-field-value ?pb-scenario "type"))
   (bind ?pb-scenario-type-id (pb-field-value ?pb-scenario "type_id"))
 
-  (send [benchmark] set-requested-scenario ?pb-scenario-type ?pb-scenario-type-id)
+  (send [benchmark] request-scenario ?pb-scenario-type ?pb-scenario-type-id)
 )
 
 (defrule net-recv-SetBenchmarkPhase-illegal
