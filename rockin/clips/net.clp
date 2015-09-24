@@ -189,12 +189,12 @@
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  ; Get the phase type (NONE, FBM, TBM) and type id from the message
-  (bind ?pb-phase (pb-field-value ?p "phase"))
-  (bind ?pb-phase-type (pb-field-value ?pb-phase "type"))
-  (bind ?pb-phase-type-id (pb-field-value ?pb-phase "type_id"))
+  ; Get the scenario type (NONE, FBM, TBM) and type id from the message
+  (bind ?pb-scenario (pb-field-value ?p "phase"))
+  (bind ?pb-scenario-type (pb-field-value ?pb-scenario "type"))
+  (bind ?pb-scenario-type-id (pb-field-value ?pb-scenario "type_id"))
 
-  (send [benchmark] set-requested-phase ?pb-phase-type ?pb-phase-type-id)
+  (send [benchmark] set-requested-scenario ?pb-scenario-type ?pb-scenario-type-id)
 )
 
 (defrule net-recv-SetBenchmarkPhase-illegal
@@ -214,7 +214,7 @@
   (bind ?pb-event (pb-field-value ?p "event"))
 
   (if (eq ?pb-event RESET) then
-    (send [benchmark] switch-phase)
+    (send [benchmark] switch-scenario)
   else
     (bind ?state-machine (send [benchmark] get-state-machine))
     (send ?state-machine process-event ?pb-event)
@@ -242,10 +242,10 @@
     (pb-set-field ?benchmarkstate "benchmark_time" ?benchmarkstate-time) ; destroys ?benchmarkstate-time!
   )
 
-  ; Add the current phase (e.g. TBM1 or FBM2) of the benchmark
-  (bind ?current-phase (send [benchmark] get-current-phase))
-  (bind ?pb-benchmark-phase (send ?current-phase create-msg))
-  (pb-set-field ?benchmarkstate "phase" ?pb-benchmark-phase)
+  ; Add the current scenario (e.g. TBM1 or FBM2) of the benchmark
+  (bind ?current-scenario (send [benchmark] get-current-scenario))
+  (bind ?pb-benchmark-scenario (send ?current-scenario create-msg))
+  (pb-set-field ?benchmarkstate "phase" ?pb-benchmark-scenario)
 
   ; Add all known teams
   (do-for-all-facts ((?team known-team)) TRUE
@@ -803,16 +803,16 @@
   (bind ?state-post (send ?state-machine get-current-state))
 
   (if (neq ?state-pre ?state-post) then
-    (bind ?phase (send [benchmark] get-current-phase))
-    (bind ?phase-type (send ?phase get-type))
-    (bind ?phase-type-id (send ?phase get-type-id))
+    (bind ?scenario (send [benchmark] get-current-scenario))
+    (bind ?scenario-type (send ?scenario get-type))
+    (bind ?scenario-type-id (send ?scenario get-type-id))
 
     ; Not relevant in the TBMs
-    (if (eq ?phase-type TBM) then
+    (if (eq ?scenario-type TBM) then
       (return)
     )
 
-    (switch ?phase-type-id
+    (switch ?scenario-type-id
       (case 1 then (net-handle-fbm1-feedback ?p ?name ?team))
       (case 2 then (net-handle-fbm2-feedback ?p ?name ?team))
     )
