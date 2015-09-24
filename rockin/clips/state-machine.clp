@@ -55,6 +55,7 @@
 
 (defclass State (is-a USER) (role abstract)
   (multislot transitions (type INSTANCE) (allowed-classes Transition))
+  (slot state-machine (type INSTANCE) (allowed-classes StateMachine))
   (slot phase (type SYMBOL))
 )
 
@@ -134,7 +135,8 @@
 
   ; check if the time is up
   (if (>= ?time ?self:max-time) then
-    (send [sm] process-event TIMEOUT)
+    (bind ?state-machine (send ?self get-state-machine))
+    (send ?state-machine process-event TIMEOUT)
   )
 )
 
@@ -170,12 +172,14 @@
 )
 
 (defmessage-handler CheckRunsState on-update ()
+  (bind ?state-machine (send ?self get-state-machine))
+
   (if (>= ?self:run ?self:max-runs) then
     (printout t "Benchmark over" crlf)
     (assert (attention-message (text "Benchmark over") (time 15)))
-    (send [sm] process-event FINISH)
+    (send ?state-machine process-event FINISH)
   else
-    (send [sm] process-event REPEAT)
+    (send ?state-machine process-event REPEAT)
   )
 )
 
@@ -187,23 +191,3 @@
 (defmessage-handler FinishedState to-robot-state ()
   (return FINISHED)
 )
-
-
-; instantiate a dummy state machine
-(defrule state-machine-init
-  (init)
-  =>
-  (make-instance [init-state] of InitState)
-  (make-instance [sm] of StateMachine
-    (current-state [init-state])
-    (states [init-state])
-  )
-)
-
-(defrule state-machine-update
-  (time $?now)
-  ?sm <- (object (is-a StateMachine))
-  =>
-  (send ?sm update)
-)
-

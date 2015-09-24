@@ -4,11 +4,15 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(deffunction task-benchmarks-tbm1-init (?time)
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState (phase EXECUTION))
-  (make-instance [finished-state] of FinishedState (phase EXECUTION))
+(deffunction task-benchmarks-tbm1-init (?time ?state-machine)
+  (make-instance [stopped-state] of StoppedState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
+  (make-instance [running-state] of RunningState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState
+    (phase EXECUTION) (state-machine ?state-machine))
+  (make-instance [finished-state] of FinishedState
+    (phase EXECUTION) (state-machine ?state-machine))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])
@@ -18,7 +22,7 @@
   (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
-  (make-instance [sm] of StateMachine
+  (make-instance ?state-machine of StateMachine
     (current-state [stopped-state])
     (states [stopped-state] [running-state] [paused-state] [finished-state])
   )
@@ -58,11 +62,15 @@
 
 
 
-(deffunction task-benchmarks-tbm2-init (?time)
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState (phase EXECUTION))
-  (make-instance [finished-state] of FinishedState (phase EXECUTION))
+(deffunction task-benchmarks-tbm2-init (?time ?state-machine)
+  (make-instance [stopped-state] of StoppedState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
+  (make-instance [running-state] of RunningState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState
+    (phase EXECUTION) (state-machine ?state-machine))
+  (make-instance [finished-state] of FinishedState
+    (phase EXECUTION) (state-machine ?state-machine))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])
@@ -72,7 +80,7 @@
   (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
-  (make-instance [sm] of StateMachine
+  (make-instance ?state-machine of StateMachine
     (current-state [stopped-state])
     (states [stopped-state] [running-state] [paused-state] [finished-state])
   )
@@ -130,11 +138,15 @@
 
 
 
-(deffunction task-benchmarks-tbm3-init (?time)
-  (make-instance [stopped-state] of StoppedState (phase EXECUTION) (time ?time))
-  (make-instance [running-state] of RunningState (phase EXECUTION) (time ?time) (max-time ?*TBM-TIME*))
-  (make-instance [paused-state] of PausedState (phase EXECUTION))
-  (make-instance [finished-state] of FinishedState (phase EXECUTION))
+(deffunction task-benchmarks-tbm3-init (?time ?state-machine)
+  (make-instance [stopped-state] of StoppedState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
+  (make-instance [running-state] of RunningState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*TBM-TIME*))
+  (make-instance [paused-state] of PausedState
+    (phase EXECUTION) (state-machine ?state-machine))
+  (make-instance [finished-state] of FinishedState
+    (phase EXECUTION) (state-machine ?state-machine))
 
   (send [stopped-state]    add-transition START           [running-state])
   (send [running-state]    add-transition STOP            [stopped-state])
@@ -144,7 +156,7 @@
   (send [paused-state]     add-transition START           [running-state])
   (send [paused-state]     add-transition STOP            [stopped-state])
 
-  (make-instance [sm] of StateMachine
+  (make-instance ?state-machine of StateMachine
     (current-state [stopped-state])
     (states [stopped-state] [running-state] [paused-state] [finished-state])
   )

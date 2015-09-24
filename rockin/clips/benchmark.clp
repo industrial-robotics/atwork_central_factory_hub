@@ -34,6 +34,9 @@
 
   ; time that the benchmark is running
   (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
+
+  ; State machine that coordinates the benchmark execution
+  (slot state-machine (type INSTANCE) (allowed-classes StateMachine))
 )
 
 (defmessage-handler Benchmark switch-phase ()
@@ -56,11 +59,21 @@
   (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
 
 
-  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 1)) then (functionality-benchmarks-fbm1-init ?self:time))
-  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 2)) then (functionality-benchmarks-fbm2-init ?self:time))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 1)) then (task-benchmarks-tbm1-init ?self:time))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 2)) then (task-benchmarks-tbm2-init ?self:time))
-  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 3)) then (task-benchmarks-tbm3-init ?self:time))
+  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 1)) then
+    (functionality-benchmarks-fbm1-init ?self:time ?self:state-machine)
+  )
+  (if (and (eq ?phase-type FBM) (eq ?phase-type-id 2)) then
+    (functionality-benchmarks-fbm2-init ?self:time ?self:state-machine)
+  )
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 1)) then
+    (task-benchmarks-tbm1-init ?self:time ?self:state-machine)
+  )
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 2)) then
+    (task-benchmarks-tbm2-init ?self:time ?self:state-machine)
+  )
+  (if (and (eq ?phase-type TBM) (eq ?phase-type-id 3)) then
+    (task-benchmarks-tbm3-init ?self:time ?self:state-machine)
+  )
 )
 
 (defmessage-handler Benchmark set-requested-phase (?type ?type-id)
@@ -72,9 +85,25 @@
 (defrule init-benchmark
   (init)
   =>
+  (make-instance [init-state] of InitState)
+
   (make-instance [benchmark] of Benchmark
     (current-phase (make-instance of BenchmarkPhase))
     (requested-phase (make-instance of BenchmarkPhase))
     (time (make-instance of BenchmarkTime))
+    (state-machine
+      (make-instance of StateMachine
+        (current-state [init-state])
+        (states [init-state])
+      )
+    )
   )
+)
+
+(defrule benchmark-update
+  (time $?now)
+  ?bm <- (object (is-a Benchmark))
+  =>
+  (bind ?state-machine (send ?bm get-state-machine))
+  (send ?state-machine update)
 )

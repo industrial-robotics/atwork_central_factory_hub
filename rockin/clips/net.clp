@@ -216,7 +216,8 @@
   (if (eq ?pb-event RESET) then
     (send [benchmark] switch-phase)
   else
-    (send [sm] process-event ?pb-event)
+    (bind ?state-machine (send [benchmark] get-state-machine))
+    (send ?state-machine process-event ?pb-event)
   )
 )
 
@@ -252,7 +253,8 @@
   )
 
   ; Set the benchmark state (e.g. PAUSED or RUNNING) based on the state machine
-  (bind ?current-state (send [sm] get-current-state))
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
   (bind ?robot-state (send ?current-state to-robot-state))
   (pb-set-field ?benchmarkstate "state" ?robot-state)
 
@@ -795,9 +797,10 @@
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  (bind ?state-pre (send [sm] get-current-state))
-  (send [sm] process-event FINISH)
-  (bind ?state-post (send [sm] get-current-state))
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?state-pre (send ?state-machine get-current-state))
+  (send ?state-machine process-event FINISH)
+  (bind ?state-post (send ?state-machine get-current-state))
 
   (if (neq ?state-pre ?state-post) then
     (bind ?phase (send [benchmark] get-current-phase))
