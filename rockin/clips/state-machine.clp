@@ -165,8 +165,9 @@
   (bind ?self:run (+ ?self:run 1))
 
   (bind ?t (send ?self:time get-timer))
-  (printout t "Run " ?self:run " over after " ?t " seconds" crlf)
-  (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?t " seconds")) (time 15)))
+  (bind ?tf (format nil "%.2f" ?t))
+  (printout t "Run " ?self:run " over after " ?tf " seconds" crlf)
+  (assert (attention-message (text (str-cat "Run " ?self:run " over after " ?tf " seconds")) (time 15)))
 
   (send ?self:time put-timer 0.0)
 )
