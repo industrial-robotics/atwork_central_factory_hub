@@ -56,7 +56,7 @@
 (defclass State (is-a USER) (role abstract)
   (multislot transitions (type INSTANCE) (allowed-classes Transition))
   (slot state-machine (type INSTANCE) (allowed-classes StateMachine))
-  (slot phase (type SYMBOL))
+  (slot phase (type SYMBOL) (default EXECUTION))
 )
 
 (defmessage-handler State on-enter (?prev-state))
