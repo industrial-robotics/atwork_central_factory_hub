@@ -29,6 +29,18 @@
 )
 
 
+(defclass NoneBenchmarkScenario (is-a BenchmarkScenario) (role concrete))
+
+(defmessage-handler NoneBenchmarkScenario setup (?time ?state-machine)
+  (make-instance [init-state] of InitState)
+
+  (make-instance ?state-machine of StateMachine
+    (current-state [init-state])
+    (states [init-state])
+  )
+)
+
+
 (defclass Benchmark (is-a USER)
   (slot current-scenario (type INSTANCE) (allowed-classes BenchmarkScenario))
   (slot requested-scenario (type INSTANCE) (allowed-classes BenchmarkScenario))
