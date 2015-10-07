@@ -25,6 +25,9 @@
   (return ?pb-benchmark-scenario)
 )
 
+(defmessage-handler BenchmarkScenario setup (?time ?state-machine)
+)
+
 
 (defclass Benchmark (is-a USER)
   (slot current-scenario (type INSTANCE) (allowed-classes BenchmarkScenario))
