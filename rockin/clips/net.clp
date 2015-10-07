@@ -271,9 +271,6 @@
 
   (pb-broadcast ?peer-id-public ?benchmark-state)
 
-  ; For stream clients set refbox mode (only STANDALONE supported)
-  (pb-set-field ?benchmark-state "refbox_mode" STANDALONE)
-
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?benchmark-state)
   )

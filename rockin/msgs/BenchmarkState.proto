@@ -61,12 +61,6 @@ message BenchmarkState {
     STOPPED   = 4;
   }
 
-  enum RefBoxMode {
-    STANDALONE  = 0;
-    MASTER      = 1;
-    SLAVE       = 2;
-  }
-
   // Time since benchmark start
   required Time benchmark_time = 1;
 
@@ -81,8 +75,6 @@ message BenchmarkState {
 
   // Name of teams which are currently connected to the RefBox
   repeated string connected_teams = 6;
-
-  optional RefBoxMode refbox_mode = 7 [default = STANDALONE];
 }
 
 

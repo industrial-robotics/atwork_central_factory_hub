@@ -214,20 +214,6 @@ bool idle_handler() {
       break;
     }
     label_phase->set_text(sstr_phase.str());
-
-
-    // RefBox mode
-    Gtk::Label *label_refbox_mode = 0;
-    builder->get_widget("label_refbox_mode", label_refbox_mode);
-    if (benchmark_state->has_refbox_mode()) {
-      switch (benchmark_state->refbox_mode()) {
-        case rockin_msgs::BenchmarkState::STANDALONE: label_refbox_mode->set_text("Standalone"); break;
-        case rockin_msgs::BenchmarkState::MASTER: label_refbox_mode->set_text("Master"); break;
-        case rockin_msgs::BenchmarkState::SLAVE: label_refbox_mode->set_text("Slave"); break;
-      }
-    } else {
-      label_refbox_mode->set_text("---");
-    }
   }
 
 

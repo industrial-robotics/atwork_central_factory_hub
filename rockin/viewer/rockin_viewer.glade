@@ -172,51 +172,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkFrame" id="frame6">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label_xalign">0</property>
-                    <property name="shadow_type">out</property>
-                    <child>
-                      <object class="GtkAlignment" id="alignment6">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="top_padding">12</property>
-                        <property name="bottom_padding">12</property>
-                        <property name="left_padding">12</property>
-                        <property name="right_padding">12</property>
-                        <child>
-                          <object class="GtkLabel" id="label_refbox_mode">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Standalone</property>
-                            <property name="lines">1</property>
-                            <attributes>
-                              <attribute name="font-desc" value="Cantarell Bold 14"/>
-                            </attributes>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child type="label">
-                      <object class="GtkLabel" id="label14">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">RefBox Mode</property>
-                        <attributes>
-                          <attribute name="font-desc" value="Cantarell Bold 12"/>
-                        </attributes>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="padding">5</property>
-                    <property name="position">4</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkFrame" id="frame7">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -257,7 +212,7 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="padding">5</property>
-                    <property name="position">5</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
@@ -616,8 +571,8 @@
                   <object class="GtkLabel" id="label_orders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
                     <property name="lines">5</property>
+                    <property name="xalign">0</property>
                     <attributes>
                       <attribute name="font-desc" value="Cantarell 12"/>
                     </attributes>
@@ -691,7 +646,6 @@
                               <object class="GtkLabel" id="label_attention_messages">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">
 
 
@@ -704,6 +658,7 @@
 
 
 </property>
+                                <property name="xalign">0</property>
                                 <attributes>
                                   <attribute name="font-desc" value="Cantarell Bold 12"/>
                                 </attributes>
