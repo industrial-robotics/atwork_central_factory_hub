@@ -184,25 +184,25 @@
   (pb-destroy ?attmsg)
 )
 
-(defrule net-recv-SetBenchmarkPhase
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
+(defrule net-recv-SetBenchmarkScenario
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkScenario") (ptr ?p) (rcvd-via STREAM))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
   ; Get the scenario type (NONE, FBM, TBM) and type id from the message
-  (bind ?pb-scenario (pb-field-value ?p "phase"))
+  (bind ?pb-scenario (pb-field-value ?p "scenario"))
   (bind ?pb-scenario-type (pb-field-value ?pb-scenario "type"))
   (bind ?pb-scenario-type-id (pb-field-value ?pb-scenario "type_id"))
 
   (send [benchmark] request-scenario ?pb-scenario-type ?pb-scenario-type-id)
 )
 
-(defrule net-recv-SetBenchmarkPhase-illegal
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p)
+(defrule net-recv-SetBenchmarkScenario-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkScenario") (ptr ?p)
            (rcvd-via BROADCAST) (rcvd-from ?host ?port))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
-  (printout warn "Illegal SetBenchmarkPhase message received from host " ?host crlf)
+  (printout warn "Illegal SetBenchmarkScenario message received from host " ?host crlf)
 )
 
 (defrule net-recv-SetBenchmarkTransitionEvent
@@ -245,7 +245,7 @@
   ; Add the current scenario (e.g. TBM1 or FBM2) of the benchmark
   (bind ?current-scenario (send [benchmark] get-current-scenario))
   (bind ?pb-benchmark-scenario (send ?current-scenario create-msg))
-  (pb-set-field ?benchmarkstate "phase" ?pb-benchmark-scenario)
+  (pb-set-field ?benchmarkstate "scenario" ?pb-benchmark-scenario)
 
   ; Add all known teams
   (do-for-all-facts ((?team known-team)) TRUE

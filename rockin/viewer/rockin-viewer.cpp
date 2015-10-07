@@ -195,25 +195,25 @@ bool idle_handler() {
     label_state->set_attributes(attr_list);
 
 
-    // Phase
-    Gtk::Label *label_phase = 0;
-    builder->get_widget("label_phase", label_phase);
-    std::stringstream sstr_phase;
+    // Benchmark scenario
+    Gtk::Label *label_scenario = 0;
+    builder->get_widget("label_benchmark_scenario", label_scenario);
+    std::stringstream sstr_scenario;
 
-    switch (benchmark_state->phase().type()) {
-      case rockin_msgs::BenchmarkPhase::NONE:
-        sstr_phase << "None";
+    switch (benchmark_state->scenario().type()) {
+      case rockin_msgs::BenchmarkScenario::NONE:
+          sstr_scenario << "None";
       break;
 
-      case rockin_msgs::BenchmarkPhase::FBM:
-        sstr_phase << "Functionality Benchmark " << benchmark_state->phase().type_id();
+      case rockin_msgs::BenchmarkScenario::FBM:
+          sstr_scenario << "Functionality Benchmark " << benchmark_state->scenario().type_id();
       break;
 
-      case rockin_msgs::BenchmarkPhase::TBM:
-        sstr_phase << "Task Benchmark " << benchmark_state->phase().type_id();
+      case rockin_msgs::BenchmarkScenario::TBM:
+          sstr_scenario << "Task Benchmark " << benchmark_state->scenario().type_id();
       break;
     }
-    label_phase->set_text(sstr_phase.str());
+    label_scenario->set_text(sstr_scenario.str());
   }
 
 

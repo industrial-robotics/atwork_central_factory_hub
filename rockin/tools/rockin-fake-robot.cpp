@@ -116,14 +116,14 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
 
     std::cout << "  Time: " << bs->benchmark_time().sec() << "s" << std::endl;
 
-    std::cout << "  Phase: ";
-    switch (bs->phase().type()) {
-      case BenchmarkPhase::NONE: std::cout << "NONE"; break;
-      case BenchmarkPhase::FBM: std::cout << "FBM"; break;
-      case BenchmarkPhase::TBM: std::cout << "TBM"; break;
+    std::cout << "  Benchmark scenario: ";
+    switch (bs->scenario().type()) {
+      case BenchmarkScenario::NONE: std::cout << "NONE"; break;
+      case BenchmarkScenario::FBM: std::cout << "FBM"; break;
+      case BenchmarkScenario::TBM: std::cout << "TBM"; break;
     }
-    std::cout << " " << bs->phase().type_id();
-    if (bs->phase().has_description()) std::cout << " (" << bs->phase().description() << ")";
+    std::cout << " " << bs->scenario().type_id();
+    if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";
     std::cout << std::endl;
 
     std::cout << "  State: ";

@@ -98,7 +98,7 @@
                         <property name="left_padding">12</property>
                         <property name="right_padding">12</property>
                         <child>
-                          <object class="GtkLabel" id="label_phase">
+                          <object class="GtkLabel" id="label_benchmark_scenario">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="label" translatable="yes">None</property>
@@ -113,7 +113,7 @@
                       <object class="GtkLabel" id="label4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Phase</property>
+                        <property name="label" translatable="yes">Benchmark Scenario</property>
                         <attributes>
                           <attribute name="font-desc" value="Cantarell Bold 12"/>
                         </attributes>

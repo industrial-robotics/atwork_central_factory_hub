@@ -34,7 +34,7 @@ option java_package = "org.rockin.common_msgs";
 option java_outer_classname = "BenchmarkStateProtos";
 
 
-message BenchmarkPhase {
+message BenchmarkScenario {
   enum BenchmarkType {
     NONE = 0; // No benchmark running
     TBM  = 1; // Task benchmark
@@ -67,8 +67,8 @@ message BenchmarkState {
   // Current benchmark state
   required State state = 3;
 
-  // Current benchmark phase
-  required BenchmarkPhase phase = 4;
+  // Current benchmark scenario
+  required BenchmarkScenario scenario = 4;
 
   // Name of all known teams
   repeated string known_teams = 5;
@@ -90,15 +90,15 @@ message SetBenchmarkState {
 }
 
 
-// Request setting of a new benchmark phase
-message SetBenchmarkPhase {
+// Request setting of a new benchmark scenario
+message SetBenchmarkScenario {
   enum CompType {
     COMP_ID  = 2000;
     MSG_TYPE = 102;
   }
 
-  // The new desired phase
-  required BenchmarkPhase phase = 1;
+  // The new desired benchmark
+  required BenchmarkScenario scenario = 1;
 }
 
 
@@ -111,7 +111,7 @@ message SetBenchmarkTransitionEvent {
 
   enum Event {
     // Transition from any state to STOPPED state and re-initialize the
-    // benchmark phase (e.g. after setting a new benchmark phase)
+    // benchmark scenario (e.g. after setting a new benchmark scenario)
     RESET = 0;
 
     // Transition from STOPPED or PAUSED to RUNNING state

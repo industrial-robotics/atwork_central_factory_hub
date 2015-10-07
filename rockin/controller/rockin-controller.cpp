@@ -93,8 +93,8 @@ bool idle_handler() {
     }
 
     // Only activate in FBM2 during STOPPED or FINISHED state
-    if ((benchmark_state->phase().type() == rockin_msgs::BenchmarkPhase::FBM)
-        && (benchmark_state->phase().type_id() == 2)
+    if ((benchmark_state->scenario().type() == rockin_msgs::BenchmarkScenario::FBM)
+        && (benchmark_state->scenario().type_id() == 2)
         && ((benchmark_state->state() == rockin_msgs::BenchmarkState::STOPPED)
          || benchmark_state->state() == rockin_msgs::BenchmarkState::FINISHED)) {
       button_success->set_sensitive(true);
@@ -152,29 +152,29 @@ void on_reset_click()
 
   Gtk::ComboBoxText *combobox_benchmark = 0;
   builder->get_widget("combobox_benchmark", combobox_benchmark);
-  std::string phase = combobox_benchmark->get_active_text();
+  std::string benchmark = combobox_benchmark->get_active_text();
 
-  rockin_msgs::SetBenchmarkPhase cmd_phase;
-  if (phase == "FBM1") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::FBM);
-    cmd_phase.mutable_phase()->set_type_id(1);
-  } else if (phase == "FBM2") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::FBM);
-    cmd_phase.mutable_phase()->set_type_id(2);
-  } else if (phase == "TBM1") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-    cmd_phase.mutable_phase()->set_type_id(1);
-  } else if (phase == "TBM2") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-    cmd_phase.mutable_phase()->set_type_id(2);
-  } else if (phase == "TBM3") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-    cmd_phase.mutable_phase()->set_type_id(3);
-  } else if (phase == "None") {
-    cmd_phase.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::NONE);
-    cmd_phase.mutable_phase()->set_type_id(0);
+  rockin_msgs::SetBenchmarkScenario cmd_scenario;
+  if (benchmark == "FBM1") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "FBM2") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+    cmd_scenario.mutable_scenario()->set_type_id(2);
+  } else if (benchmark == "TBM1") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "TBM2") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+    cmd_scenario.mutable_scenario()->set_type_id(2);
+  } else if (benchmark == "TBM3") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+    cmd_scenario.mutable_scenario()->set_type_id(3);
+  } else if (benchmark == "None") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::NONE);
+    cmd_scenario.mutable_scenario()->set_type_id(0);
   }
-  client.send(cmd_phase);
+  client.send(cmd_scenario);
 
 
   rockin_msgs::SetBenchmarkTransitionEvent cmd_event;

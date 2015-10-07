@@ -16,7 +16,7 @@
 (defmessage-handler BenchmarkScenario create-msg ()
   "Create a ProtoBuf message for a benchmark scenario description"
 
-  (bind ?pb-benchmark-scenario (pb-create "rockin_msgs.BenchmarkPhase"))
+  (bind ?pb-benchmark-scenario (pb-create "rockin_msgs.BenchmarkScenario"))
  
   (pb-set-field ?pb-benchmark-scenario "type" ?self:type)
   (pb-set-field ?pb-benchmark-scenario "type_id" ?self:type-id)

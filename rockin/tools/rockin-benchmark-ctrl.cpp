@@ -54,14 +54,14 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
     }
     std::cout << std::endl;
 
-    std::cout << "Phase: ";
-    switch (s->phase().type()) {
-      case rockin_msgs::BenchmarkPhase::NONE: std::cout << "NONE"; break;
-      case rockin_msgs::BenchmarkPhase::FBM: std::cout << "FBM"; break;
-      case rockin_msgs::BenchmarkPhase::TBM: std::cout << "TBM"; break;
+    std::cout << "Benchmark Scenario: ";
+    switch (s->scenario().type()) {
+      case rockin_msgs::BenchmarkScenario::NONE: std::cout << "NONE"; break;
+      case rockin_msgs::BenchmarkScenario::FBM: std::cout << "FBM"; break;
+      case rockin_msgs::BenchmarkScenario::TBM: std::cout << "TBM"; break;
     }
-    std::cout << s->phase().type_id();
-    if (s->phase().has_description()) std::cout << " (" << s->phase().description() << ")";
+    std::cout << s->scenario().type_id();
+    if (s->scenario().has_description()) std::cout << " (" << s->scenario().description() << ")";
     std::cout << std::endl;
 
     quit_ = true;
@@ -78,18 +78,18 @@ void handle_connected()
 
 int main(int argc, char **argv)
 {
-  ArgumentParser argp(argc, argv, "s:p:e:");
+  ArgumentParser argp(argc, argv, "s:b:e:");
 
   if (argp.num_items() > 4) {
-    std::cout << "Usage: " << argv[0] << " [-s <state>]  [-p <phase>]  [-e <event>]" << std::endl;
+    std::cout << "Usage: " << argv[0] << " [-s <state>]  [-b <benchmark>]  [-e <event>]" << std::endl;
     exit(1);
   }
 
   bool has_state = false;
-  bool has_phase = false;
+  bool has_scenario = false;
   bool has_event = false;
   std::string state = "";
-  std::string phase = "";
+  std::string scenario = "";
   std::string event = "";
 
   if (argp.has_arg("s")) {
@@ -98,10 +98,10 @@ int main(int argc, char **argv)
     std::transform(state.begin(), state.end(), state.begin(), ::tolower);
   }
 
-  if (argp.has_arg("p")) {
-    phase = argp.arg("p");
-    has_phase = true;
-    std::transform(phase.begin(), phase.end(), phase.begin(), ::tolower);
+  if (argp.has_arg("b")) {
+    scenario = argp.arg("b");
+    has_scenario = true;
+    std::transform(scenario.begin(), scenario.end(), scenario.begin(), ::tolower);
   }
 
   if (argp.has_arg("e")) {
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
   message_register.add_message_type<rockin_msgs::BenchmarkState>();
 
   client.signal_connected().connect(handle_connected);
-  if ((!has_state) && (!has_phase)) client.signal_received().connect(handle_message);
+  if ((!has_state) && (!has_scenario)) client.signal_received().connect(handle_message);
   client.async_connect(
       config.get_string("/llsfrb/shell/refbox-host").c_str(),
       config.get_uint("/llsfrb/shell/refbox-port"));
@@ -151,29 +151,29 @@ int main(int argc, char **argv)
       quit_ = true;
     }
 
-    if (has_phase) {
-      rockin_msgs::SetBenchmarkPhase cmd;
+    if (has_scenario) {
+      rockin_msgs::SetBenchmarkScenario cmd;
 
-      if (phase == "fbm1") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::FBM);
-        cmd.mutable_phase()->set_type_id(1);
-      } else if (phase == "fbm2") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::FBM);
-        cmd.mutable_phase()->set_type_id(2);
-      } else if (phase == "tbm1") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-        cmd.mutable_phase()->set_type_id(1);
-      } else if (phase == "tbm2") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-        cmd.mutable_phase()->set_type_id(2);
-      } else if (phase == "tbm3") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::TBM);
-        cmd.mutable_phase()->set_type_id(3);
-      } else if (phase == "none") {
-        cmd.mutable_phase()->set_type(rockin_msgs::BenchmarkPhase::NONE);
-        cmd.mutable_phase()->set_type_id(0);
+      if (scenario == "fbm1") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "fbm2") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(2);
+      } else if (scenario == "tbm1") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "tbm2") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+        cmd.mutable_scenario()->set_type_id(2);
+      } else if (scenario == "tbm3") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
+        cmd.mutable_scenario()->set_type_id(3);
+      } else if (scenario == "none") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::NONE);
+        cmd.mutable_scenario()->set_type_id(0);
       } else {
-        std::cerr << "The provided phase '" << phase << "' is invalid" << std::endl;
+        std::cerr << "The provided benchmark scenario '" << scenario << "' is invalid" << std::endl;
         break;
       }
 
