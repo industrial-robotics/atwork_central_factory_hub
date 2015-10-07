@@ -167,32 +167,58 @@ bool idle_handler() {
     // State
     Gtk::Label *label_state = 0;
     builder->get_widget("label_state", label_state);
-    Pango::Attribute fg_color;
+    Pango::Attribute fg_color_state;
 
-    Pango::AttrList attr_list = label_state->get_attributes();
+    Pango::AttrList attr_list_state = label_state->get_attributes();
     switch (benchmark_state->state()) {
       case rockin_msgs::BenchmarkState::RUNNING:
-        fg_color = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
+        fg_color_state = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
         label_state->set_text("Running");
       break;
 
       case rockin_msgs::BenchmarkState::PAUSED:
-        fg_color = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
+        fg_color_state = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
         label_state->set_text("Paused");
       break;
 
       case rockin_msgs::BenchmarkState::FINISHED:
-        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        fg_color_state = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
         label_state->set_text("Finished");
       break;
 
       case rockin_msgs::BenchmarkState::STOPPED:
-        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        fg_color_state = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
         label_state->set_text("Stopped");
       break;
     }
-    attr_list.insert(fg_color);
-    label_state->set_attributes(attr_list);
+    attr_list_state.insert(fg_color_state);
+    label_state->set_attributes(attr_list_state);
+
+
+    // Phase
+    Gtk::Label *label_phase = 0;
+    builder->get_widget("label_phase", label_phase);
+    Pango::Attribute fg_color_phase;
+
+    Pango::AttrList attr_list_phase = label_phase->get_attributes();
+    switch (benchmark_state->phase()) {
+      case rockin_msgs::BenchmarkState::EXECUTION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
+        label_phase->set_text("Execution");
+      break;
+
+      case rockin_msgs::BenchmarkState::CALIBRATION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        label_phase->set_text("Calibration");
+      break;
+
+      case rockin_msgs::BenchmarkState::PREPARATION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
+        label_phase->set_text("Preparation");
+      break;
+    }
+    attr_list_phase.insert(fg_color_phase);
+    label_phase->set_attributes(attr_list_phase);
 
 
     // Benchmark scenario
