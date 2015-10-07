@@ -61,11 +61,20 @@ message BenchmarkState {
     STOPPED   = 4;
   }
 
+  enum Phase {
+    EXECUTION   = 0;
+    CALIBRATION = 1;
+    PREPARATION = 2;
+  }
+
   // Time since benchmark start
   required Time benchmark_time = 1;
 
   // Current benchmark state
   required State state = 3;
+
+  // Current benchmark phase
+  required Phase phase = 9;
 
   // Current benchmark scenario
   required BenchmarkScenario scenario = 4;

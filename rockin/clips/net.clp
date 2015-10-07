@@ -258,6 +258,9 @@
   (bind ?robot-state (send ?current-state to-robot-state))
   (pb-set-field ?benchmarkstate "state" ?robot-state)
 
+  (bind ?robot-phase (send ?current-state to-robot-phase))
+  (pb-set-field ?benchmarkstate "phase" ?robot-phase)
+
   (return ?benchmarkstate)
 )
 
