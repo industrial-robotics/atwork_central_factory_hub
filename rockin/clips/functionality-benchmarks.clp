@@ -73,7 +73,12 @@
 )
 
 
-(deffunction functionality-benchmarks-fbm1-init (?time ?state-machine)
+
+
+(defclass FunctionalityBenchmark1 (is-a BenchmarkScenario) (role concrete))
+(defclass FunctionalityBenchmark2 (is-a BenchmarkScenario) (role concrete))
+
+(defmessage-handler FunctionalityBenchmark1 setup (?time ?state-machine)
   (make-instance [stopped-state] of FbmStoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [running-state] of FbmRunningState
@@ -102,7 +107,7 @@
   )
 )
 
-(deffunction functionality-benchmarks-fbm2-init (?time ?state-machine)
+(defmessage-handler FunctionalityBenchmark2 setup (?time ?state-machine)
   (make-instance [stopped-state] of FbmStoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [running-state] of FbmRunningState
@@ -128,4 +133,16 @@
     (current-state [stopped-state])
     (states [stopped-state] [running-state] [paused-state] [check-runs-state] [finished-state])
   )
+)
+
+
+(defrule init-fbm
+  (init)
+  ?bm <- (object (is-a Benchmark))
+  =>
+  (make-instance [FBM1] of FunctionalityBenchmark1 (type FBM) (type-id 1) (description "Object Perception Functionality"))
+  (make-instance [FBM2] of FunctionalityBenchmark2 (type FBM) (type-id 2) (description "Visual Servoing Functionality"))
+
+  (slot-insert$ ?bm registered-scenarios 1 [FBM1])
+  (slot-insert$ ?bm registered-scenarios 1 [FBM2])
 )

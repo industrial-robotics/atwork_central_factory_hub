@@ -4,7 +4,11 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(deffunction task-benchmarks-tbm1-init (?time ?state-machine)
+(defclass TaskBenchmark1 (is-a BenchmarkScenario) (role concrete))
+(defclass TaskBenchmark2 (is-a BenchmarkScenario) (role concrete))
+(defclass TaskBenchmark3 (is-a BenchmarkScenario) (role concrete))
+
+(defmessage-handler TaskBenchmark1 setup (?time ?state-machine)
   (make-instance [stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [running-state] of RunningState
@@ -62,7 +66,7 @@
 
 
 
-(deffunction task-benchmarks-tbm2-init (?time ?state-machine)
+(defmessage-handler TaskBenchmark2 setup (?time ?state-machine)
   (make-instance [stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [running-state] of RunningState
@@ -138,7 +142,7 @@
 
 
 
-(deffunction task-benchmarks-tbm3-init (?time ?state-machine)
+(defmessage-handler TaskBenchmark3 setup (?time ?state-machine)
   (make-instance [stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [running-state] of RunningState
@@ -218,4 +222,18 @@
     ; Deliver 1 motor with gear box AX-09 into foam container EM-03-01
     (make-instance of Order (status OFFERED) (object-id [ax-09]) (container-id [em-03-01]) (quantity-requested 1))
   )
+)
+
+
+(defrule init-tbm
+  (init)
+  ?bm <- (object (is-a Benchmark))
+  =>
+  (make-instance [TBM1] of TaskBenchmark1 (type TBM) (type-id 1) (description "Prepare Assembly Aid Tray for Force Fitting"))
+  (make-instance [TBM2] of TaskBenchmark2 (type TBM) (type-id 2) (description "Plate Drilling"))
+  (make-instance [TBM3] of TaskBenchmark3 (type TBM) (type-id 3) (description "Fill a Box with Parts for Manual Assembly"))
+
+  (slot-insert$ ?bm registered-scenarios 1 [TBM1])
+  (slot-insert$ ?bm registered-scenarios 1 [TBM2])
+  (slot-insert$ ?bm registered-scenarios 1 [TBM3])
 )
