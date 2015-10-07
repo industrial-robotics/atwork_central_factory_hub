@@ -47,7 +47,6 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
   if ((s = std::dynamic_pointer_cast<rockin_msgs::BenchmarkState>(msg))) {
     std::cout << "State: ";
     switch (s->state()) {
-      case rockin_msgs::BenchmarkState::INIT: std::cout << "INIT"; break;
       case rockin_msgs::BenchmarkState::RUNNING: std::cout << "RUNNING"; break;
       case rockin_msgs::BenchmarkState::PAUSED: std::cout << "PAUSED"; break;
       case rockin_msgs::BenchmarkState::FINISHED: std::cout << "FINISHED"; break;
@@ -131,8 +130,7 @@ int main(int argc, char **argv)
     if (has_state) {
       rockin_msgs::SetBenchmarkState cmd;
 
-      if (state == "init") cmd.set_state(rockin_msgs::BenchmarkState::INIT);
-      else if (state == "running") cmd.set_state(rockin_msgs::BenchmarkState::RUNNING);
+      if (state == "running") cmd.set_state(rockin_msgs::BenchmarkState::RUNNING);
       else if (state == "paused") cmd.set_state(rockin_msgs::BenchmarkState::PAUSED);
       else if (state == "finished") cmd.set_state(rockin_msgs::BenchmarkState::FINISHED);
       else break;

@@ -171,11 +171,6 @@ bool idle_handler() {
 
     Pango::AttrList attr_list = label_state->get_attributes();
     switch (benchmark_state->state()) {
-      case rockin_msgs::BenchmarkState::INIT:
-        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
-        label_state->set_text("Initializing");
-      break;
-
       case rockin_msgs::BenchmarkState::RUNNING:
         fg_color = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
         label_state->set_text("Running");

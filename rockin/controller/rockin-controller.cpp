@@ -67,12 +67,6 @@ bool idle_handler() {
     builder->get_widget("button_fail", button_fail);
 
     switch (benchmark_state->state()) {
-      case rockin_msgs::BenchmarkState::INIT:
-        button_start->set_sensitive(false);
-        button_pause->set_sensitive(false);
-        button_stop->set_sensitive(false);
-      break;
-
       case rockin_msgs::BenchmarkState::STOPPED:
         button_start->set_sensitive(true);
         button_pause->set_sensitive(false);

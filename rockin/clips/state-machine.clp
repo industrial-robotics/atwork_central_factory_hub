@@ -101,7 +101,7 @@
 
 
 (defmessage-handler InitState to-robot-state ()
-  (return INIT)
+  (return STOPPED)
 )
 
 
