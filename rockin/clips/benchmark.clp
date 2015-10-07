@@ -99,21 +99,15 @@
 (defrule init-benchmark
   (init)
   =>
-  (make-instance [NONE] of BenchmarkScenario (type NONE) (type-id 0) (description "No benchmark running"))
-
-  (make-instance [init-state] of InitState)
+  (make-instance [NONE] of NoneBenchmarkScenario (type NONE) (type-id 0) (description "No benchmark running"))
 
   (make-instance [benchmark] of Benchmark
-    (current-scenario [NONE])
-    (requested-scenario [NONE])
     (time (make-instance of BenchmarkTime))
-    (state-machine
-      (make-instance of StateMachine
-        (current-state [init-state])
-        (states [init-state])
-      )
-    )
+    (registered-scenarios [NONE])
   )
+
+  (send [benchmark] request-scenario NONE 0)
+  (send [benchmark] switch-scenario)
 )
 
 (defrule benchmark-update
