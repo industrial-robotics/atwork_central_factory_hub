@@ -32,6 +32,7 @@
 (defclass Benchmark (is-a USER)
   (slot current-scenario (type INSTANCE) (allowed-classes BenchmarkScenario))
   (slot requested-scenario (type INSTANCE) (allowed-classes BenchmarkScenario))
+  (multislot registered-scenarios (type INSTANCE) (allowed-classes BenchmarkScenario))
 
   ; time that the benchmark is running
   (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
