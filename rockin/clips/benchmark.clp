@@ -46,16 +46,20 @@
 
 
   ; Remove all items from the inventory
-  (foreach ?item (send [inventory] get-items)
-    (unmake-instance ?item)
+  (do-for-all-instances ((?inventory Inventory))
+    (foreach ?item (send ?inventory get-items)
+      (unmake-instance ?item)
+    )
+    (slot-delete$ ?inventory items 1 (length$ (send ?inventory get-items)))
   )
-  (slot-delete$ [inventory] items 1 (length$ (send [inventory] get-items)))
 
   ; Remove all orders from the order info
-  (foreach ?order (send [order-info] get-orders)
-    (unmake-instance ?order)
+  (do-for-all-instances ((?order-info OrderInfo))
+    (foreach ?order (send ?order-info get-orders)
+      (unmake-instance ?order)
+    )
+    (slot-delete$ ?order-info orders 1 (length$ (send ?order-info get-orders)))
   )
-  (slot-delete$ [order-info] orders 1 (length$ (send [order-info] get-orders)))
 
 
   ; TODO: Remove all states and their transitions
