@@ -3,7 +3,7 @@
 # Main configuration document
 
 llsfrb:
-  plugins: "drilling_machine,conveyor_belt,quality_control_camera,force_fitting_machine"
+  plugins: "drilling_machine,conveyor_belt,force_fitting_machine"
 
   log:
     level: info
@@ -16,12 +16,6 @@ llsfrb:
     host: !ipv4 eth0
     command_port: !tcp-port 55502
     status_port: !tcp-port 55501
-
-  quality-control-camera:
-    enable: false
-    host: !ipv4 192.168.1.102
-    service_port: !tcp-port 55522
-    status_port: !tcp-port 55521
 
   drilling-machine:
     enable: false

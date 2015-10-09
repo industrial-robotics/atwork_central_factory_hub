@@ -569,20 +569,6 @@
   (pb-destroy ?status)
 )
 
-(defrule net-recv-CameraCommand
-  ?mf <- (protobuf-msg (type "rockin_msgs.CameraCommand") (rcvd-from ?host ?port))
-  (network-peer (group ?group) (id ?peer-id))
-  (robot (name ?name) (team ?team) (host ?host))
-  (have-feature QualityControlCamera)
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (printout t "Robot " ?name "/" ?team " requests camera image" crlf)
-  (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " requests camera image"))))
-
-  (quality-control-camera-send-image-to-peer ?peer-id)
-)
-
 (defrule net-recv-ForceFittingMachineCommand
   ?mf <- (protobuf-msg (type "rockin_msgs.ForceFittingMachineCommand") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
