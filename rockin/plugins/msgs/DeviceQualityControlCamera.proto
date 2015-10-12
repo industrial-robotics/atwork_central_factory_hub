@@ -1,0 +1,13 @@
+message QualityControlCameraStatus
+{
+    enum State
+    {
+        NO_PLATE = 0;
+        UNKNOWN_PLATE = 1;
+        FAULTY_PLATE = 2;
+        UNUSABLE_PLATE = 3;
+    }
+
+    required bool is_device_connected = 1;
+    optional State state = 2;
+}
