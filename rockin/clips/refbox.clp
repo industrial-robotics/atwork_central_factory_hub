@@ -17,3 +17,11 @@
 (load* (resolve-file functionality-benchmarks.clp))
 (load* (resolve-file net.clp))
 (load* (resolve-file robots.clp))
+
+(defrule load-device-quality-control-camera
+  (init)
+  (have-feature QualityControlCamera)
+  =>
+  (printout t "Enabling Quality Control Camera" crlf)
+  (load* (resolve-file device-quality-control-camera.clp))
+)
