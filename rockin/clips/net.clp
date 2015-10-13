@@ -307,19 +307,22 @@
 (deffunction net-create-RobotInfo ()
   (bind ?ri (pb-create "rockin_msgs.RobotInfo"))
 
-  (do-for-all-facts ((?robot robot)) TRUE
+  (bind ?robots (find-all-facts ((?r robot)) TRUE))
+  (bind ?robots (sort robot-order ?robots))
+
+  (foreach ?robot ?robots
     (bind ?r (pb-create "rockin_msgs.Robot"))
     (bind ?r-time (pb-field-value ?r "last_seen"))
     (if (eq (type ?r-time) EXTERNAL-ADDRESS) then
-      (pb-set-field ?r-time "sec" (nth$ 1 ?robot:last-seen))
-      (pb-set-field ?r-time "nsec" (integer (* (nth$ 2 ?robot:last-seen) 1000)))
+      (pb-set-field ?r-time "sec" (nth$ 1 (fact-slot-value ?robot last-seen)))
+      (pb-set-field ?r-time "nsec" (integer (* (nth$ 2 (fact-slot-value ?robot last-seen)) 1000)))
       (pb-set-field ?r "last_seen" ?r-time) ; destroys ?r-time!
     )
 
-    (pb-set-field ?r "name" ?robot:name)
-    (pb-set-field ?r "team" ?robot:team)
-    (pb-set-field ?r "host" ?robot:host)
-    (pb-set-field ?r "is_logging" ?robot:is-logging)
+    (pb-set-field ?r "name" (fact-slot-value ?robot name))
+    (pb-set-field ?r "team" (fact-slot-value ?robot team))
+    (pb-set-field ?r "host" (fact-slot-value ?robot host))
+    (pb-set-field ?r "is_logging" (fact-slot-value ?robot is-logging))
 
     (pb-add-list ?ri "robots" ?r) ; destroys ?r
   )
