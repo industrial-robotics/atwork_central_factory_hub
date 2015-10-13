@@ -160,6 +160,9 @@ int main(int argc, char **argv)
       } else if (scenario == "fbm2") {
         cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
         cmd.mutable_scenario()->set_type_id(2);
+      } else if (scenario == "fbm3") {
+        cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(3);
       } else if (scenario == "tbm1") {
         cmd.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
         cmd.mutable_scenario()->set_type_id(1);
