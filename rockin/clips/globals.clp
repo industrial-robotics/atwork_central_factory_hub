@@ -43,6 +43,6 @@
   ; Benchmark repetitions
   ?*TBM-COUNT*    =  1
   ?*FBM1-COUNT*   = 10
-  ?*FBM2-COUNT*   =  7
+  ?*FBM2-COUNT*   =  5
   ?*FBM3-COUNT*   =  5
 )
