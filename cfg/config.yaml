@@ -3,7 +3,7 @@
 # Main configuration document
 
 llsfrb:
-  plugins: "drilling_machine,conveyor_belt,force_fitting_machine"
+  plugins: "drilling_machine,triggered_conveyor_belt,force_fitting_machine"
 
   log:
     level: info
@@ -11,7 +11,7 @@ llsfrb:
     clips: clips.log
     game: game.log
 
-  conveyor-belt:
+  triggered-conveyor-belt:
     enable: false
     host: !ipv4 eth0
     command_port: !tcp-port 55502
