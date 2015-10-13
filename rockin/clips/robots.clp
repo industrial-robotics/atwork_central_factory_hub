@@ -5,6 +5,17 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
+; Determine the order of two robots. If the robots are in the same team, sort
+; them by the robot name, else sort them by the team name.
+(deffunction robot-order (?r1 ?r2)
+  (if (eq (fact-slot-value ?r1 team) (fact-slot-value ?r2 team))
+   then
+    (string-gt (fact-slot-value ?r2 name) (fact-slot-value ?r1 name))
+   else
+    (string-gt (fact-slot-value ?r2 team) (fact-slot-value ?r1 team))
+  )
+)
+
 (defrule robot-lost
   (time $?now)
   ?rf <- (robot (team ?team) (name ?name) (host ?host) (port ?port)
