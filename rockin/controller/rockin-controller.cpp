@@ -161,6 +161,9 @@ void on_reset_click()
   } else if (benchmark == "FBM2") {
     cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
     cmd_scenario.mutable_scenario()->set_type_id(2);
+  } else if (benchmark == "FBM3") {
+    cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::FBM);
+    cmd_scenario.mutable_scenario()->set_type_id(3);
   } else if (benchmark == "TBM1") {
     cmd_scenario.mutable_scenario()->set_type(rockin_msgs::BenchmarkScenario::TBM);
     cmd_scenario.mutable_scenario()->set_type_id(1);
