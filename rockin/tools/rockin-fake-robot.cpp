@@ -63,6 +63,7 @@ static boost::asio::deadline_timer *timer_ = NULL;
 std::string name_;
 std::string team_name_;
 unsigned long seq_ = 0;
+int conveyor_belt_cycle_ = 0;
 ProtobufBroadcastPeer *peer_public_ = NULL;
 ProtobufBroadcastPeer *peer_team_ = NULL;
 bool crypto_setup_ = false;
@@ -196,14 +197,16 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     std::cout << std::endl;
   }
 
-  std::shared_ptr<ConveyorBeltStatus> cb;
-  if ((cb = std::dynamic_pointer_cast<ConveyorBeltStatus>(msg))) {
+  std::shared_ptr<TriggeredConveyorBeltStatus> cb;
+  if ((cb = std::dynamic_pointer_cast<TriggeredConveyorBeltStatus>(msg))) {
     std::cout << "Conveyor belt status received: ";
     switch (cb->state()) {
       case ConveyorBeltRunMode::START: std::cout << "RUNNING"; break;
       case ConveyorBeltRunMode::STOP: std::cout << "STOPPED"; break;
     }
-    std::cout << std::endl;
+    std::cout << " [Cycle: " << cb->cycle() << "]" << std::endl;
+
+    conveyor_belt_cycle_ = cb->cycle();
   }
 }
 
@@ -254,6 +257,13 @@ handle_timer(const boost::system::error_code& error)
     bf.set_object_class_name("aluminium");
     bf.set_grasp_notification(true);
     peer_public_->send(bf);
+
+
+    // Command the conveyor belt
+    TriggeredConveyorBeltCommand cb_cmd;
+    cb_cmd.set_command(ConveyorBeltRunMode::START);
+    cb_cmd.set_next_cycle(conveyor_belt_cycle_ + 1);
+    peer_public_->send(cb_cmd);
 
 
     // Send robot status report
@@ -324,7 +334,7 @@ main(int argc, char **argv)
   message_register.add_message_type<Inventory>();
   message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<DrillingMachineStatus>();
-  message_register.add_message_type<ConveyorBeltStatus>();
+  message_register.add_message_type<TriggeredConveyorBeltStatus>();
   message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =
