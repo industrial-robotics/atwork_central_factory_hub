@@ -77,6 +77,7 @@
 
 (defclass FunctionalityBenchmark1 (is-a BenchmarkScenario) (role concrete))
 (defclass FunctionalityBenchmark2 (is-a BenchmarkScenario) (role concrete))
+(defclass FunctionalityBenchmark3 (is-a BenchmarkScenario) (role concrete))
 
 (defmessage-handler FunctionalityBenchmark1 setup (?time ?state-machine)
   (make-instance [stopped-state] of FbmStoppedState
@@ -156,6 +157,72 @@
   )
 )
 
+(defmessage-handler FunctionalityBenchmark3 setup (?time ?state-machine)
+  (make-instance [calibration-stopped-state] of StoppedState
+    (phase CALIBRATION) (state-machine ?state-machine) (time ?time))
+  (make-instance [calibration-running-state] of RunningState
+    (phase CALIBRATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+  (make-instance [calibration-paused-state] of PausedState
+    (phase CALIBRATION) (state-machine ?state-machine))
+
+  (make-instance [preparation-stopped-state] of StoppedState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
+  (make-instance [preparation-running-state] of RunningState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+  (make-instance [preparation-paused-state] of PausedState
+    (phase PREPARATION) (state-machine ?state-machine))
+
+  (make-instance [execution-stopped-state] of StoppedState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
+  (make-instance [execution-running-state] of RunningState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+  (make-instance [execution-paused-state] of PausedState
+    (phase EXECUTION) (state-machine ?state-machine))
+  (make-instance [execution-check-runs-state] of CheckRunsState
+    (phase EXECUTION) (state-machine ?state-machine)(time ?time) (max-runs ?*FBM3-COUNT*))
+  (make-instance [execution-finished-state] of FinishedState
+    (phase EXECUTION) (state-machine ?state-machine))
+
+  (send [calibration-stopped-state]  add-transition START   [calibration-running-state])
+  (send [calibration-running-state]  add-transition PAUSE   [calibration-paused-state])
+  (send [calibration-running-state]  add-transition STOP    [preparation-stopped-state])
+  (send [calibration-running-state]  add-transition TIMEOUT [preparation-stopped-state])
+  (send [calibration-running-state]  add-transition FINISH  [preparation-stopped-state])
+  (send [calibration-paused-state]   add-transition START   [calibration-running-state])
+  (send [calibration-paused-state]   add-transition STOP    [preparation-stopped-state])
+
+  (send [preparation-stopped-state]  add-transition START   [preparation-running-state])
+  (send [preparation-running-state]  add-transition PAUSE   [preparation-paused-state])
+  (send [preparation-running-state]  add-transition STOP    [execution-stopped-state])
+  (send [preparation-running-state]  add-transition TIMEOUT [execution-stopped-state])
+  (send [preparation-running-state]  add-transition FINISH  [execution-stopped-state])
+  (send [preparation-paused-state]   add-transition START   [preparation-running-state])
+  (send [preparation-paused-state]   add-transition STOP    [execution-stopped-state])
+
+  (send [execution-stopped-state]    add-transition START   [execution-running-state])
+  (send [execution-running-state]    add-transition STOP    [execution-check-runs-state])
+  (send [execution-running-state]    add-transition PAUSE   [execution-paused-state])
+  (send [execution-running-state]    add-transition TIMEOUT [execution-check-runs-state])
+  (send [execution-running-state]    add-transition FINISH  [execution-check-runs-state])
+  (send [execution-paused-state]     add-transition START   [execution-running-state])
+  (send [execution-paused-state]     add-transition STOP    [execution-stopped-state])
+  (send [execution-check-runs-state] add-transition REPEAT  [preparation-stopped-state])
+  (send [execution-check-runs-state] add-transition FINISH  [execution-finished-state])
+
+  (make-instance ?state-machine of StateMachine
+    (current-state [calibration-stopped-state])
+    (states
+      [calibration-stopped-state] [calibration-running-state]
+      [calibration-paused-state] [calibration-finished-state]
+      [preparation-stopped-state] [preparation-running-state]
+      [preparation-paused-state] [preparation-finished-state]
+      [execution-stopped-state] [execution-running-state]
+      [execution-paused-state] [execution-check-runs-state]
+      [execution-finished-state]
+    )
+  )
+)
+
 
 (defrule init-fbm
   (init)
@@ -163,7 +230,9 @@
   =>
   (make-instance [FBM1] of FunctionalityBenchmark1 (type FBM) (type-id 1) (description "Object Perception Functionality"))
   (make-instance [FBM2] of FunctionalityBenchmark2 (type FBM) (type-id 2) (description "Visual Servoing Functionality"))
+  (make-instance [FBM3] of FunctionalityBenchmark3 (type FBM) (type-id 3) (description "Control Functionality"))
 
   (slot-insert$ ?bm registered-scenarios 1 [FBM1])
   (slot-insert$ ?bm registered-scenarios 1 [FBM2])
+  (slot-insert$ ?bm registered-scenarios 1 [FBM3])
 )
