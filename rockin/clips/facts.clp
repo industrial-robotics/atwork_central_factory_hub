@@ -42,6 +42,10 @@
   (slot time (type INTEGER) (default 5))
 )
 
+(deftemplate triggered-conveyor-belt
+  (slot cycle (type INTEGER) (default 0))
+)
+
 (deftemplate benchmark-info
   (slot object (type STRING) (default ""))
 )
@@ -81,4 +85,7 @@
   (signal (type inventory) (time (create$ 0 0)) (seq 1))
   (signal (type drilling-machine) (time (create$ 0 0)) (seq 1))
   (signal (type conveyor-belt) (time (create$ 0 0)) (seq 1))
+  (signal (type triggered-conveyor-belt) (time (create$ 0 0)) (seq 1))
+
+  (triggered-conveyor-belt)
 )
