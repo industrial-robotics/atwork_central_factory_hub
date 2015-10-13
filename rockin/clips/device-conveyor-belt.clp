@@ -50,9 +50,6 @@
 
   (bind ?status (net-create-ConveyorBeltStatus))
 
-  ; Broadcast to peers
-  (pb-broadcast ?peer-id-public ?status)
-
   ; Send to all clients
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?status)
