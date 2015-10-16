@@ -47,8 +47,9 @@
 #include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/Camera.pb.h>
-#include <msgs/CompressedImage.pb.h>
 #include <msgs/BenchmarkFeedback.pb.h>
+#include <msgs/RobotStatusReport.pb.h>
+#include <msgs/LoggingStatus.pb.h>
 
 #include <boost/asio.hpp>
 #include <boost/date_time.hpp>
@@ -62,6 +63,7 @@ static boost::asio::deadline_timer *timer_ = NULL;
 std::string name_;
 std::string team_name_;
 unsigned long seq_ = 0;
+int conveyor_belt_cycle_ = 0;
 ProtobufBroadcastPeer *peer_public_ = NULL;
 ProtobufBroadcastPeer *peer_team_ = NULL;
 bool crypto_setup_ = false;
@@ -114,22 +116,22 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
 
     std::cout << "  Time: " << bs->benchmark_time().sec() << "s" << std::endl;
 
-    std::cout << "  Phase: ";
-    switch (bs->phase().type()) {
-      case BenchmarkPhase::NONE: std::cout << "NONE"; break;
-      case BenchmarkPhase::FBM: std::cout << "FBM"; break;
-      case BenchmarkPhase::TBM: std::cout << "TBM"; break;
+    std::cout << "  Benchmark scenario: ";
+    switch (bs->scenario().type()) {
+      case BenchmarkScenario::NONE: std::cout << "NONE"; break;
+      case BenchmarkScenario::FBM: std::cout << "FBM"; break;
+      case BenchmarkScenario::TBM: std::cout << "TBM"; break;
     }
-    std::cout << " " << bs->phase().type_id();
-    if (bs->phase().has_description()) std::cout << " (" << bs->phase().description() << ")";
+    std::cout << " " << bs->scenario().type_id();
+    if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";
     std::cout << std::endl;
 
     std::cout << "  State: ";
     switch (bs->state()) {
-      case BenchmarkState::INIT: std::cout << "INIT" << std::endl; break;
       case BenchmarkState::RUNNING: std::cout << "RUNNING" << std::endl; break;
       case BenchmarkState::PAUSED: std::cout << "PAUSED" << std::endl; break;
       case BenchmarkState::FINISHED: std::cout << "FINISHED" << std::endl; break;
+      case BenchmarkState::STOPPED: std::cout << "STOPPED" << std::endl; break;
     }
 
     std::cout << "  Known teams: ";
@@ -195,19 +197,16 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     std::cout << std::endl;
   }
 
-  std::shared_ptr<ConveyorBeltStatus> cb;
-  if ((cb = std::dynamic_pointer_cast<ConveyorBeltStatus>(msg))) {
+  std::shared_ptr<TriggeredConveyorBeltStatus> cb;
+  if ((cb = std::dynamic_pointer_cast<TriggeredConveyorBeltStatus>(msg))) {
     std::cout << "Conveyor belt status received: ";
     switch (cb->state()) {
       case ConveyorBeltRunMode::START: std::cout << "RUNNING"; break;
       case ConveyorBeltRunMode::STOP: std::cout << "STOPPED"; break;
     }
-    std::cout << std::endl;
-  }
+    std::cout << " [Cycle: " << cb->cycle() << "]" << std::endl;
 
-  std::shared_ptr<CompressedImage> img;
-  if ((img = std::dynamic_pointer_cast<CompressedImage>(msg))) {
-    std::cout << "Image received (format=" << img->format() << ")" << std::endl;
+    conveyor_belt_cycle_ = cb->cycle();
   }
 }
 
@@ -260,6 +259,39 @@ handle_timer(const boost::system::error_code& error)
     peer_public_->send(bf);
 
 
+    // Command the conveyor belt
+    TriggeredConveyorBeltCommand cb_cmd;
+    cb_cmd.set_command(ConveyorBeltRunMode::START);
+    cb_cmd.set_next_cycle(conveyor_belt_cycle_ + 1);
+    peer_public_->send(cb_cmd);
+
+
+    // Send robot status report
+    RobotStatusReport report;
+    RobotStatus *status;
+    status = report.add_status();
+    status->set_capability(RobotStatus::TASK);
+    status->set_functionality("SchedulerComponent");
+    status->set_meta_data("Task execution active");
+    status = report.add_status();
+    status->set_capability(RobotStatus::NAVIGATION);
+    status->set_functionality("NavigationPlanner");
+    status->set_meta_data("Planning a path for the base");
+    peer_public_->send(report);
+
+
+    // Send if the robot is logging offline benchmarking data
+    LoggingStatus logging;
+    logging.set_is_logging(true);
+    peer_team_->send(logging);
+
+
+    // Accept an order
+    OrderAcceptance acceptance;
+    acceptance.add_id(1);
+    peer_team_->send(acceptance);
+
+
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));
     timer_->async_wait(handle_timer);
@@ -302,8 +334,7 @@ main(int argc, char **argv)
   message_register.add_message_type<Inventory>();
   message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<DrillingMachineStatus>();
-  message_register.add_message_type<ConveyorBeltStatus>();
-  message_register.add_message_type<CompressedImage>();
+  message_register.add_message_type<TriggeredConveyorBeltStatus>();
   message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =

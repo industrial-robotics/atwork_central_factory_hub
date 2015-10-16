@@ -1,0 +1,48 @@
+package rockin_msgs;
+
+option java_package = "org.rockin.common_msgs";
+option java_outer_classname = "RobotStatusReportProtos";
+
+
+message RobotStatus {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 601;
+  }
+
+  enum Capability {
+    // Navigation (e.g. planning or execution)
+    NAVIGATION = 0;
+
+    // Manipulation (e.g. grasp planning/execution, arm motion
+    // planning/execution)
+    MANIPULATION = 1;
+
+    // Perception (e.g. RGB or depth image processing)
+    PERCEPTION = 2;
+
+    // Task planning or task execution
+    TASK = 3;
+  }
+
+
+  // The currently active capability
+  optional Capability capability = 1;
+
+  // The functionality which provides the above capability (e.g. a software
+  // component)
+  optional string functionality = 2;
+
+  // Arbitrary information to further describe the capability (e.g. error codes
+  // or detected objects).
+  optional string meta_data = 3;
+}
+
+message RobotStatusReport {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 602;
+  }
+
+  repeated RobotStatus status = 1;
+}

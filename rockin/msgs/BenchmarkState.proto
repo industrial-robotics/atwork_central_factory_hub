@@ -34,7 +34,7 @@ option java_package = "org.rockin.common_msgs";
 option java_outer_classname = "BenchmarkStateProtos";
 
 
-message BenchmarkPhase {
+message BenchmarkScenario {
   enum BenchmarkType {
     NONE = 0; // No benchmark running
     TBM  = 1; // Task benchmark
@@ -55,16 +55,16 @@ message BenchmarkState {
   }
 
   enum State {
-    INIT      = 0;
     RUNNING   = 1;
     PAUSED    = 2;
     FINISHED  = 3;
+    STOPPED   = 4;
   }
 
-  enum RefBoxMode {
-    STANDALONE  = 0;
-    MASTER      = 1;
-    SLAVE       = 2;
+  enum Phase {
+    EXECUTION   = 0;
+    CALIBRATION = 1;
+    PREPARATION = 2;
   }
 
   // Time since benchmark start
@@ -74,15 +74,16 @@ message BenchmarkState {
   required State state = 3;
 
   // Current benchmark phase
-  required BenchmarkPhase phase = 4;
+  required Phase phase = 9;
+
+  // Current benchmark scenario
+  required BenchmarkScenario scenario = 4;
 
   // Name of all known teams
   repeated string known_teams = 5;
 
   // Name of teams which are currently connected to the RefBox
   repeated string connected_teams = 6;
-
-  optional RefBoxMode refbox_mode = 7 [default = STANDALONE];
 }
 
 
@@ -98,13 +99,40 @@ message SetBenchmarkState {
 }
 
 
-// Request setting of a new benchmark phase
-message SetBenchmarkPhase {
+// Request setting of a new benchmark scenario
+message SetBenchmarkScenario {
   enum CompType {
     COMP_ID  = 2000;
     MSG_TYPE = 102;
   }
 
-  // The new desired phase
-  required BenchmarkPhase phase = 1;
+  // The new desired benchmark
+  required BenchmarkScenario scenario = 1;
+}
+
+
+// Message to control the benchmark state machine by requesting transitions
+message SetBenchmarkTransitionEvent {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 103;
+  }
+
+  enum Event {
+    // Transition from any state to STOPPED state and re-initialize the
+    // benchmark scenario (e.g. after setting a new benchmark scenario)
+    RESET = 0;
+
+    // Transition from STOPPED or PAUSED to RUNNING state
+    START = 1;
+
+    // Transition from RUNNING to STOPPED state
+    STOP = 2;
+
+    // Transition from RUNNING to PAUSED state
+    PAUSE = 3;
+  }
+
+  // The requested transition
+  required Event event = 1;
 }

@@ -28,7 +28,7 @@ CFLAGS += $(CFLAGS_CPP11)
 REQ_BOOST_LIBS = thread asio system signals2
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
-LIBS_llsf_refbox = stdc++ llsfrbaspects llsfrbbaseapp llsfrbcore llsfrbconfig \
+LIBS_llsf_refbox = stdc++ m llsfrbaspects llsfrbbaseapp llsfrbcore llsfrbconfig \
 		   llsfrblogging llsfrbnetcomm llsfrbplugin llsfrbutils llsf_protobuf_comm \
 		   llsf_protobuf_clips llsf_sps
 OBJS_llsf_refbox = main.o refbox.o clips_logger.o

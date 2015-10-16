@@ -1,8 +1,8 @@
 /***************************************************************************
- *  quality_control_camera_plugin.cpp - Quality control camera plugin
+ *  triggered_conveyor_belt_plugin.cpp - Triggered conveyor belt plugin
  *
- *  Created: Mon Nov 12 10:25:11 2014
- *  Copyright  2014 Frederik Hegger
+ *  Created: Mon Oct 12 15:39:11 2015
+ *  Copyright  2015 Sven Schneider
  ****************************************************************************/
 
 /*  This program is free software; you can redistribute it and/or modify
@@ -20,25 +20,29 @@
 
 #include <core/plugin.h>
 
-#include "quality_control_camera_thread.h"
+#include "triggered_conveyor_belt_simulation_thread.h"
 
 using namespace fawkes;
 
-/** Plugin to interface with quality control camera
- * @author Frederik Hegger
+/** Plugin to interface with the triggered conveyor belt device. The triggered
+ * conveyor belt is the composition of the conveyor belt (which can be started
+ * and stopped via the plugin) and the quality control camera (which can also
+ * stop the conveyor belt and provides the detected object to this plugin).
+ *
+ * @author Sven Schneider
  */
-class QualityControlCameraPlugin: public fawkes::Plugin
+class TriggeredConveyorBeltPlugin: public fawkes::Plugin
 {
     public:
         /** Constructor.
          * @param config Fawkes configuration
          */
-        QualityControlCameraPlugin(Configuration *config) :
+        TriggeredConveyorBeltPlugin(Configuration *config) :
                 Plugin(config)
         {
-            thread_list.push_back(new QualityControlCameraThread());
+            thread_list.push_back(new TriggeredConveyorBeltSimulationThread());
         }
 };
 
-PLUGIN_DESCRIPTION("Plugin to communicate with the quality control camera")
-EXPORT_PLUGIN(QualityControlCameraPlugin)
+PLUGIN_DESCRIPTION("Plugin to communicate with the triggered conveyor belt")
+EXPORT_PLUGIN(TriggeredConveyorBeltPlugin)

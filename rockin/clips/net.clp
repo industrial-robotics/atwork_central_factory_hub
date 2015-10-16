@@ -159,7 +159,7 @@
                 "@" ?from-port ")"))))
   )
 
-  (if (and (eq ?team "LLSF") (eq ?name "RefBox"))
+  (if (and (eq ?team "RoCKIn") (eq ?name "RefBox"))
    then
     (printout warn "Detected another RefBox at " ?from-host ":" ?from-port crlf)
     (assert (attention-message (text (str-cat "Detected another RefBox at "
@@ -184,92 +184,95 @@
   (pb-destroy ?attmsg)
 )
 
-(defrule net-recv-SetBenchmarkState
-  ?sf <- (benchmark-state (state ?state))
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p) (rcvd-via STREAM))
+(defrule net-recv-SetBenchmarkScenario
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkScenario") (ptr ?p) (rcvd-via STREAM))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
-  (modify ?sf (state (sym-cat (pb-field-value ?p "state"))) (prev-state ?state))
+
+  ; Get the scenario type (NONE, FBM, TBM) and type id from the message
+  (bind ?pb-scenario (pb-field-value ?p "scenario"))
+  (bind ?pb-scenario-type (pb-field-value ?pb-scenario "type"))
+  (bind ?pb-scenario-type-id (pb-field-value ?pb-scenario "type_id"))
+
+  (send [benchmark] request-scenario ?pb-scenario-type ?pb-scenario-type-id)
 )
 
-(defrule net-recv-SetBenchmarkState-illegal
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkState") (ptr ?p)
+(defrule net-recv-SetBenchmarkScenario-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkScenario") (ptr ?p)
            (rcvd-via BROADCAST) (rcvd-from ?host ?port))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
-  (printout warn "Illegal SetBenchmarkState message received from host " ?host crlf)
+  (printout warn "Illegal SetBenchmarkScenario message received from host " ?host crlf)
 )
 
-(defrule net-recv-SetBenchmarkPhase
-  ?sf <- (benchmark-state (phase-id ?phase-id))
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p) (rcvd-via STREAM))
+(defrule net-recv-SetBenchmarkTransitionEvent
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkTransitionEvent") (ptr ?p)
+           (rcvd-via STREAM) (rcvd-from ?host ?port))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  ; Get the phase type (NONE, FBM, TBM) and type id from the message
-  (bind ?pb-phase (pb-field-value ?p "phase"))
-  (bind ?pb-phase-type (pb-field-value ?pb-phase "type"))
-  (bind ?pb-phase-type-id (pb-field-value ?pb-phase "type_id"))
+  (bind ?pb-event (pb-field-value ?p "event"))
 
-  ; When a phase was found, that matches the type and ID in the message, update the current and previous phase ID
-  (do-for-fact ((?phase benchmark-phase)) (and (eq ?phase:type ?pb-phase-type) (eq ?phase:type-id ?pb-phase-type-id))
-    (modify ?sf (phase-id ?phase:id) (prev-phase-id ?phase-id))
+  (if (eq ?pb-event RESET) then
+    (send [benchmark] switch-scenario)
+  else
+    (bind ?state-machine (send [benchmark] get-state-machine))
+    (send ?state-machine process-event ?pb-event)
   )
 )
 
-(defrule net-recv-SetBenchmarkPhase-illegal
-  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkPhase") (ptr ?p)
+(defrule net-recv-SetBenchmarkTransitionEvent-illegal
+  ?mf <- (protobuf-msg (type "rockin_msgs.SetBenchmarkTransitionEvent") (ptr ?p)
            (rcvd-via BROADCAST) (rcvd-from ?host ?port))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
-  (printout warn "Illegal SetBenchmarkPhase message received from host " ?host crlf)
+  (printout warn "Illegal SetBenchmarkTransitionEvent message received from host " ?host crlf)
 )
 
-(deffunction net-create-BenchmarkState (?bs)
+(deffunction net-create-BenchmarkState ()
   (bind ?benchmarkstate (pb-create "rockin_msgs.BenchmarkState"))
   (bind ?benchmarkstate-time (pb-field-value ?benchmarkstate "benchmark_time"))
-  (bind ?benchmarkstate-phase (pb-field-value ?benchmarkstate "phase"))
 
   ; Set the benchmark time (in seconds)
   (if (eq (type ?benchmarkstate-time) EXTERNAL-ADDRESS) then
-    (bind ?gt (time-from-sec (fact-slot-value ?bs benchmark-time)))
-    (pb-set-field ?benchmarkstate-time "sec" (nth$ 1 ?gt))
-    (pb-set-field ?benchmarkstate-time "nsec" (integer (* (nth$ 2 ?gt) 1000)))
+    (bind ?bt (send [benchmark] get-time))
+    (bind ?time (time-from-sec (send ?bt get-timer)))
+    (pb-set-field ?benchmarkstate-time "sec" (nth$ 1 ?time))
+    (pb-set-field ?benchmarkstate-time "nsec" (integer (* (nth$ 2 ?time) 1000)))
     (pb-set-field ?benchmarkstate "benchmark_time" ?benchmarkstate-time) ; destroys ?benchmarkstate-time!
   )
 
-  ; Add the current phase of the benchmark
-  (do-for-fact ((?phase benchmark-phase)) (eq ?phase:id (fact-slot-value ?bs phase-id))
-    (pb-set-field ?benchmarkstate-phase "type" ?phase:type)
-    (pb-set-field ?benchmarkstate-phase "type_id" ?phase:type-id)
-    (pb-set-field ?benchmarkstate-phase "description" ?phase:description)
-  )
-  (pb-set-field ?benchmarkstate "phase" ?benchmarkstate-phase)
+  ; Add the current scenario (e.g. TBM1 or FBM2) of the benchmark
+  (bind ?current-scenario (send [benchmark] get-current-scenario))
+  (bind ?pb-benchmark-scenario (send ?current-scenario create-msg))
+  (pb-set-field ?benchmarkstate "scenario" ?pb-benchmark-scenario)
 
   ; Add all known teams
   (do-for-all-facts ((?team known-team)) TRUE
     (pb-add-list ?benchmarkstate "known_teams" ?team:name)
   )
 
-  (pb-set-field ?benchmarkstate "state" (fact-slot-value ?bs state))
+  ; Set the benchmark state (e.g. PAUSED or RUNNING) based on the state machine
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
+  (bind ?robot-state (send ?current-state to-robot-state))
+  (pb-set-field ?benchmarkstate "state" ?robot-state)
+
+  (bind ?robot-phase (send ?current-state to-robot-phase))
+  (pb-set-field ?benchmarkstate "phase" ?robot-phase)
 
   (return ?benchmarkstate)
 )
 
 (defrule net-send-BenchmarkState
   (time $?now)
-  ?bs <- (benchmark-state (refbox-mode ?refbox-mode))
   ?f <- (signal (type benchmark-state) (time $?t&:(timeout ?now ?t ?*BENCHMARKSTATE-PERIOD*)) (seq ?seq))
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
-  (if (debug 3) then (printout t "Sending BenchmarkState" crlf))
-  (bind ?benchmark-state (net-create-BenchmarkState ?bs))
+  (bind ?benchmark-state (net-create-BenchmarkState))
 
   (pb-broadcast ?peer-id-public ?benchmark-state)
-
-  ; For stream clients set refbox mode
-  (pb-set-field ?benchmark-state "refbox_mode" ?refbox-mode)
 
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?benchmark-state)
@@ -277,21 +280,49 @@
   (pb-destroy ?benchmark-state)
 )
 
+(deffunction net-create-BenchmarkInfo (?info)
+  (bind ?bi (pb-create "rockin_msgs.BenchmarkInfo"))
+
+  (pb-set-field ?bi "object" (fact-slot-value ?info object))
+
+  (return ?bi)
+)
+
+(defrule net-send-BenchmarkInfo
+  (time $?now)
+  ?f <- (signal (type benchmark-info) (time $?t&:(timeout ?now ?t ?*BENCHMARKINFO-PERIOD*)) (seq ?seq))
+  ;(benchmark-info ?info)
+  ?info <- (benchmark-info)
+  =>
+  (modify ?f (time ?now) (seq (+ ?seq 1)))
+  (bind ?benchmark-info (net-create-BenchmarkInfo ?info))
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?benchmark-info)
+  )
+
+  (pb-destroy ?benchmark-info)
+)
+
 (deffunction net-create-RobotInfo ()
   (bind ?ri (pb-create "rockin_msgs.RobotInfo"))
 
-  (do-for-all-facts ((?robot robot)) TRUE
+  (bind ?robots (find-all-facts ((?r robot)) TRUE))
+  (bind ?robots (sort robot-order ?robots))
+
+  (foreach ?robot ?robots
     (bind ?r (pb-create "rockin_msgs.Robot"))
     (bind ?r-time (pb-field-value ?r "last_seen"))
     (if (eq (type ?r-time) EXTERNAL-ADDRESS) then
-      (pb-set-field ?r-time "sec" (nth$ 1 ?robot:last-seen))
-      (pb-set-field ?r-time "nsec" (integer (* (nth$ 2 ?robot:last-seen) 1000)))
+      (pb-set-field ?r-time "sec" (nth$ 1 (fact-slot-value ?robot last-seen)))
+      (pb-set-field ?r-time "nsec" (integer (* (nth$ 2 (fact-slot-value ?robot last-seen)) 1000)))
       (pb-set-field ?r "last_seen" ?r-time) ; destroys ?r-time!
     )
 
-    (pb-set-field ?r "name" ?robot:name)
-    (pb-set-field ?r "team" ?robot:team)
-    (pb-set-field ?r "host" ?robot:host)
+    (pb-set-field ?r "name" (fact-slot-value ?robot name))
+    (pb-set-field ?r "team" (fact-slot-value ?robot team))
+    (pb-set-field ?r "host" (fact-slot-value ?robot host))
+    (pb-set-field ?r "is_logging" (fact-slot-value ?robot is-logging))
 
     (pb-add-list ?ri "robots" ?r) ; destroys ?r
   )
@@ -314,81 +345,6 @@
   (pb-destroy ?ri)
 )
 
-(deffunction net-create-ObjectIdentifier (?object-id)
-  "Create a ProtoBuf message of an ObjectIdentifier which is referenced by its
-   ID as specified in the ?object-id parameter"
-
-  (bind ?pb-object-identifier (pb-create "rockin_msgs.ObjectIdentifier"))
-
-  (do-for-fact ((?object object-identifier)) (eq ?object-id ?object:id)
-    (pb-set-field ?pb-object-identifier "type" ?object:type)
-    (pb-set-field ?pb-object-identifier "type_id" ?object:type-id)
-
-    ; Only set the instance id if it is available
-    (if (<> (length$ ?object:instance-id) 0) then
-      (pb-set-field ?pb-object-identifier "instance_id" ?object:instance-id)
-    )
-
-    ; Only set the description if it is available
-    (if (<> (length$ ?object:description) 0) then
-      (pb-set-field ?pb-object-identifier "description" ?object:description)
-    )
-  )
-
-  (return ?pb-object-identifier)
-)
-
-(deffunction net-create-LocationIdentifier (?location-id)
-  "Create a ProtoBuf message of a LocationIdentifier which is referenced by its
-   ID as specified in the ?location-id parameter"
-
-  (bind ?pb-location-identifier (pb-create "rockin_msgs.LocationIdentifier"))
-
-  (do-for-fact ((?location location-identifier)) (eq ?location-id ?location:id)
-    (pb-set-field ?pb-location-identifier "type" ?location:type)
-    (pb-set-field ?pb-location-identifier "instance_id" ?location:instance-id)
-
-    ; Only set the description if it is available
-    (if (<> (length$ ?location:description) 0) then
-      (pb-set-field ?pb-location-identifier "description" ?location:description)
-    )
-  )
-
-  (return ?pb-location-identifier)
-)
-
-(deffunction net-create-Inventory ()
-  ; Instantiate a new inventory
-  (bind ?pb-inventory (pb-create "rockin_msgs.Inventory"))
-
-  ; Iterate over all asserted items (which form the inventory)
-  (do-for-all-facts ((?item item)) TRUE
-    ; Instantiate a new item for the protobuf message
-    (bind ?pb-item (pb-create "rockin_msgs.Inventory.Item"))
-
-    (pb-set-field ?pb-item "object" (net-create-ObjectIdentifier ?item:object-id))
-
-    ; Only set the location if is available
-    (if (<> (length$ ?item:location-id) 0) then
-      (pb-set-field ?pb-item "location" (net-create-LocationIdentifier (nth$ 1 ?item:location-id)))
-    )
-
-    ; Only set the container if it is available
-    (if (<> (length$ ?item:container-id) 0) then
-      (pb-set-field ?pb-item "container" (net-create-ObjectIdentifier (nth$ 1 ?item:container-id)))
-    )
-
-    ; Only set the quantity if it is available
-    (if (<> (length$ ?item:quantity) 0) then
-      (pb-set-field ?pb-item "quantity" (nth$ 1 ?item:quantity))
-    )
-
-    (pb-add-list ?pb-inventory "items" ?pb-item)
-  )
-
-  (return ?pb-inventory)
-)
-
 (defrule net-send-Inventory
   (time $?now)
   ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
@@ -396,7 +352,7 @@
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
 
-  (bind ?pb-inventory (net-create-Inventory))
+  (bind ?pb-inventory (send [inventory] create-msg))
   (pb-broadcast ?peer-id-public ?pb-inventory)
 
   (do-for-all-facts ((?client network-client)) TRUE
@@ -404,54 +360,6 @@
   )
 
   (pb-destroy ?pb-inventory)
-)
-
-(deffunction net-create-Order (?order-fact)
-  (bind ?o (pb-create "rockin_msgs.Order"))
-
-  (pb-set-field ?o "id" (fact-slot-value ?order-fact id))
-  (pb-set-field ?o "status" (fact-slot-value ?order-fact status))
-
-  (bind ?oi (net-create-ObjectIdentifier (fact-slot-value ?order-fact object-id)))
-  (pb-set-field ?o "object" ?oi)  ; destroys ?oi
-
-  (if (<> (length$ (fact-slot-value ?order-fact container-id)) 0) then
-    (bind ?ci (net-create-ObjectIdentifier (nth$ 1 (fact-slot-value ?order-fact container-id))))
-    (pb-set-field ?o "container" ?ci)  ; destroys ?ci
-  )
-
-  (pb-set-field ?o "quantity_delivered" (fact-slot-value ?order-fact quantity-delivered))
-
-  (if (<> (length$ (fact-slot-value ?order-fact quantity-requested)) 0) then
-    (pb-set-field ?o "quantity_requested" (nth$ 1 (fact-slot-value ?order-fact quantity-requested)))
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact destination-id)) 0) then
-    (bind ?li (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact destination-id))))
-    (pb-set-field ?o "destination" ?li) ; destroys ?li
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact source-id)) 0) then
-    (bind ?si (net-create-LocationIdentifier (nth$ 1 (fact-slot-value ?order-fact source-id))))
-    (pb-set-field ?o "source" ?si) ; destroys ?si
-  )
-
-  (if (<> (length$ (fact-slot-value ?order-fact processing-team)) 0) then
-    (pb-set-field ?o "processing_team" (nth$ 1 (fact-slot-value ?order-fact processing-team)))
-  )
-
-  (return ?o)
-)
-
-(deffunction net-create-OrderInfo ()
-  (bind ?oi (pb-create "rockin_msgs.OrderInfo"))
-
-  (do-for-all-facts ((?order order)) TRUE
-    (bind ?o (net-create-Order ?order))
-    (pb-add-list ?oi "orders" ?o) ; destroys ?o
-  )
-
-  (return ?oi)
 )
 
 (defrule net-send-OrderInfo
@@ -464,7 +372,7 @@
   =>
   (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
 
-  (bind ?oi (net-create-OrderInfo))
+  (bind ?oi (send [order-info] create-msg))
   (pb-broadcast ?peer-id-public ?oi)
 
   (do-for-all-facts ((?client network-client)) TRUE
@@ -472,6 +380,35 @@
   )
 
   (pb-destroy ?oi)
+)
+
+(defrule net-recv-OrderAcceptance
+  ?mf <- (protobuf-msg (type "rockin_msgs.OrderAcceptance") (ptr ?p) (rcvd-at $?rcvd-at)
+           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
+  ?rf <- (robot (name ?name) (host ?from-host) (port ?from-port) (team ?team))
+  =>
+  (retract ?mf) ; message will be destroyed after rule completes
+
+  (bind ?pb-order-ids (pb-field-list ?p "id"))
+
+  (foreach ?id ?pb-order-ids
+    (do-for-all-instances ((?order Order)) (eq ?order:id ?id)
+      (bind ?processing-team (send ?order get-processing-team))
+
+      ; Check if any team is already processing the order
+      (if (eq (length$ ?processing-team) 0) then
+        (printout t ?name "/" ?team " accepts order " ?id crlf)
+        (slot-insert$ ?order processing-team 1 ?team)
+      else
+        (bind ?processing-team (nth$ 1 ?processing-team))
+
+        ; Check if the requesting team is processing the order
+        (if (neq (str-compare ?processing-team ?team) 0) then
+          (printout t ?name "/" ?team " tries to accept order " ?id ", but the order is already processed by " ?processing-team crlf)
+        )
+      )
+    )
+  )
 )
 
 (defrule net-send-VersionInfo
@@ -487,205 +424,64 @@
   (pb-destroy ?vi)
 )
 
-(defrule net-recv-DrillingMachineCommand
-  ?mf <- (protobuf-msg (type "rockin_msgs.DrillingMachineCommand") (ptr ?p)
+(deffunction print-RobotStatus (?name ?team ?p)
+  (bind ?msg (str-cat "Status (" ?name "/" ?team "): "))
+  (bind ?has-data FALSE)
+
+  (if (pb-has-field ?p "functionality") then
+    (bind ?pb-functionality (pb-field-value ?p "functionality"))
+    (bind ?msg (str-cat ?msg ?pb-functionality))
+    (bind ?has-data TRUE)
+  )
+
+  (if (pb-has-field ?p "capability") then
+    (bind ?pb-capability (pb-field-value ?p "capability"))
+    (bind ?msg (str-cat ?msg " [" ?pb-capability "]"))
+    (bind ?has-data TRUE)
+  )
+
+  (if (pb-has-field ?p "meta_data") then
+    (bind ?pb-meta-data (pb-field-value ?p "meta_data"))
+    (bind ?msg (str-cat ?msg ": " ?pb-meta-data))
+    (bind ?has-data TRUE)
+  )
+
+  (if (eq ?has-data TRUE) then
+    (printout t ?msg crlf)
+    (assert (attention-message (text ?msg)))
+  )
+)
+
+(defrule net-recv-RobotStatusReport
+  ?mf <- (protobuf-msg (type "rockin_msgs.RobotStatusReport") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
   (robot (name ?name) (team ?team) (host ?host))
-  (have-feature DrillingMachine)
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  ; Get the command from the message
-  (bind ?pb-command (pb-field-value ?p "command"))
-
-  (switch ?pb-command
-    (case MOVE_UP then
-      (printout t "Robot " ?name "/" ?team " commands drilling machine up" crlf)
-      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands drilling machine up"))))
-      (drilling-machine-move-drill-up)
-    )
-
-    (case MOVE_DOWN then
-      (printout t "Robot " ?name "/" ?team " commands drilling machine down" crlf)
-      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands drilling machine down"))))
-      (drilling-machine-move-drill-down)
-    )
+  (bind ?pb-report (pb-field-list ?p "status"))
+  (foreach ?pb-status ?pb-report
+    (print-RobotStatus ?name ?team ?pb-status)
   )
 )
 
-(defrule net-recv-DrillingMachineCommand-client
-  ?mf <- (protobuf-msg (type "rockin_msgs.DrillingMachineCommand") (ptr ?p)
+(defrule net-recv-LoggingStatus
+  ?mf <- (protobuf-msg (type "rockin_msgs.LoggingStatus") (ptr ?p)
          (rcvd-via ?via) (rcvd-from ?host ?port))
-  (network-client (id ?client-id) (host ?client-host) (port ?port))
-  (have-feature DrillingMachine)
+  ?robot <- (robot (host ?host))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  ; Get the command from the message
-  (bind ?pb-command (pb-field-value ?p "command"))
-
-  (switch ?pb-command
-    (case MOVE_UP then
-      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands drilling machine up" crlf)
-      (drilling-machine-move-drill-up)
-    )
-
-    (case MOVE_DOWN then
-      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands drilling machine down" crlf)
-      (drilling-machine-move-drill-down)
-    )
+  (bind ?is-logging (pb-field-value ?p "is_logging"))
+  (if (eq ?is-logging 1) then
+    (modify ?robot (is-logging TRUE))
+  else
+    (modify ?robot (is-logging FALSE))
   )
 )
 
-(deffunction net-create-DrillingMachineStatus ()
-  ; Instantiate a new status message
-  (bind ?pb-status (pb-create "rockin_msgs.DrillingMachineStatus"))
 
-  ; Assumption: The enum in the device communication message is aligned with the
-  ;             enum of the robot communication (e.g. in both messages the state
-  ;             UNKNOWN maps to the value 4)
-  (switch (drilling-machine-get-state)
-    (case 0 then (pb-set-field ?pb-status "state" AT_TOP))
-    (case 1 then (pb-set-field ?pb-status "state" AT_BOTTOM))
-    (case 2 then (pb-set-field ?pb-status "state" MOVING_UP))
-    (case 3 then (pb-set-field ?pb-status "state" MOVING_DOWN))
-    (case 4 then (pb-set-field ?pb-status "state" UNKNOWN))
-  )
-
-  (return ?pb-status)
-)
-
-(defrule net-send-DrillingMachineStatus
-  (time $?now)
-  ?f <- (signal (type drilling-machine) (time $?t&:(timeout ?now ?t ?*DRILLING-MACHINE-PERIOD*)) (seq ?seq))
-  (network-peer (group "PUBLIC") (id ?peer-id-public))
-  (have-feature DrillingMachine)
-  =>
-  (modify ?f (time ?now) (seq (+ ?seq 1)))
-
-  (bind ?ds (net-create-DrillingMachineStatus))
-
-  ; Broadcast to peers
-  (pb-broadcast ?peer-id-public ?ds)
-
-  ; Send to all clients
-  (do-for-all-facts ((?client network-client)) TRUE
-    (pb-send ?client:id ?ds)
-  )
-
-  (pb-destroy ?ds)
-)
-
-(defrule net-recv-ConveyorBeltCommand
-  ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
-         (rcvd-via ?via) (rcvd-from ?host ?port))
-  (robot (name ?name) (team ?team) (host ?host))
-  (have-feature ConveyorBelt)
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  ; Get the command from the message
-  (bind ?pb-command (pb-field-value ?p "command"))
-
-  (switch ?pb-command
-    (case STOP then
-      (printout t "Robot " ?name "/" ?team " commands conveyor belt to stop" crlf)
-      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands conveyor belt to stop"))))
-      (conveyor-belt-stop-belt)
-    )
-
-    (case START then
-      (printout t "Robot " ?name "/" ?team " commands conveyor belt to start" crlf)
-      (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " commands conveyor belt to start"))))
-      (conveyor-belt-start-belt)
-    )
-  )
-)
-
-(defrule net-recv-ConveyorBeltCommand-client
-  ?mf <- (protobuf-msg (type "rockin_msgs.ConveyorBeltCommand") (ptr ?p)
-         (rcvd-via ?via) (rcvd-from ?host ?port))
-  (network-client (id ?client-id) (host ?client-host) (port ?port))
-  (have-feature ConveyorBelt)
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  ; Get the command from the message
-  (bind ?pb-command (pb-field-value ?p "command"))
-
-  (switch ?pb-command
-    (case STOP then
-      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands conveyor belt to stop" crlf)
-      (conveyor-belt-stop-belt)
-    )
-
-    (case START then
-      (printout t "Client " ?client-id " (" ?client-host ":" ?port ") commands conveyor belt to start" crlf)
-      (conveyor-belt-start-belt)
-    )
-  )
-)
-
-(deffunction net-create-ConveyorBeltStatus ()
-  ; Instantiate a new status message
-  (bind ?pb-status (pb-create "rockin_msgs.ConveyorBeltStatus"))
-
-  (if (conveyor-belt-is-running)
-   then
-    (pb-set-field ?pb-status "state" START)
-   else
-    (pb-set-field ?pb-status "state" STOP)
-  )
-
-  (return ?pb-status)
-)
-
-(defrule net-send-ConveyorBeltStatus
-  (time $?now)
-  ?f <- (signal (type conveyor-belt) (time $?t&:(timeout ?now ?t ?*CONVEYOR-BELT-PERIOD*)) (seq ?seq))
-  (network-peer (group "PUBLIC") (id ?peer-id-public))
-  (have-feature ConveyorBelt)
-  =>
-  (modify ?f (time ?now) (seq (+ ?seq 1)))
-
-  (bind ?status (net-create-ConveyorBeltStatus))
-
-  ; Broadcast to peers
-  (pb-broadcast ?peer-id-public ?status)
-
-  ; Send to all clients
-  (do-for-all-facts ((?client network-client)) TRUE
-    (pb-send ?client:id ?status)
-  )
-
-  (pb-destroy ?status)
-)
-
-(defrule net-recv-CameraCommand
-  ?mf <- (protobuf-msg (type "rockin_msgs.CameraCommand") (rcvd-from ?host ?port))
-  (network-peer (group ?group) (id ?peer-id))
-  (robot (name ?name) (team ?team) (host ?host))
-  (have-feature QualityControlCamera)
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (printout t "Robot " ?name "/" ?team " requests camera image" crlf)
-  (assert (attention-message (text (str-cat "Robot " ?name "/" ?team " requests camera image"))))
-
-  (quality-control-camera-send-image-to-peer ?peer-id)
-)
-
-(defrule net-recv-BenchmarkFeedback-fbm1-peer
-  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
-  (robot (name ?name) (team ?team) (host ?from-host))
-  (benchmark-phase (id ?phase) (type FBM) (type-id 1))
-  (benchmark-state (phase-id ?phase) (state RUNNING))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (assert (benchmark-run-over))
-
+(deffunction net-handle-fbm1-feedback (?p ?name ?team)
   (if (and
        (pb-has-field ?p "object_class_name")
        (pb-has-field ?p "object_instance_name")
@@ -697,38 +493,12 @@
     (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
         " recognized object instance" (pb-field-value ?p "object_instance_name")
         " of class " (pb-field-value ?p "object_class_name")))))
-
-    (bind ?pose (pb-field-value ?p "object_pose"))
-    (bind ?position (pb-field-value ?pose "position"))
-    (bind ?orientation (pb-field-value ?pose "orientation"))
-
-    (assert (benchmark-feedback (time ?rcvd-at) (type RECOGNIZED)
-        (object-class-name (pb-field-value ?p "object_class_name"))
-        (object-instance-name (pb-field-value ?p "object_instance_name"))
-        (object-pose-position-x (pb-field-value ?position "x"))
-        (object-pose-position-y (pb-field-value ?position "y"))
-        (object-pose-position-z (pb-field-value ?position "z"))
-        (object-pose-orientation-x (pb-field-value ?orientation "x"))
-        (object-pose-orientation-y (pb-field-value ?orientation "y"))
-        (object-pose-orientation-z (pb-field-value ?orientation "z"))
-        (object-pose-orientation-w (pb-field-value ?orientation "w"))))
    else
-    (printout t "Benchmark feedback from " ?from-host ":" ?from-port " is invalid" crlf)
-    (assert (benchmark-feedback (time ?rcvd-at) (type TIMEOUT)))
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
   )
 )
 
-(defrule net-recv-BenchmarkFeedback-fbm2-peer
-  ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type PEER))
-  (robot (name ?name) (team ?team) (host ?from-host))
-  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
-  (benchmark-state (phase-id ?phase) (state RUNNING))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (assert (benchmark-run-over))
-
+(deffunction net-handle-fbm2-feedback (?p ?name ?team)
   (if (and
        (pb-has-field ?p "grasp_notification")
        (pb-has-field ?p "object_class_name")
@@ -741,55 +511,41 @@
     (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
         " lifted object instance " (pb-field-value ?p "object_instance_name")
         " of class " (pb-field-value ?p "object_class_name")))))
-
-    (bind ?pose (pb-field-value ?p "end_effector_pose"))
-    (bind ?position (pb-field-value ?pose "position"))
-    (bind ?orientation (pb-field-value ?pose "orientation"))
-
-    (assert (benchmark-feedback (source PEER) (time ?rcvd-at) (type LIFTED)
-        (grasp-notification (pb-field-value ?p "grasp_notification"))
-        (object-class-name (pb-field-value ?p "object_class_name"))
-        (object-instance-name (pb-field-value ?p "object_instance_name"))
-        (end-effector-pose-position-x (pb-field-value ?position "x"))
-        (end-effector-pose-position-y (pb-field-value ?position "y"))
-        (end-effector-pose-position-z (pb-field-value ?position "z"))
-        (end-effector-pose-orientation-x (pb-field-value ?orientation "x"))
-        (end-effector-pose-orientation-y (pb-field-value ?orientation "y"))
-        (end-effector-pose-orientation-z (pb-field-value ?orientation "z"))
-        (end-effector-pose-orientation-w (pb-field-value ?orientation "w"))))
    else
-    (printout t "Benchmark feedback from " ?from-host ":" ?from-port " is invalid" crlf)
-    (assert (benchmark-feedback (time ?rcvd-at) (type TIMEOUT)))
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
   )
 )
 
-(defrule net-recv-BenchmarkFeedback-fbm2-client
+(defrule net-recv-BenchmarkFeedback
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-          (rcvd-at $?rcvd-at) (rcvd-from ?from-host ?from-port) (client-type CLIENT|SERVER))
-  (benchmark-phase (id ?phase) (type FBM) (type-id 2))
-  (benchmark-state (phase-id ?phase) (state PAUSED|FINISHED))
+         (rcvd-from ?host ?port) (client-type PEER))
+  (robot (name ?name) (team ?team) (host ?host))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
-  (if (pb-has-field ?p "grasp_notification")
-   then
-    (printout t "Benchmark feedback valid" crlf)
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?state-pre (send ?state-machine get-current-state))
+  (send ?state-machine process-event FINISH)
+  (bind ?state-post (send ?state-machine get-current-state))
 
-    (if (eq (pb-field-value ?p "grasp_notification") 1)
-     then
-      (assert (benchmark-feedback (source CLIENT) (time ?rcvd-at) (type SUCCESS)))
-     else
-      (assert (benchmark-feedback (source CLIENT) (time ?rcvd-at) (type FAIL)))
+  (if (neq ?state-pre ?state-post) then
+    (bind ?scenario (send [benchmark] get-current-scenario))
+    (bind ?scenario-type (send ?scenario get-type))
+    (bind ?scenario-type-id (send ?scenario get-type-id))
+
+    ; Not relevant in the TBMs
+    (if (eq ?scenario-type TBM) then
+      (return)
     )
-   else
-    (printout t "Benchmark feedback from " ?from-host ":" ?from-port " is invalid" crlf)
-  )
-)
 
-; In case there is no rule consuming the feedback, retract it here
-(defrule retract-benchmark-feedback
-  (declare (salience ?*PRIORITY_LAST*))
-  ?f <- (benchmark-feedback)
-  =>
-  (retract ?f)
+    (switch ?scenario-type-id
+      (case 1 then (net-handle-fbm1-feedback ?p ?name ?team))
+      (case 2 then (net-handle-fbm2-feedback ?p ?name ?team))
+    )
+
+    ; Forward the feedback to all clients
+    (do-for-all-facts ((?client network-client)) TRUE
+      (pb-send ?client:id ?p)
+    )
+  )
 )

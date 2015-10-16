@@ -9,10 +9,12 @@
   ; network sending periods; seconds
   ?*BEACON-PERIOD* = 1.0
   ?*BENCHMARKSTATE-PERIOD* = 0.1
+  ?*BENCHMARKINFO-PERIOD* = 0.1
   ?*ROBOTINFO-PERIOD* = 0.25
   ?*INVENTORY-PERIOD* = 1.0
   ?*DRILLING-MACHINE-PERIOD* = 0.1
   ?*CONVEYOR-BELT-PERIOD* = 0.1
+  ?*FORCE-FITTING-MACHINE-PERIOD* = 0.1
   ?*BC-ORDERINFO-PERIOD* = 2.0
   ?*BC-ORDERINFO-BURST-PERIOD* = 0.5
 
@@ -36,9 +38,11 @@
   ?*TBM-TIME*     =  600
   ?*FBM1-TIME*    =  120  ; per run
   ?*FBM2-TIME*    =  240  ; per run
+  ?*FBM3-TIME*    =  600  ; per run
 
   ; Benchmark repetitions
   ?*TBM-COUNT*    =  1
   ?*FBM1-COUNT*   = 10
-  ?*FBM2-COUNT*   =  7
+  ?*FBM2-COUNT*   =  5
+  ?*FBM3-COUNT*   =  5
 )

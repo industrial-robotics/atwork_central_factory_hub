@@ -1,4 +1,0 @@
-message CameraStatus
-{
-	required bool is_device_connected = 1;
-}

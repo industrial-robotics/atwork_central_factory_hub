@@ -10,6 +10,7 @@
 #include <protobuf_comm/client.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/DrillingMachine.pb.h>
+#include <msgs/ForceFittingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 #include <msgs/RobotInfo.pb.h>
 #include <msgs/AttentionMessage.pb.h>
@@ -32,6 +33,7 @@ boost::mutex mutex;
 std::shared_ptr<rockin_msgs::BenchmarkState> benchmark_state;
 std::shared_ptr<rockin_msgs::ConveyorBeltStatus> conveyor_belt_state;
 std::shared_ptr<rockin_msgs::DrillingMachineStatus> drilling_machine_state;
+std::shared_ptr<rockin_msgs::ForceFittingMachineStatus> force_fitting_machine_state;
 std::shared_ptr<rockin_msgs::RobotInfo> robot_info;
 std::shared_ptr<rockin_msgs::Inventory> inventory;
 std::shared_ptr<rockin_msgs::OrderInfo> order_info;
@@ -111,6 +113,10 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
     drilling_machine_state = std::dynamic_pointer_cast<rockin_msgs::DrillingMachineStatus>(msg);
   }
 
+  if (std::dynamic_pointer_cast<rockin_msgs::ForceFittingMachineStatus>(msg)) {
+    force_fitting_machine_state = std::dynamic_pointer_cast<rockin_msgs::ForceFittingMachineStatus>(msg);
+  }
+
   if (std::dynamic_pointer_cast<rockin_msgs::RobotInfo>(msg)) {
     robot_info = std::dynamic_pointer_cast<rockin_msgs::RobotInfo>(msg);
   }
@@ -134,6 +140,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
 bool idle_handler() {
   if ((std::chrono::system_clock::now() - last_gui_update) < std::chrono::milliseconds(100)) {
+    usleep(10000);
     return true;
   }
   last_gui_update = std::chrono::system_clock::now();
@@ -160,67 +167,79 @@ bool idle_handler() {
     // State
     Gtk::Label *label_state = 0;
     builder->get_widget("label_state", label_state);
-    Pango::Attribute fg_color;
+    Pango::Attribute fg_color_state;
 
-    Pango::AttrList attr_list = label_state->get_attributes();
+    Pango::AttrList attr_list_state = label_state->get_attributes();
     switch (benchmark_state->state()) {
-      case rockin_msgs::BenchmarkState::INIT:
-        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
-        label_state->set_text("Initializing");
-      break;
-
       case rockin_msgs::BenchmarkState::RUNNING:
-        fg_color = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
+        fg_color_state = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
         label_state->set_text("Running");
       break;
 
       case rockin_msgs::BenchmarkState::PAUSED:
-        fg_color = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
+        fg_color_state = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
         label_state->set_text("Paused");
       break;
 
       case rockin_msgs::BenchmarkState::FINISHED:
-        fg_color = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        fg_color_state = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
         label_state->set_text("Finished");
       break;
+
+      case rockin_msgs::BenchmarkState::STOPPED:
+        fg_color_state = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        label_state->set_text("Stopped");
+      break;
     }
-    attr_list.insert(fg_color);
-    label_state->set_attributes(attr_list);
+    attr_list_state.insert(fg_color_state);
+    label_state->set_attributes(attr_list_state);
 
 
     // Phase
     Gtk::Label *label_phase = 0;
     builder->get_widget("label_phase", label_phase);
-    std::stringstream sstr_phase;
+    Pango::Attribute fg_color_phase;
 
-    switch (benchmark_state->phase().type()) {
-      case rockin_msgs::BenchmarkPhase::NONE:
-        sstr_phase << "None";
+    Pango::AttrList attr_list_phase = label_phase->get_attributes();
+    switch (benchmark_state->phase()) {
+      case rockin_msgs::BenchmarkState::EXECUTION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(35466, 57825, 13364);
+        label_phase->set_text("Execution");
       break;
 
-      case rockin_msgs::BenchmarkPhase::FBM:
-        sstr_phase << "Functionality Benchmark " << benchmark_state->phase().type_id();
+      case rockin_msgs::BenchmarkState::CALIBRATION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(61423, 10537, 10537);
+        label_phase->set_text("Calibration");
       break;
 
-      case rockin_msgs::BenchmarkPhase::TBM:
-        sstr_phase << "Task Benchmark " << benchmark_state->phase().type_id();
+      case rockin_msgs::BenchmarkState::PREPARATION:
+        fg_color_phase = Pango::Attribute::create_attr_foreground(13364, 25957, 42148);
+        label_phase->set_text("Preparation");
       break;
     }
-    label_phase->set_text(sstr_phase.str());
+    attr_list_phase.insert(fg_color_phase);
+    label_phase->set_attributes(attr_list_phase);
 
 
-    // RefBox mode
-    Gtk::Label *label_refbox_mode = 0;
-    builder->get_widget("label_refbox_mode", label_refbox_mode);
-    if (benchmark_state->has_refbox_mode()) {
-      switch (benchmark_state->refbox_mode()) {
-        case rockin_msgs::BenchmarkState::STANDALONE: label_refbox_mode->set_text("Standalone"); break;
-        case rockin_msgs::BenchmarkState::MASTER: label_refbox_mode->set_text("Master"); break;
-        case rockin_msgs::BenchmarkState::SLAVE: label_refbox_mode->set_text("Slave"); break;
-      }
-    } else {
-      label_refbox_mode->set_text("---");
+    // Benchmark scenario
+    Gtk::Label *label_scenario = 0;
+    builder->get_widget("label_benchmark_scenario", label_scenario);
+    std::stringstream sstr_scenario;
+
+    switch (benchmark_state->scenario().type()) {
+      case rockin_msgs::BenchmarkScenario::NONE:
+          sstr_scenario << "None";
+      break;
+
+      case rockin_msgs::BenchmarkScenario::FBM:
+          sstr_scenario << "Functionality Benchmark " << benchmark_state->scenario().type_id();
+      break;
+
+      case rockin_msgs::BenchmarkScenario::TBM:
+          sstr_scenario << "Task Benchmark " << benchmark_state->scenario().type_id();
+      break;
     }
+    label_scenario->set_text(sstr_scenario.str());
   }
 
 
@@ -263,6 +282,30 @@ bool idle_handler() {
   }
 
 
+  if (force_fitting_machine_state) {
+    Gtk::Label *label_force_fitting_machine = 0;
+    builder->get_widget("label_force_fitting_machine", label_force_fitting_machine);
+
+    switch (force_fitting_machine_state->state()) {
+      case rockin_msgs::ForceFittingMachineStatus::AT_BOTTOM:
+        label_force_fitting_machine->set_text("At bottom");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::AT_TOP:
+        label_force_fitting_machine->set_text("At top");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::MOVING_DOWN:
+        label_force_fitting_machine->set_text("Moving down");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::MOVING_UP:
+        label_force_fitting_machine->set_text("Moving up");
+      break;
+      case rockin_msgs::ForceFittingMachineStatus::UNKNOWN:
+        label_force_fitting_machine->set_text("Unknown");
+      break;
+    }
+  }
+
+
   if (robot_info) {
     Gtk::Box *box_robots = 0;
     builder->get_widget("box_robots", box_robots);
@@ -288,6 +331,11 @@ bool idle_handler() {
       std::stringstream sstr_host;
       sstr_host << robot_info->robots(i).host() << std::endl;
       sstr_host << (is_robot_lost ? "Lost" : "Active");
+
+      if (robot_info->robots(i).has_is_logging()) {
+        bool is_logging = robot_info->robots(i).is_logging();
+        sstr_host << ", " << (is_logging ? "Logging" : "Not Logging");
+      }
 
       RobotInfoFrame *frame = new RobotInfoFrame(sstr_name.str(), sstr_host.str(), is_robot_lost);
       box_robots->pack_end(*frame);
@@ -327,6 +375,8 @@ bool idle_handler() {
       sstr << order.object().description() << " -> ";
       if (order.has_destination()) sstr << order.destination().description();
       else if (order.has_container()) sstr << order.container().description();
+
+      if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
 
       sstr << std::endl;
     }
