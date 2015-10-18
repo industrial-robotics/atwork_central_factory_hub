@@ -18,7 +18,7 @@ llsfrb:
     status_port: !tcp-port 55501
 
   drilling-machine:
-    enable: false
+    mode: simulation
     host: !ipv4 eth0
     command_port: !tcp-port 55512
     status_port: !tcp-port 55511

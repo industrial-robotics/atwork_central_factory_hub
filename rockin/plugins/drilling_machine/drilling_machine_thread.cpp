@@ -53,31 +53,28 @@ void DrillingMachineThread::init()
 
     try
     {
-        if (config->get_bool("/llsfrb/drilling-machine/enable"))
+        if (config->exists("/llsfrb/drilling-machine/host") && config->exists("/llsfrb/drilling-machine/command_port") && config->exists("/llsfrb/drilling-machine/status_port"))
         {
-            if (config->exists("/llsfrb/drilling-machine/host") && config->exists("/llsfrb/drilling-machine/command_port") && config->exists("/llsfrb/drilling-machine/status_port"))
-            {
-                host_ip_address = config->get_string("/llsfrb/drilling-machine/host");
-                host_command_port = "epgm://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/command_port"));
-                host_status_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/status_port"));
+            host_ip_address = config->get_string("/llsfrb/drilling-machine/host");
+            host_command_port = "epgm://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/command_port"));
+            host_status_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/status_port"));
 
-                zmq_context_ = new zmq::context_t(1);
+            zmq_context_ = new zmq::context_t(1);
 
-                int msg_limit = 1;
+            int msg_limit = 1;
 
-                // add publisher to send status messages
-                logger->log_info("DrillingMachine", "Connecting to the command port: %s", host_command_port.c_str());
-                zmq_publisher_ = new zmq::socket_t(*zmq_context_, ZMQ_PUB);
-                zmq_publisher_->setsockopt(ZMQ_CONFLATE, &msg_limit, sizeof(msg_limit));
-                zmq_publisher_->bind(host_command_port.c_str());
+            // add publisher to send status messages
+            logger->log_info("DrillingMachine", "Connecting to the command port: %s", host_command_port.c_str());
+            zmq_publisher_ = new zmq::socket_t(*zmq_context_, ZMQ_PUB);
+            zmq_publisher_->setsockopt(ZMQ_CONFLATE, &msg_limit, sizeof(msg_limit));
+            zmq_publisher_->bind(host_command_port.c_str());
 
-                // add subscriber to receive command messages from a client
-                logger->log_info("DrillingMachine", "Connecting to the status port: %s", host_status_port.c_str());
-                zmq_subscriber_ = new zmq::socket_t(*zmq_context_, ZMQ_SUB);
-                zmq_subscriber_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
-                zmq_subscriber_->setsockopt(ZMQ_CONFLATE, &msg_limit, sizeof(msg_limit));
-                zmq_subscriber_->connect(host_status_port.c_str());
-            }
+            // add subscriber to receive command messages from a client
+            logger->log_info("DrillingMachine", "Connecting to the status port: %s", host_status_port.c_str());
+            zmq_subscriber_ = new zmq::socket_t(*zmq_context_, ZMQ_SUB);
+            zmq_subscriber_->setsockopt(ZMQ_SUBSCRIBE, "", 0);
+            zmq_subscriber_->setsockopt(ZMQ_CONFLATE, &msg_limit, sizeof(msg_limit));
+            zmq_subscriber_->connect(host_status_port.c_str());
         }
     } catch (fawkes::Exception &e)
     {
