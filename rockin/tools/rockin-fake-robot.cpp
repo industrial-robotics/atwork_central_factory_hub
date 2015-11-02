@@ -126,6 +126,13 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";
     std::cout << std::endl;
 
+    std::cout << "  Phase: ";
+    switch (bs->phase()) {
+        case BenchmarkState::CALIBRATION: std::cout << "CALIBRATION" << std::endl; break;
+        case BenchmarkState::PREPARATION: std::cout << "PREPARATION" << std::endl; break;
+        case BenchmarkState::EXECUTION: std::cout << "EXECUTION" << std::endl; break;
+    }
+
     std::cout << "  State: ";
     switch (bs->state()) {
       case BenchmarkState::RUNNING: std::cout << "RUNNING" << std::endl; break;
