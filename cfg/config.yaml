@@ -12,10 +12,11 @@ llsfrb:
     game: game.log
 
   triggered-conveyor-belt:
-    enable: false
+    mode: simulation
     host: !ipv4 eth0
-    command_port: !tcp-port 55502
-    status_port: !tcp-port 55501
+    camera_status_port: !tcp-port 55521
+    conveyor_status_port: !tcp-port 55522
+    command_port: !tcp-port 55523
 
   drilling-machine:
     mode: simulation

@@ -20,6 +20,7 @@
 
 #include <core/plugin.h>
 
+#include "triggered_conveyor_belt_thread.h"
 #include "triggered_conveyor_belt_simulation_thread.h"
 
 using namespace fawkes;
@@ -40,9 +41,16 @@ class TriggeredConveyorBeltPlugin: public fawkes::Plugin
         TriggeredConveyorBeltPlugin(Configuration *config) :
                 Plugin(config)
         {
-            thread_list.push_back(new TriggeredConveyorBeltSimulationThread());
+            if (config->exists("/llsfrb/triggered-conveyor-belt/mode"))
+            {
+                std::string config_mode = config->get_string("/llsfrb/triggered-conveyor-belt/mode");
+                if (config_mode == std::string("real"))
+                    thread_list.push_back(new TriggeredConveyorBeltThread());
+                else if (config_mode == std::string("simulation"))
+                    thread_list.push_back(new TriggeredConveyorBeltSimulationThread());
+            }
         }
 };
 
-PLUGIN_DESCRIPTION("Plugin to communicate with the triggered conveyor belt")
+PLUGIN_DESCRIPTION("Plugin to communicate with or simulate the triggered conveyor belt")
 EXPORT_PLUGIN(TriggeredConveyorBeltPlugin)
