@@ -206,7 +206,7 @@
   (send [execution-running-state]    add-transition FINISH  [execution-check-runs-state])
   (send [execution-paused-state]     add-transition START   [execution-running-state])
   (send [execution-paused-state]     add-transition STOP    [execution-stopped-state])
-  (send [execution-check-runs-state] add-transition REPEAT  [preparation-stopped-state])
+  (send [execution-check-runs-state] add-transition REPEAT  [calibration-stopped-state])
   (send [execution-check-runs-state] add-transition FINISH  [execution-finished-state])
 
   (make-instance ?state-machine of StateMachine
