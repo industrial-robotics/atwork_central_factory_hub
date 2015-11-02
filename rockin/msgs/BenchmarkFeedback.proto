@@ -35,6 +35,7 @@
 package rockin_msgs;
 
 import "Pose3D.proto";
+import "BenchmarkState.proto";
 
 option java_package = "org.rockin.common_msgs";
 option java_outer_classname = "BenchmarkFeedbackProtos";
@@ -50,6 +51,15 @@ message BenchmarkFeedback {
     FAULTY   = 2;
     PERFECT  = 3;
   }
+
+  // The benchmark phase to terminate
+  // The specification of the benchmark phase is especially important in FBMs.
+  // To finish the FBM, the robot should continuously send out the feedback
+  // message until the phase in the benchmark state changes. To avoid
+  // accidentally finishing the next phase via a burst of "old" feedback
+  // messages, the desired phase that should be terminated is included in the
+  // benchmark feedback.
+  required BenchmarkState.Phase phase_to_terminate = 100;
 
   // FBM1
   optional string object_class_name = 1;

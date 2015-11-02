@@ -192,6 +192,7 @@ void on_success_click()
 
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(true);
+  msg.set_phase_to_terminate(benchmark_state->phase());
   client.send(msg);
 }
 
@@ -202,6 +203,7 @@ void on_fail_click()
 
   rockin_msgs::BenchmarkFeedback msg;
   msg.set_grasp_notification(false);
+  msg.set_phase_to_terminate(benchmark_state->phase());
   client.send(msg);
 }
 

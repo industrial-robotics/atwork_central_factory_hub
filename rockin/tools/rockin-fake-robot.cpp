@@ -64,6 +64,7 @@ std::string name_;
 std::string team_name_;
 unsigned long seq_ = 0;
 int conveyor_belt_cycle_ = 0;
+BenchmarkState::Phase current_benchmark_phase_ = BenchmarkState::EXECUTION;
 ProtobufBroadcastPeer *peer_public_ = NULL;
 ProtobufBroadcastPeer *peer_team_ = NULL;
 bool crypto_setup_ = false;
@@ -132,6 +133,7 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
         case BenchmarkState::PREPARATION: std::cout << "PREPARATION" << std::endl; break;
         case BenchmarkState::EXECUTION: std::cout << "EXECUTION" << std::endl; break;
     }
+    current_benchmark_phase_ = bs->phase();
 
     std::cout << "  State: ";
     switch (bs->state()) {
@@ -263,6 +265,7 @@ handle_timer(const boost::system::error_code& error)
     bf.set_object_instance_name("AX-01");
     bf.set_object_class_name("aluminium");
     bf.set_grasp_notification(true);
+    bf.set_phase_to_terminate(current_benchmark_phase_);
     peer_public_->send(bf);
 
 
