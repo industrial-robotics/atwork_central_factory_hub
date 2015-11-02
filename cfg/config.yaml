@@ -55,41 +55,23 @@ llsfrb:
       #send-port: !udp-port 4444
       #recv-port: !udp-port 4445
 
-    AugsburgDublin-peer:
+    b-it-bots-peer:
       host: !ipv4 192.168.1.255
       port: !udp-port 4446
       #send-port: !udp-port 4446
       #recv-port: !udp-port 4447
 
-    RobOTTO-peer:
+    smARTLab-peer:
       host: !ipv4 192.168.1.255
       port: !udp-port 4448
       #send-port: !udp-port 4448
       #recv-port: !udp-port 4449
 
-    smARTLab-peer:
+    SPQR-peer:
       host: !ipv4 192.168.1.255
       port: !udp-port 4450
       #send-port: !udp-port 4450
       #recv-port: !udp-port 4451
-
-    SPQR-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4452
-      #send-port: !udp-port 4452
-      #recv-port: !udp-port 4453
-
-    UvA-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4454
-      #send-port: !udp-port 4454
-      #recv-port: !udp-port 4455
-
-    wits-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4456
-      #send-port: !udp-port 4456
-      #recv-port: !udp-port 4457
 
   mongodb:
     enable: true
@@ -100,14 +82,11 @@ llsfrb:
       protobuf: llsfrb.protobuf
 
   game:
-    teams: [AugsburgDublin, RobOTTO, smARTLab, SPQR, UvA, wits]
+    teams: [b-it-bots, smARTLab, SPQR]
     crypto-keys:
-      AugsburgDublin: randomkey
-      RobOTTO: randomkey
+      b-it-bots: randomkey
       smARTLab: randomkey
       SPQR: randomkey
-      UvA: randomkey
-      wits: randomkey
 
   shell:
     refbox-host: !ipv4 192.168.1.100
