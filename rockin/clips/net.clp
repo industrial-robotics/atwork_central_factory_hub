@@ -523,7 +523,22 @@
   =>
   (retract ?mf) ; message will be destroyed after rule completes
 
+  ; Identify which phase the peer wants to terminate
+  (bind ?phase-to-terminate (pb-field-value ?p "phase_to_terminate"))
+
+  ; Identify the currently active phase
   (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
+  (bind ?current-phase (send ?current-state to-robot-phase))
+
+  ; Exit if the phase to terminate is not the same as the currently active phase
+  (if (neq ?phase-to-terminate ?current-phase) then
+    (if (debug 3) then (printout t "Ignoring BechmarkFeedback from robot "
+        ?name "/" ?team " because the specified phase is incorrect" crlf))
+    (return)
+  )
+
+  ; Finish the current state
   (bind ?state-pre (send ?state-machine get-current-state))
   (send ?state-machine process-event FINISH)
   (bind ?state-post (send ?state-machine get-current-state))
