@@ -112,14 +112,14 @@
   (make-instance [preparation-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [preparation-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-PREPARATION-TIME*))
   (make-instance [preparation-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [execution-stopped-state] of FbmStoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [execution-running-state] of FbmRunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-EXECUTION-TIME*))
   (make-instance [execution-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [execution-check-runs-state] of CheckRunsState
@@ -161,21 +161,21 @@
   (make-instance [calibration-stopped-state] of StoppedState
     (phase CALIBRATION) (state-machine ?state-machine) (time ?time))
   (make-instance [calibration-running-state] of RunningState
-    (phase CALIBRATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+    (phase CALIBRATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-CALIBRATION-TIME*))
   (make-instance [calibration-paused-state] of PausedState
     (phase CALIBRATION) (state-machine ?state-machine))
 
   (make-instance [preparation-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [preparation-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-PREPARATION-TIME*))
   (make-instance [preparation-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [execution-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [execution-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-EXECUTION-TIME*))
   (make-instance [execution-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [execution-check-runs-state] of CheckRunsState
