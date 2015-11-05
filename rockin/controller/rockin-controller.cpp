@@ -86,9 +86,15 @@ bool idle_handler() {
       break;
 
       case rockin_msgs::BenchmarkState::FINISHED:
-        button_start->set_sensitive(false);
-        button_pause->set_sensitive(false);
-        button_stop->set_sensitive(false);
+        if (benchmark_state->phase() == rockin_msgs::BenchmarkState::EXECUTION) {
+            button_start->set_sensitive(false);
+            button_pause->set_sensitive(false);
+            button_stop->set_sensitive(false);
+        } else {
+            button_start->set_sensitive(true);
+            button_pause->set_sensitive(false);
+            button_stop->set_sensitive(false);
+        }
       break;
     }
 
