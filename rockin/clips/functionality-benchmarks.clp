@@ -164,6 +164,8 @@
     (phase CALIBRATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM3-CALIBRATION-TIME*))
   (make-instance [calibration-paused-state] of PausedState
     (phase CALIBRATION) (state-machine ?state-machine))
+  (make-instance [calibration-finished-state] of FinishedState
+    (phase CALIBRATION) (state-machine ?state-machine))
 
   (make-instance [preparation-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
@@ -185,11 +187,12 @@
 
   (send [calibration-stopped-state]  add-transition START   [calibration-running-state])
   (send [calibration-running-state]  add-transition PAUSE   [calibration-paused-state])
-  (send [calibration-running-state]  add-transition STOP    [preparation-stopped-state])
-  (send [calibration-running-state]  add-transition TIMEOUT [preparation-stopped-state])
-  (send [calibration-running-state]  add-transition FINISH  [preparation-stopped-state])
+  (send [calibration-running-state]  add-transition STOP    [calibration-finished-state])
+  (send [calibration-running-state]  add-transition TIMEOUT [calibration-finished-state])
+  (send [calibration-running-state]  add-transition FINISH  [calibration-finished-state])
   (send [calibration-paused-state]   add-transition START   [calibration-running-state])
-  (send [calibration-paused-state]   add-transition STOP    [preparation-stopped-state])
+  (send [calibration-paused-state]   add-transition STOP    [calibration-finished-state])
+  (send [calibration-finished-state] add-transition START   [preparation-stopped-state])
 
   (send [preparation-stopped-state]  add-transition START   [preparation-running-state])
   (send [preparation-running-state]  add-transition PAUSE   [preparation-paused-state])
