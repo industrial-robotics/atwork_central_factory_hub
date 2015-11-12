@@ -36,8 +36,9 @@
 TriggeredConveyorBeltThread::TriggeredConveyorBeltThread() :
         Thread("TriggeredConveyorBeltThread", Thread::OPMODE_CONTINUOUS),
         zmq_context_(NULL), zmq_publisher_(NULL), zmq_camera_subscriber_(NULL),
-        zmq_conveyor_subscriber_(NULL), cfg_timer_interval_(40),
-        default_network_interface_("eth0"),
+        zmq_conveyor_subscriber_(NULL), cfg_timer_interval_(40), cycle_(0),
+        send_conveyor_command_(false), send_reset_command_(true),
+        requested_run_mode_(STOP),
         last_state_(QualityControlCameraStatus::NO_PLATE)
 {
 }
@@ -64,7 +65,7 @@ void TriggeredConveyorBeltThread::init()
             && config->exists("/llsfrb/triggered-conveyor-belt/conveyor_status_port"))
         {
             host_ip_address = config->get_string("/llsfrb/triggered-conveyor-belt/host");
-            host_command_port = "epgm://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/triggered-conveyor-belt/command_port"));
+            host_command_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/triggered-conveyor-belt/command_port"));
             host_camera_status_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/triggered-conveyor-belt/camera_status_port"));
             host_conveyor_status_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/triggered-conveyor-belt/conveyor_status_port"));
 
@@ -114,6 +115,9 @@ void TriggeredConveyorBeltThread::init()
 
     fawkes::MutexLocker lock(clips_mutex);
 
+    logger->log_info("TriggeredConveyorBelt", "Sending reset to Device");
+    setConveyorBeltRunMode(requested_run_mode_);
+
     clips->add_function("conveyor-belt-start-belt", sigc::slot<void>(sigc::mem_fun(*this, &TriggeredConveyorBeltThread::clips_start_belt)));
     clips->add_function("conveyor-belt-stop-belt", sigc::slot<void>(sigc::mem_fun(*this, &TriggeredConveyorBeltThread::clips_stop_belt)));
     clips->add_function("conveyor-belt-is-running", sigc::slot<bool>(sigc::mem_fun(*this, &TriggeredConveyorBeltThread::clips_is_belt_running)));
@@ -148,6 +152,18 @@ void TriggeredConveyorBeltThread::loop()
     boost::this_thread::sleep(boost::posix_time::milliseconds(cfg_timer_interval_));
     receiveAndBufferConveyorStatusMsg();
     receiveAndBufferCameraStatusMsg();
+
+    fawkes::MutexLocker lock(clips_mutex);
+    if (send_conveyor_command_)
+    {
+        int next_cycle;
+        next_cycle = cycle_ + 1;
+        if (next_cycle == last_conveyor_status_msg_.cycle())
+            return;
+        setConveyorBeltRunMode(requested_run_mode_);
+    } else if (send_reset_command_){
+        setConveyorBeltRunMode(requested_run_mode_);
+    }
 }
 
 bool TriggeredConveyorBeltThread::clips_is_belt_running()
@@ -185,18 +201,20 @@ bool TriggeredConveyorBeltThread::clips_is_camera_connected()
 
 void TriggeredConveyorBeltThread::clips_start_belt()
 {
-    setConveyorBeltRunMode(START);
+    fawkes::MutexLocker lock(clips_mutex);
+    requested_run_mode_ = START;
+    send_conveyor_command_ = true;
 }
 
 void TriggeredConveyorBeltThread::clips_stop_belt()
 {
-    setConveyorBeltRunMode(STOP);
+    fawkes::MutexLocker lock(clips_mutex);
+    requested_run_mode_ = STOP;
+    send_conveyor_command_ = true;
 }
 
 void TriggeredConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
 {
-    logger->log_info("TriggeredConveyorBelt", "Set run mode: %d", mode);
-
     boost::posix_time::time_duration time_diff;
 
     // prevent sending to many messages to the device
@@ -208,7 +226,10 @@ void TriggeredConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
     ConveyorBeltCommand command_msg;
     std::string serialized_string;
 
+    command_msg.set_next_cycle(cycle_+1);
     command_msg.set_mode(mode);
+    if (send_reset_command_)
+        command_msg.set_reset(true);
 
     zmq::message_t *query = NULL;
     try
@@ -219,8 +240,6 @@ void TriggeredConveyorBeltThread::setConveyorBeltRunMode(RunMode mode)
         zmq_publisher_->send(*query);
 
         last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
-
-        logger->log_info("TriggeredConveyorBelt", "Set run mode: %d", command_msg.mode());
 
         delete query;
     } catch (fawkes::Exception &e)
@@ -246,6 +265,15 @@ void TriggeredConveyorBeltThread::receiveAndBufferConveyorStatusMsg()
             if (last_conveyor_status_msg_.ParseFromArray(zmq_conveyor_msg_.data(),
                                                          zmq_conveyor_msg_.size()))
             {
+                int expected_cycle = cycle_ + 1;
+                if (last_conveyor_status_msg_.cycle() == expected_cycle){
+                    cycle_++;
+                    send_conveyor_command_ = false;
+                    send_reset_command_ = false;
+                } else if (last_conveyor_status_msg_.cycle() > expected_cycle)
+                {
+                    send_reset_command_ = true;
+                }
                 prev_conveyor_update_timestamp_ = boost::posix_time::microsec_clock::local_time();
             }
         } else

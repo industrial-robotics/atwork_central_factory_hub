@@ -58,10 +58,12 @@ class TriggeredConveyorBeltThread : public fawkes::Thread, public fawkes::Loggin
         zmq::socket_t *zmq_camera_subscriber_;
         zmq::socket_t *zmq_conveyor_subscriber_;
         unsigned int cfg_timer_interval_;
+        unsigned int cycle_;
 
-        std::string default_network_interface_;
-
+        bool send_conveyor_command_;
+        bool send_reset_command_;
         ConveyorBeltStatus last_conveyor_status_msg_;
+        RunMode requested_run_mode_;
         QualityControlCameraStatus last_camera_status_msg_;
         QualityControlCameraStatus::State last_state_;
 
