@@ -101,6 +101,8 @@ void DrillingMachineSimulationThread::loop()
 
 DrillingMachineStatus::State DrillingMachineSimulationThread::clips_get_device_state()
 {
+    fawkes::MutexLocker lock(clips_mutex);
+
     if (last_status_msg_.has_state())
     {
         return last_status_msg_.state();
@@ -110,6 +112,7 @@ DrillingMachineStatus::State DrillingMachineSimulationThread::clips_get_device_s
 
 int DrillingMachineSimulationThread::clips_is_device_connected()
 {
+    fawkes::MutexLocker lock(clips_mutex);
     return (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected());
 }
 
@@ -131,6 +134,7 @@ void DrillingMachineSimulationThread::moveDrill(DrillingMachineCommand::Command 
     if (time_diff.total_milliseconds() < 200)
         return;
 
+    fawkes::MutexLocker lock(clips_mutex);
     last_command_msg_.set_command(drill_command);
     last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
 
