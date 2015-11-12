@@ -152,6 +152,7 @@ void TriggeredConveyorBeltThread::loop()
 
 bool TriggeredConveyorBeltThread::clips_is_belt_running()
 {
+    fawkes::MutexLocker lock(clips_mutex);
     if (last_conveyor_status_msg_.has_mode()
         && last_conveyor_status_msg_.mode() == START)
     {
@@ -162,6 +163,7 @@ bool TriggeredConveyorBeltThread::clips_is_belt_running()
 
 bool TriggeredConveyorBeltThread::clips_is_belt_connected()
 {
+    fawkes::MutexLocker lock(clips_mutex);
     if (last_conveyor_status_msg_.has_is_device_connected()
         && last_conveyor_status_msg_.is_device_connected())
     {
@@ -172,6 +174,7 @@ bool TriggeredConveyorBeltThread::clips_is_belt_connected()
 
 bool TriggeredConveyorBeltThread::clips_is_camera_connected()
 {
+    fawkes::MutexLocker lock(clips_mutex);
     if (last_camera_status_msg_.has_is_device_connected()
         && last_camera_status_msg_.is_device_connected())
     {
