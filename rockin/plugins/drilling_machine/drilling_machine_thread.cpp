@@ -120,6 +120,8 @@ void DrillingMachineThread::loop()
 
 DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 {
+    fawkes::MutexLocker lock(clips_mutex);
+
     if (last_status_msg_.has_state())
     {
         return last_status_msg_.state();
@@ -130,6 +132,7 @@ DrillingMachineStatus::State DrillingMachineThread::clips_get_device_state()
 
 int DrillingMachineThread::clips_is_device_connected()
 {
+    fawkes::MutexLocker lock(clips_mutex);
     return (last_status_msg_.has_is_device_connected() && last_status_msg_.is_device_connected());
 }
 
@@ -152,6 +155,7 @@ void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_comm
     if (!zmq_publisher_)
         return;
 
+    fawkes::MutexLocker lock(clips_mutex);
     // prevent sending to many messages to the device
     time_diff = boost::posix_time::microsec_clock::local_time() - last_sent_command_timestamp_;
     if (time_diff.total_milliseconds() < 200)
