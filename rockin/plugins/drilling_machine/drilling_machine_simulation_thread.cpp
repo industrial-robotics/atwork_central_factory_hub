@@ -138,5 +138,5 @@ void DrillingMachineSimulationThread::moveDrill(DrillingMachineCommand::Command 
     last_command_msg_.set_command(drill_command);
     last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
 
-    logger->log_info("DrillingMachineSim", "Send drill command: %d", drill_command);
+    logger->log_debug("DrillingMachineSim", "Send drill command: %d", drill_command);
 }

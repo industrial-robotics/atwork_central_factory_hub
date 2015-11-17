@@ -174,11 +174,9 @@ void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_comm
 
         last_sent_command_timestamp_ = boost::posix_time::microsec_clock::local_time();
 
-        logger->log_info("DrillingMachine", "Send drill command: %d", command_msg.command());
-
     } catch (fawkes::Exception &e)
     {
-        logger->log_warn("DrillingMachine", "Failed to send drilling command: %s", e.what());
+        logger->log_debug("DrillingMachine", "Failed to send drilling command: %s", e.what());
 
         if (query != NULL)
             delete query;
