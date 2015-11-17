@@ -21,6 +21,8 @@
 #include <core/plugin.h>
 
 #include "drilling_machine_thread.h"
+#include "drilling_machine_simulation_thread.h"
+#include "drilling_machine_mockup_thread.h"
 
 using namespace fawkes;
 
@@ -31,14 +33,22 @@ class DrillingMachinePlugin: public fawkes::Plugin
 {
     public:
         /** Constructor.
-         * @param config Fawkes configuration
-         */
-        DrillingMachinePlugin(Configuration *config) :
-                Plugin(config)
+        * @param config Fawkes configuration
+        */
+        DrillingMachinePlugin(Configuration *config): Plugin(config)
         {
-            thread_list.push_back(new DrillingMachineThread());
+            if (config->exists("/llsfrb/drilling-machine/mode"))
+            {
+                std::string config_mode = config->get_string("/llsfrb/drilling-machine/mode");
+                if (config_mode == std::string("real"))
+                    thread_list.push_back(new DrillingMachineThread());
+                else if (config_mode == std::string("simulation"))
+                    thread_list.push_back(new DrillingMachineSimulationThread());
+                else
+                    thread_list.push_back(new DrillingMachineMockupThread());
+            }
         }
 };
 
-PLUGIN_DESCRIPTION("Plugin to communicate with the drilling machine")
+PLUGIN_DESCRIPTION("Plugin to communicate with or simulate the drilling machine")
 EXPORT_PLUGIN(DrillingMachinePlugin)
