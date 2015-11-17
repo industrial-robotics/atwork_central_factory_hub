@@ -352,6 +352,14 @@
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
 
+  (bind ?item-count (length (send [inventory] get-items)))
+  (if (>= ?item-count 23)
+   then
+    (printout t "Too many items in the inventory! Please reset the benchmark" crlf)
+    (assert (attention-message (text "Too many items in the inventory! Please reset the benchmark")))
+    (return)
+  )
+
   (bind ?pb-inventory (send [inventory] create-msg))
   (pb-broadcast ?peer-id-public ?pb-inventory)
 
