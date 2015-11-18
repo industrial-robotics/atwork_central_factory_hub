@@ -32,24 +32,34 @@
   )
 
 
+  (bind ?shelf-locations (create$ [shelf-01] [shelf-02] [shelf-03] [shelf-04]
+        [shelf-05] [shelf-06] [shelf-07] [shelf-08] [shelf-09] [shelf-10]
+        [shelf-11] [shelf-12]))
+
+  ; Randomize a location for EM-01-01
+  (bind ?em-01-01-location (pick-random$ ?shelf-locations))
+
+  ; The location of EM-01-01 should should not be reused
+  (delete-member$ ?shelf-locations ?em-01-01-location)
+
   ; Inventory
   (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;;;;;;;
     ; Assembly aid trays
     ;;;;;;;;;;;;;;;;;;;;
 
-    ; Assembly aid tray EM-01-01 at shelf SH-07
-    (make-instance of Item (object-id [em-01-01]) (location-id [shelf-07]))
+    ; Assembly aid tray EM-01-01 at random location
+    (make-instance of Item (object-id [em-01-01]) (location-id ?em-01-01-location))
 
     ;;;;;;;;;;;;;;;
     ; Bearing boxes
     ;;;;;;;;;;;;;;;
 
-    ; 1 bearing box at shelf SH-02
-    (make-instance of Item (object-id [ax-01]) (location-id [shelf-02]) (quantity 1))
+    ; 1 bearing box at random location
+    (make-instance of Item (object-id [ax-01]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
 
-    ; 1 bearing box at shelf SH-09
-    (make-instance of Item (object-id [ax-01]) (location-id [shelf-09]) (quantity 1))
+    ; 1 bearing box at random location
+    (make-instance of Item (object-id [ax-01]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
   )
 
 
@@ -90,6 +100,13 @@
   )
 
 
+  (bind ?shelf-locations (create$ [shelf-01] [shelf-02] [shelf-03] [shelf-04]
+        [shelf-05] [shelf-06] [shelf-07] [shelf-08] [shelf-09] [shelf-10]
+        [shelf-11] [shelf-12]))
+
+  ; Randomize a location for EM-02-01
+  (bind ?em-02-01-location (pick-random$ ?shelf-locations))
+
   ; Inventory
   (slot-insert$ [inventory] items 1
     ;;;;;;;;;;;;;;
@@ -107,8 +124,8 @@
     ; Manipulation objects
     ;;;;;;;;;;;;;;;;;;;;;;
 
-    ; File-card box EM-02-01 in shelf SH-02
-    (make-instance of Item (object-id [em-02-01]) (location-id [shelf-02]) (quantity 1))
+    ; File-card box EM-02-01 at random location
+    (make-instance of Item (object-id [em-02-01]) (location-id ?em-02-01-location) (quantity 1))
 
     ; File-card box EM-02-01 on robot
     ;(make-instance of Item (object-id [em-02-01]) (location-id [robot]) (quantity 1))
@@ -166,36 +183,46 @@
   )
 
 
+  (bind ?shelf-locations (create$ [shelf-01] [shelf-02] [shelf-03] [shelf-04]
+        [shelf-05] [shelf-06] [shelf-07] [shelf-08] [shelf-09] [shelf-10]
+        [shelf-11] [shelf-12]))
+
+  ; Randomize a location for EM-03-01
+  (bind ?em-03-01-location (pick-random$ ?shelf-locations))
+
+  ; The location of the assembly aid tray should should not be reused
+  (delete-member$ ?shelf-locations ?em-03-01-location)
+
   ; Inventory
   (slot-insert$ [inventory] items 1
-    ;;;;;;;;;;
-    ; Objects
-    ;;;;;;;;;;
-
-    ; 1 bearing box AX-01 at shelf SH-01
-    (make-instance of Item (object-id [ax-01]) (location-id [shelf-01]) (quantity 1))
-
-    ; 1 bearing AX-02 at shelf SH-02
-    (make-instance of Item (object-id [ax-02]) (location-id [shelf-02]) (quantity 1))
-
-    ; 1 axis AX-03 at shelf SH-03
-    (make-instance of Item (object-id [ax-03]) (location-id [shelf-03]) (quantity 1))
-
-    ; 1 shaft nut AX-04 at shelf SH-07
-    (make-instance of Item (object-id [ax-04]) (location-id [shelf-07]) (quantity 1))
-
-    ; 1 distance tube AX-05 at shelf SH-08
-    (make-instance of Item (object-id [ax-08]) (location-id [shelf-08]) (quantity 1))
-
-    ; 1 motor with gear box AX-09 at shelf SH-09
-    (make-instance of Item (object-id [ax-09]) (location-id [shelf-09]) (quantity 1))
-
     ;;;;;;;;;;;;;;;;
     ; Foam container
     ;;;;;;;;;;;;;;;;
 
-    ; Foam container EM-03-01 at shelf WS-01
-    (make-instance of Item (object-id [em-03-01]) (location-id [workstation-01]) (quantity 1))
+    ; Foam container EM-03-01 at random location
+    (make-instance of Item (object-id [em-03-01]) (location-id ?em-03-01-location) (quantity 1))
+
+    ;;;;;;;;;;
+    ; Objects
+    ;;;;;;;;;;
+
+    ; 1 bearing box AX-01 at random location
+    (make-instance of Item (object-id [ax-01]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+
+    ; 1 bearing AX-02 at random location
+    (make-instance of Item (object-id [ax-02]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+
+    ; 1 axis AX-03 at random location
+    (make-instance of Item (object-id [ax-03]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+
+    ; 1 shaft nut AX-04 at random location
+    (make-instance of Item (object-id [ax-04]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+
+    ; 1 distance tube AX-05 at random location
+    (make-instance of Item (object-id [ax-08]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+
+    ; 1 motor with gear box AX-09 at random location
+    (make-instance of Item (object-id [ax-09]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
   )
 
 
