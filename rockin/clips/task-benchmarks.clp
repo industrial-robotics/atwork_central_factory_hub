@@ -209,11 +209,11 @@
         [shelf-05] [shelf-06] [shelf-07] [shelf-08] [shelf-09] [shelf-10]
         [shelf-11] [shelf-12]))
 
-  ; Randomize a location for EM-03-01
-  (bind ?em-03-01-location (pick-random$ ?shelf-locations))
+  ; Randomize a location for ER-02-01
+  (bind ?er-02-01-location (pick-random$ ?shelf-locations))
 
   ; The location of the assembly aid tray should should not be reused
-  (delete-member$ ?shelf-locations ?em-03-01-location)
+  (delete-member$ ?shelf-locations ?er-02-01-location)
 
   ; Inventory
   (slot-insert$ [inventory] items 1
@@ -221,8 +221,8 @@
     ; Foam container
     ;;;;;;;;;;;;;;;;
 
-    ; Foam container EM-03-01 at random location
-    (make-instance of Item (object-id [em-03-01]) (location-id ?em-03-01-location) (quantity 1))
+    ; Foam container ER-02-01 at random location
+    (make-instance of Item (object-id [er-02-01]) (location-id ?er-02-01-location) (quantity 1))
 
     ;;;;;;;;;;
     ; Objects
@@ -250,26 +250,26 @@
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-    ; Deliver foam container EM-03-01 to workstation WS-03
-    (make-instance of Order (status OFFERED) (object-id [em-03-01]) (destination-id [workstation-03]))
+	    ; Deliver foam container ER-02-01 to workstation WS-03
+    (make-instance of Order (status OFFERED) (object-id [er-02-01]) (destination-id [workstation-03]))
 
-    ; Deliver 1 bearing box AX-01 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-01]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 bearing box AX-01 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-01]) (container-id [er-02-01]) (quantity-requested 1))
 
-    ; Deliver 1 bearing AX-02 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-02]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 bearing AX-02 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-02]) (container-id [er-02-01]) (quantity-requested 1))
 
-    ; Deliver 1 axis AX-03 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-03]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 axis AX-03 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-03]) (container-id [er-02-01]) (quantity-requested 1))
 
-    ; Deliver 1 shaft nut AX-04 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-04]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 shaft nut AX-04 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-04]) (container-id [er-02-01]) (quantity-requested 1))
 
-    ; Deliver 1 distance tube AX-05 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-05]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 distance tube AX-05 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-05]) (container-id [er-02-01]) (quantity-requested 1))
 
-    ; Deliver 1 motor with gear box AX-09 into foam container EM-03-01
-    (make-instance of Order (status OFFERED) (object-id [ax-09]) (container-id [em-03-01]) (quantity-requested 1))
+    ; Deliver 1 motor with gear box AX-09 into foam container ER-02-01
+    (make-instance of Order (status OFFERED) (object-id [ax-09]) (container-id [er-02-01]) (quantity-requested 1))
   )
 )
 
