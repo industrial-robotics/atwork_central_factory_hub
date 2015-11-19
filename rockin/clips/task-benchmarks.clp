@@ -73,6 +73,17 @@
   )
 )
 
+(defmessage-handler TaskBenchmark1 handle-feedback (?pb-msg ?name ?team)
+  (if (and
+       (pb-has-field ?pb-msg "assembly_aid_tray_id")
+       (pb-has-field ?pb-msg "container_id"))
+   then
+    (return CONTINUE)   ; TBM feedback is valid -> continue the benchmark
+   else
+    (return FINISH)     ; TBM feedback is invalid -> finish the benchmark
+  )
+)
+
 
 
 
@@ -153,6 +164,17 @@
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
+  )
+)
+
+(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?name ?team)
+  (if (and
+       (pb-has-field ?pb-msg "after_receiving")
+       (pb-has-field ?pb-msg "after_drilling"))
+   then
+    (return CONTINUE)   ; TBM feedback is valid -> continue the benchmark
+   else
+    (return FINISH)     ; TBM feedback is invalid -> finish the benchmark
   )
 )
 
@@ -250,6 +272,12 @@
     (make-instance of Order (status OFFERED) (object-id [ax-09]) (container-id [em-03-01]) (quantity-requested 1))
   )
 )
+
+(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+
 
 
 (defrule init-tbm
