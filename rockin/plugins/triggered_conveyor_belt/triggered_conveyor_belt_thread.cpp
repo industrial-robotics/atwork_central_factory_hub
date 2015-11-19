@@ -314,17 +314,11 @@ void TriggeredConveyorBeltThread::receiveAndBufferCameraStatusMsg()
                   default: detected_plate = "UNKNOWN_PLATE"; break;
               }
 
-              if (last_state_ == last_camera_status_msg_.state())
-              {
-                  return;
-              } else
-              {
-                  last_state_ = last_camera_status_msg_.state();
-                  // let CLIPS know about the plate by asserting it as a fact
-                  std::stringstream sstr;
-                  sstr << "(quality-control-camera-object " << detected_plate << ")";
-                  clips->assert_fact(sstr.str());
-              }
+              last_state_ = last_camera_status_msg_.state();
+              // let CLIPS know about the plate by asserting it as a fact
+              std::stringstream sstr;
+              sstr << "(quality-control-camera-object " << detected_plate << ")";
+              clips->assert_fact(sstr.str());
             }
         } else
         {
