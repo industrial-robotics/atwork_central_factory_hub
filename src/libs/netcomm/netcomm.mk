@@ -14,7 +14,7 @@
 #*****************************************************************************
 
 ifneq ($(PKGCONFIG),)
-  HAVE_AVAHI     := $(if $(shell $(PKGCONFIG) --exists 'avahi-client'; echo $${?/1/}),1,0)
+  HAVE_AVAHI     := 0
   HAVE_LIBCRYPTO := $(if $(shell $(PKGCONFIG) --exists 'libcrypto'; echo $${?/1/}),1,0)
   LIBCRYPTO_PKG  := libcrypto
   ifneq ($(HAVE_LIBCRYPTO),1)

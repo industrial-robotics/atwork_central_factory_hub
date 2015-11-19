@@ -31,7 +31,7 @@
 
 /** Constructor. */
 DrillingMachineThread::DrillingMachineThread() :
-        Thread("DrillingMachineThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40), default_network_interface_("eth0")
+        Thread("DrillingMachineThread", Thread::OPMODE_CONTINUOUS), zmq_context_(NULL), zmq_publisher_(NULL), zmq_subscriber_(NULL), cfg_timer_interval_(40)
 {
 }
 
@@ -56,7 +56,7 @@ void DrillingMachineThread::init()
         if (config->exists("/llsfrb/drilling-machine/host") && config->exists("/llsfrb/drilling-machine/command_port") && config->exists("/llsfrb/drilling-machine/status_port"))
         {
             host_ip_address = config->get_string("/llsfrb/drilling-machine/host");
-            host_command_port = "epgm://" + default_network_interface_ + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/command_port"));
+            host_command_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/command_port"));
             host_status_port = "epgm://" + host_ip_address + ":" + boost::lexical_cast<std::string>(config->get_uint("/llsfrb/drilling-machine/status_port"));
 
             zmq_context_ = new zmq::context_t(1);

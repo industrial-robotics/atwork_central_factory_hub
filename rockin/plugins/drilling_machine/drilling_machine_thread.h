@@ -57,7 +57,6 @@ class DrillingMachineThread: public fawkes::Thread, public fawkes::LoggingAspect
         DrillingMachineStatus last_status_msg_;
         zmq::message_t zmq_message_;
 
-        std::string default_network_interface_;
 
         boost::posix_time::ptime prev_device_update_timestamp_;
         boost::posix_time::ptime last_sent_command_timestamp_;
