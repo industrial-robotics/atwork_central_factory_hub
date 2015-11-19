@@ -488,42 +488,6 @@
   )
 )
 
-
-(deffunction net-handle-fbm1-feedback (?p ?name ?team)
-  (if (and
-       (pb-has-field ?p "object_class_name")
-       (pb-has-field ?p "object_instance_name")
-       (pb-has-field ?p "object_pose"))
-   then
-    (printout t "FBM: Robot " ?name "/" ?team
-        " recognized object instance " (pb-field-value ?p "object_instance_name")
-        " of class " (pb-field-value ?p "object_class_name") crlf)
-    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
-        " recognized object instance" (pb-field-value ?p "object_instance_name")
-        " of class " (pb-field-value ?p "object_class_name")))))
-   else
-    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
-  )
-)
-
-(deffunction net-handle-fbm2-feedback (?p ?name ?team)
-  (if (and
-       (pb-has-field ?p "grasp_notification")
-       (pb-has-field ?p "object_class_name")
-       (pb-has-field ?p "object_instance_name")
-       (pb-has-field ?p "end_effector_pose"))
-   then
-    (printout t "FBM: Robot " ?name "/" ?team
-        " lifted object instance " (pb-field-value ?p "object_instance_name")
-        " of class " (pb-field-value ?p "object_class_name") crlf)
-    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
-        " lifted object instance " (pb-field-value ?p "object_instance_name")
-        " of class " (pb-field-value ?p "object_class_name")))))
-   else
-    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
-  )
-)
-
 (defrule net-recv-BenchmarkFeedback
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
          (rcvd-from ?host ?port) (client-type PEER))
@@ -546,26 +510,19 @@
     (return)
   )
 
-  ; Finish the current state
+
+  ; Forward the feedback to the benchmark's feedback handler
+  (bind ?command (send [benchmark] handle-feedback ?p ?name ?team))
+
+  ; Simply return if the benchmark should continue
+  (if (eq ?command CONTINUE) then (return))
+
+  ; Switch the state if the benchmark should finish
   (bind ?state-pre (send ?state-machine get-current-state))
   (send ?state-machine process-event FINISH)
   (bind ?state-post (send ?state-machine get-current-state))
 
   (if (neq ?state-pre ?state-post) then
-    (bind ?scenario (send [benchmark] get-current-scenario))
-    (bind ?scenario-type (send ?scenario get-type))
-    (bind ?scenario-type-id (send ?scenario get-type-id))
-
-    ; Not relevant in the TBMs
-    (if (eq ?scenario-type TBM) then
-      (return)
-    )
-
-    (switch ?scenario-type-id
-      (case 1 then (net-handle-fbm1-feedback ?p ?name ?team))
-      (case 2 then (net-handle-fbm2-feedback ?p ?name ?team))
-    )
-
     ; Forward the feedback to all clients
     (do-for-all-facts ((?client network-client)) TRUE
       (pb-send ?client:id ?p)
