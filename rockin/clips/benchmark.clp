@@ -28,6 +28,10 @@
 (defmessage-handler BenchmarkScenario setup (?time ?state-machine)
 )
 
+(defmessage-handler BenchmarkScenario handle-feedback (?pb-msg ?name ?team)
+  (return CONTINUE)
+)
+
 
 (defclass NoneBenchmarkScenario (is-a BenchmarkScenario) (role concrete))
 
