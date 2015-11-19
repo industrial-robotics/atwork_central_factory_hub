@@ -108,6 +108,28 @@
   )
 )
 
+(defmessage-handler FunctionalityBenchmark1 handle-feedback (?pb-msg ?time ?name ?team)
+  (if (and
+       (pb-has-field ?pb-msg "object_class_name")
+       (pb-has-field ?pb-msg "object_instance_name")
+       (pb-has-field ?pb-msg "object_pose"))
+   then
+    (printout t "FBM: Robot " ?name "/" ?team
+        " recognized object instance " (pb-field-value ?pb-msg "object_instance_name")
+        " of class " (pb-field-value ?pb-msg "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " recognized object instance" (pb-field-value ?pb-msg "object_instance_name")
+        " of class " (pb-field-value ?pb-msg "object_class_name")))))
+   else
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
+  )
+
+  (return FINISH)
+)
+
+
+
+
 (defmessage-handler FunctionalityBenchmark2 setup (?time ?state-machine)
   (make-instance [preparation-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
@@ -156,6 +178,29 @@
     )
   )
 )
+
+(defmessage-handler FunctionalityBenchmark2 handle-feedback (?pb-msg ?time ?name ?team)
+  (if (and
+       (pb-has-field ?pb-msg "grasp_notification")
+       (pb-has-field ?pb-msg "object_class_name")
+       (pb-has-field ?pb-msg "object_instance_name")
+       (pb-has-field ?pb-msg "end_effector_pose"))
+   then
+    (printout t "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
+        " of class " (pb-field-value ?pb-msg "object_class_name") crlf)
+    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+        " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
+        " of class " (pb-field-value ?pb-msg "object_class_name")))))
+   else
+    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
+  )
+
+  (return FINISH)
+)
+
+
+
 
 (defmessage-handler FunctionalityBenchmark3 setup (?time ?state-machine)
   (make-instance [calibration-stopped-state] of StoppedState
@@ -225,6 +270,12 @@
     )
   )
 )
+
+(defmessage-handler FunctionalityBenchmark3 handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)
+)
+
+
 
 
 (defrule init-fbm

@@ -23,7 +23,9 @@ REQ_BOOST_LIBS = thread system
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
 LIBS_drilling_machine = llsfrbcore llsfrbaspects rockin_plugin_msgs
-OBJS_drilling_machine = drilling_machine_plugin.o drilling_machine_thread.o
+OBJS_drilling_machine = drilling_machine_plugin.o drilling_machine_thread.o \
+                        drilling_machine_simulation_thread.o \
+                        drilling_machine_mockup_thread.o
 
 ifeq ($(HAVE_CLIPS)$(HAVE_PROTOBUF)$(HAVE_LIBZMQ)$(HAVE_BOOST_LIBS),1111)
   OBJS_all    = $(OBJS_drilling_machine)
