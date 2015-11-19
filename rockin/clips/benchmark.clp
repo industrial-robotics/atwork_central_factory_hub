@@ -28,7 +28,7 @@
 (defmessage-handler BenchmarkScenario setup (?time ?state-machine)
 )
 
-(defmessage-handler BenchmarkScenario handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler BenchmarkScenario handle-feedback (?pb-msg ?time ?name ?team)
   (return CONTINUE)
 )
 
@@ -99,9 +99,9 @@
   (printout t "Requested benchmark scenario " ?type ?type-id " does not exist" crlf)
 )
 
-(defmessage-handler Benchmark handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler Benchmark handle-feedback (?pb-msg ?time ?name ?team)
   (bind ?scenario (send ?self get-current-scenario))
-  (return (send ?scenario handle-feedback ?pb-msg ?name ?team))
+  (return (send ?scenario handle-feedback ?pb-msg ?time ?name ?team))
 )
 
 

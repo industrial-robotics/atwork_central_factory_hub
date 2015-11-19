@@ -490,7 +490,7 @@
 
 (defrule net-recv-BenchmarkFeedback
   ?mf <- (protobuf-msg (type "rockin_msgs.BenchmarkFeedback") (ptr ?p)
-         (rcvd-from ?host ?port) (client-type PEER))
+         (rcvd-at $?rcvd-at) (rcvd-from ?host ?port) (client-type PEER))
   (robot (name ?name) (team ?team) (host ?host))
   =>
   (retract ?mf) ; message will be destroyed after rule completes
@@ -512,7 +512,7 @@
 
 
   ; Forward the feedback to the benchmark's feedback handler
-  (bind ?command (send [benchmark] handle-feedback ?p ?name ?team))
+  (bind ?command (send [benchmark] handle-feedback ?p ?rcvd-at ?name ?team))
 
   ; Simply return if the benchmark should continue
   (if (eq ?command CONTINUE) then (return))

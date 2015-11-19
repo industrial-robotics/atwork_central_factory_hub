@@ -108,7 +108,7 @@
   )
 )
 
-(defmessage-handler FunctionalityBenchmark1 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler FunctionalityBenchmark1 handle-feedback (?pb-msg ?time ?name ?team)
   (if (and
        (pb-has-field ?pb-msg "object_class_name")
        (pb-has-field ?pb-msg "object_instance_name")
@@ -179,7 +179,7 @@
   )
 )
 
-(defmessage-handler FunctionalityBenchmark2 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler FunctionalityBenchmark2 handle-feedback (?pb-msg ?time ?name ?team)
   (if (and
        (pb-has-field ?pb-msg "grasp_notification")
        (pb-has-field ?pb-msg "object_class_name")
@@ -271,7 +271,7 @@
   )
 )
 
-(defmessage-handler FunctionalityBenchmark3 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler FunctionalityBenchmark3 handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)
 )
 

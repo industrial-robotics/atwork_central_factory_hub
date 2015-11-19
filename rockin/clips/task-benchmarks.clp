@@ -73,7 +73,7 @@
   )
 )
 
-(defmessage-handler TaskBenchmark1 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler TaskBenchmark1 handle-feedback (?pb-msg ?time ?name ?team)
   (if (and
        (pb-has-field ?pb-msg "assembly_aid_tray_id")
        (pb-has-field ?pb-msg "container_id"))
@@ -167,7 +167,7 @@
   )
 )
 
-(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?time ?name ?team)
   (if (and
        (pb-has-field ?pb-msg "after_receiving")
        (pb-has-field ?pb-msg "after_drilling"))
@@ -273,7 +273,7 @@
   )
 )
 
-(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?name ?team)
+(defmessage-handler TaskBenchmark2 handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
