@@ -242,26 +242,29 @@ handle_timer(const boost::system::error_code& error)
 
 
     // Request a camera image
+    /*
     CameraCommand cam_cmd;
     peer_team_->send(cam_cmd);
-
+    */
 
     // Send benchnmark feedback
     BenchmarkFeedback bf;
     bf.mutable_object_pose()->mutable_position()->set_x(0.0);
     bf.mutable_object_pose()->mutable_position()->set_y(0.0);
     bf.mutable_object_pose()->mutable_position()->set_z(0.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_w(0.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_x(1.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_w(1.0);
+    bf.mutable_object_pose()->mutable_orientation()->set_x(0.0);
     bf.mutable_object_pose()->mutable_orientation()->set_y(0.0);
     bf.mutable_object_pose()->mutable_orientation()->set_z(0.0);
+    /*
     bf.mutable_end_effector_pose()->mutable_position()->set_x(0.0);
     bf.mutable_end_effector_pose()->mutable_position()->set_y(0.0);
     bf.mutable_end_effector_pose()->mutable_position()->set_z(0.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_w(0.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_x(1.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_w(1.0);
+    bf.mutable_end_effector_pose()->mutable_orientation()->set_x(0.0);
     bf.mutable_end_effector_pose()->mutable_orientation()->set_y(0.0);
     bf.mutable_end_effector_pose()->mutable_orientation()->set_z(0.0);
+    */
     bf.set_object_instance_name("AX-01");
     bf.set_object_class_name("aluminium");
     bf.set_grasp_notification(true);
@@ -270,13 +273,15 @@ handle_timer(const boost::system::error_code& error)
 
 
     // Command the conveyor belt
+    /*
     TriggeredConveyorBeltCommand cb_cmd;
     cb_cmd.set_command(ConveyorBeltRunMode::START);
     cb_cmd.set_next_cycle(conveyor_belt_cycle_ + 1);
     peer_public_->send(cb_cmd);
-
+    */
 
     // Send robot status report
+    /**
     RobotStatusReport report;
     RobotStatus *status;
     status = report.add_status();
@@ -288,7 +293,7 @@ handle_timer(const boost::system::error_code& error)
     status->set_functionality("NavigationPlanner");
     status->set_meta_data("Planning a path for the base");
     peer_public_->send(report);
-
+    */
 
     // Send if the robot is logging offline benchmarking data
     LoggingStatus logging;
@@ -297,10 +302,11 @@ handle_timer(const boost::system::error_code& error)
 
 
     // Accept an order
+    /*
     OrderAcceptance acceptance;
     acceptance.add_id(1);
     peer_team_->send(acceptance);
-
+    */
 
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));

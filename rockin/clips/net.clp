@@ -216,6 +216,7 @@
   (if (eq ?pb-event RESET) then
     (send [benchmark] switch-scenario)
   else
+    (printout t "RECV TRANSITION EVENT: " ?pb-event crlf)
     (bind ?state-machine (send [benchmark] get-state-machine))
     (send ?state-machine process-event ?pb-event)
   )
@@ -523,6 +524,7 @@
   (bind ?state-post (send ?state-machine get-current-state))
 
   (if (neq ?state-pre ?state-post) then
+    (printout t "SENDING TO CLIENTS" crlf)
     ; Forward the feedback to all clients
     (do-for-all-facts ((?client network-client)) TRUE
       (pb-send ?client:id ?p)

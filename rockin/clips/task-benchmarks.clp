@@ -40,7 +40,7 @@
   (bind ?em-01-01-location (pick-random$ ?shelf-locations))
 
   ; The location of EM-01-01 should should not be reused
-  (delete-member$ ?shelf-locations ?em-01-01-location)
+  (bind ?shelf-locations (delete-member$ ?shelf-locations ?em-01-01-location))
 
   ; Inventory
   (slot-insert$ [inventory] items 1
@@ -68,8 +68,8 @@
     ; Deliver 2 items of AX-01 to EM-01-01
     (make-instance of Order (status OFFERED) (object-id [ax-01]) (container-id [em-01-01]) (quantity-requested 2))
 
-    ; Deliver container EM-01-01 to location WS-01
-    (make-instance of Order (status OFFERED) (object-id [em-01-01]) (destination-id [workstation-01]))
+    ; Deliver container EM-01-01 to location WS-03
+    (make-instance of Order (status OFFERED) (object-id [em-01-01]) (destination-id [workstation-03]))
   )
 )
 
@@ -110,36 +110,14 @@
     (states [stopped-state] [running-state] [paused-state] [finished-state])
   )
 
-
-  (bind ?shelf-locations (create$ [shelf-01] [shelf-02] [shelf-03] [shelf-04]
-        [shelf-05] [shelf-06] [shelf-07] [shelf-08] [shelf-09] [shelf-10]
-        [shelf-11] [shelf-12]))
-
-  ; Randomize a location for EM-02-01
-  (bind ?em-02-01-location (pick-random$ ?shelf-locations))
-
   ; Inventory
   (slot-insert$ [inventory] items 1
-    ;;;;;;;;;;;;;;
-    ; Cover plates
-    ;;;;;;;;;;;;;;
-
-    ; 5 cover plates with unknown state on conveyor belt CB-01
-    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
-    (make-instance of Item (object-id [ax-15]) (location-id [conveyor_belt-01]) (quantity 1))
-
     ;;;;;;;;;;;;;;;;;;;;;;
     ; Manipulation objects
     ;;;;;;;;;;;;;;;;;;;;;;
 
-    ; File-card box EM-02-01 at random location
-    (make-instance of Item (object-id [em-02-01]) (location-id ?em-02-01-location) (quantity 1))
-
-    ; File-card box EM-02-01 on robot
-    ;(make-instance of Item (object-id [em-02-01]) (location-id [robot]) (quantity 1))
+    ; File-card box EM-02-01 at WS-01
+    (make-instance of Item (object-id [em-02-01]) (location-id [workstation-01]) (quantity 1))
 
     ; Common shelf container ER-02-01 in location CB-01
     (make-instance of Item (object-id [er-02-01]) (location-id [conveyor_belt-01]) (quantity 1))
@@ -148,20 +126,11 @@
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-    ; Deliver file-card box EM-02-01 to workstation WS-05
-    (make-instance of Order (status OFFERED) (object-id [em-02-01]) (destination-id [workstation-05]))
-
-    ; Deliver 5 machined cover plates AX-07 into file-card box EM-02-01
-    (make-instance of Order (status OFFERED) (object-id [ax-07]) (container-id [em-02-01]) (quantity-requested 1))
-    (make-instance of Order (status OFFERED) (object-id [ax-07]) (container-id [em-02-01]) (quantity-requested 1))
-    (make-instance of Order (status OFFERED) (object-id [ax-07]) (container-id [em-02-01]) (quantity-requested 1))
+    ; Deliver 2 machined cover plates AX-07 into file-card box EM-02-01
     (make-instance of Order (status OFFERED) (object-id [ax-07]) (container-id [em-02-01]) (quantity-requested 1))
     (make-instance of Order (status OFFERED) (object-id [ax-07]) (container-id [em-02-01]) (quantity-requested 1))
 
-    ; Deliver 5 unusable cover plates AX-08 into common shelf container ER-02-01
-    (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
-    (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
-    (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
+    ; Deliver 2 unusable cover plates AX-08 into common shelf container ER-02-01
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
     (make-instance of Order (status OFFERED) (object-id [ax-08]) (container-id [er-02-01]) (quantity-requested 1))
   )
@@ -213,7 +182,7 @@
   (bind ?er-02-01-location (pick-random$ ?shelf-locations))
 
   ; The location of the assembly aid tray should should not be reused
-  (delete-member$ ?shelf-locations ?er-02-01-location)
+  (bind ?shelf-locations (delete-member$ ?shelf-locations ?er-02-01-location))
 
   ; Inventory
   (slot-insert$ [inventory] items 1
@@ -241,7 +210,7 @@
     (make-instance of Item (object-id [ax-04]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
 
     ; 1 distance tube AX-05 at random location
-    (make-instance of Item (object-id [ax-08]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
+    (make-instance of Item (object-id [ax-05]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
 
     ; 1 motor with gear box AX-09 at random location
     (make-instance of Item (object-id [ax-09]) (location-id (pick-random$ ?shelf-locations)) (quantity 1))
@@ -250,8 +219,8 @@
 
   ; Orders
   (slot-insert$ [order-info] orders 1
-	    ; Deliver foam container ER-02-01 to workstation WS-03
-    (make-instance of Order (status OFFERED) (object-id [er-02-01]) (destination-id [workstation-03]))
+	    ; Deliver foam container ER-02-01 to workstation WS-06
+    (make-instance of Order (status OFFERED) (object-id [er-02-01]) (destination-id [workstation-06]))
 
     ; Deliver 1 bearing box AX-01 into foam container ER-02-01
     (make-instance of Order (status OFFERED) (object-id [ax-01]) (container-id [er-02-01]) (quantity-requested 1))

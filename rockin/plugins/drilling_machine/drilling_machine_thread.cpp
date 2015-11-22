@@ -158,10 +158,12 @@ void DrillingMachineThread::moveDrill(DrillingMachineCommand::Command drill_comm
     fawkes::MutexLocker lock(clips_mutex);
     // prevent sending to many messages to the device
     time_diff = boost::posix_time::microsec_clock::local_time() - last_sent_command_timestamp_;
-    if (time_diff.total_milliseconds() < 200)
+    if (time_diff.total_milliseconds() < 1000)
         return;
-
-
+        
+    if(last_status_msg_.state() == DrillingMachineStatus::MOVING_UP || last_status_msg_.state() == DrillingMachineStatus::MOVING_DOWN)
+        return;
+        
     command_msg.set_command(drill_command);
 
     zmq::message_t *query = NULL;
