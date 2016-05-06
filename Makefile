@@ -15,11 +15,11 @@
 
 BASEDIR = .
 
-SUBDIRS = src rockin
+SUBDIRS = src atwork
 
 # Explicit dependencies, this is needed to have make bail out if there is any
 # error. This is also necessary for working parallel builds
-rockin: src
+atwork: src
 
 include $(BASEDIR)/etc/buildsys/config.mk
 include $(BUILDSYSDIR)/rules.mk

@@ -28,14 +28,14 @@ CFLAGS += $(CFLAGS_CPP11)
 REQ_BOOST_LIBS = thread asio system signals2
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
-LIBS_llsf_refbox = stdc++ m llsfrbaspects llsfrbbaseapp llsfrbcore llsfrbconfig \
+LIBS_refbox = stdc++ m llsfrbaspects llsfrbbaseapp llsfrbcore llsfrbconfig \
 		   llsfrblogging llsfrbnetcomm llsfrbplugin llsfrbutils llsf_protobuf_comm \
 		   llsf_protobuf_clips llsf_sps
-OBJS_llsf_refbox = main.o refbox.o clips_logger.o
+OBJS_refbox = main.o refbox.o clips_logger.o
 
 ifeq ($(HAVE_PROTOBUF)$(HAVE_LIBMODBUS)$(HAVE_CLIPS)$(HAVE_BOOST_LIBS),1111)
-  OBJS_all =	$(OBJS_llsf_refbox)
-  BINS_all =	$(BINDIR)/llsf-refbox
+  OBJS_all =	$(OBJS_refbox)
+  BINS_all =	$(BINDIR)/refbox
 
   CFLAGS  += $(CFLAGS_PROTOBUF) $(CFLAGS_LIBMODBUS) $(CFLAGS_CLIPS) $(CFLAGS_MONGODB) \
 	     $(call boost-libs-cflags,$(REQ_BOOST_LIBS))
@@ -49,7 +49,7 @@ ifeq ($(HAVE_PROTOBUF)$(HAVE_LIBMODBUS)$(HAVE_CLIPS)$(HAVE_BOOST_LIBS),1111)
   endif
 
   ifeq ($(HAVE_MONGODB),1)
-    LIBS_llsf_refbox += llsf_mongodb_log
+    LIBS_refbox += llsf_mongodb_log
   endif
 else
   ifneq ($(HAVE_PROTOBUF),1)

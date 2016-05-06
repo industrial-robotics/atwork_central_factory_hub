@@ -12,15 +12,15 @@ llsfrb:
     game: game.log
 
   triggered-conveyor-belt:
-    mode: real
-    host: !ipv4 192.168.1.100
+    mode: false
+    host: !ipv4 127.0.0.1
     camera_status_port: !tcp-port 55521
     conveyor_status_port: !tcp-port 55522
     command_port: !tcp-port 55523
 
   drilling-machine:
-    mode: real
-    host: !ipv4 192.168.1.100
+    mode: false
+    host: !ipv4 127.0.0.1
     command_port: !tcp-port 55512
     status_port: !tcp-port 55511
     
@@ -31,7 +31,7 @@ llsfrb:
     status_port: !tcp-port 55531
 
   clips:
-    dir: "@BASEDIR@/rockin/clips"
+    dir: "@BASEDIR@/atwork/clips"
     # Timer interval, in milliseconds
     timer-interval: 40
 
@@ -46,36 +46,36 @@ llsfrb:
                     net-send-DrillingMachineStatus, net-send-ConveyorBeltStatus]
 
   comm:
-    protobuf-dirs: ["@BASEDIR@/rockin/msgs"]
+    protobuf-dirs: ["@BASEDIR@/atwork/msgs"]
 
     server-port: !tcp-port 4444
 
     public-peer:
       host: !ipv4 192.168.1.255
-      port: !udp-port 4444
-      #send-port: !udp-port 4444
-      #recv-port: !udp-port 4445
+      #port: !udp-port 4444
+      send-port: !udp-port 4444
+      recv-port: !udp-port 4445
 
     b-it-bots-peer:
       host: !ipv4 192.168.1.255
-      port: !udp-port 4446
-      #send-port: !udp-port 4446
-      #recv-port: !udp-port 4447
+      #port: !udp-port 4446
+      send-port: !udp-port 4446
+      recv-port: !udp-port 4447
 
     smARTLab-peer:
       host: !ipv4 192.168.1.255
-      port: !udp-port 4448
-      #send-port: !udp-port 4448
-      #recv-port: !udp-port 4449
+      #port: !udp-port 4448
+      send-port: !udp-port 4448
+      recv-port: !udp-port 4449
 
     SPQR-peer:
       host: !ipv4 192.168.1.255
-      port: !udp-port 4450
-      #send-port: !udp-port 4450
-      #recv-port: !udp-port 4451
+      #port: !udp-port 4450
+      send-port: !udp-port 4450
+      recv-port: !udp-port 4451
 
   mongodb:
-    enable: true
+    enable: false
     hostport: localhost
     collections:
       text-log: llsfrb.log
@@ -90,5 +90,5 @@ llsfrb:
       SPQR: randomkey
 
   shell:
-    refbox-host: !ipv4 192.168.1.100
+    refbox-host: !ipv4 127.0.0.1
     refbox-port: 4444
