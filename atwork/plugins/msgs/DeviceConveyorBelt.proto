@@ -1,0 +1,19 @@
+enum RunMode
+{
+	STOP = 0;
+	START = 1;
+}
+
+message ConveyorBeltCommand
+{
+	optional RunMode mode = 1;
+	optional bool reset = 2;
+	required int32 next_cycle = 3;
+}
+
+message ConveyorBeltStatus
+{
+	required bool is_device_connected = 1;
+	optional RunMode mode = 2;
+	required int32 cycle = 3;
+}
