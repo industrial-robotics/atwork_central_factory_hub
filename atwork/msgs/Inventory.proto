@@ -7,15 +7,28 @@ option java_outer_classname = "InventoryProtos";
 message ObjectIdentifier {
 
   enum ObjectType {
-    AX = 1;
-    EM = 2;
-    ER = 3;
+    F20_20_B      = 1;  // Small Aluminium Profile (Black)
+    F20_20_G      = 2;  // Small Aluminium Profile (Grey)
+    S40_40_B      = 3;  // Big Aluminium Profile (Black)
+    S40_40_G      = 4;  // Big Aluminium Profile (Grey)
+    M20_100       = 5;  // Screw (Bolt)
+    M20           = 6;  // Small Nut
+    M30           = 7;  // Large Nut
+    R20           = 8;  // Plastic Tube
+    BEARING_BOX   = 9;  //
+    BEARING       = 10; //
+    AXIS          = 11; //
+    DISTANCE_TUBE = 12; //
+    MOTOR         = 13; //
+    CONTAINER_B   = 14; // A Container (Blue)
+    CONTAINER_R   = 15; // A Container (Red)
+    CAVITY        = 16; // A PPT Cavity
   }
 
   // The object class (e.g. "EM-01") consists of the type ("EM") and a type
   // ID (1).
   required ObjectType type        = 1;  // The type of the object
-  required int64      type_id     = 2;  // The type ID of the object
+  optional int64      type_id     = 2;  // The type ID of the object
 
   // All labeled objects also have an instance ID. For example, there could
   // exist two instances of EM-01 containers, called "EM-01-001" and
@@ -27,14 +40,14 @@ message ObjectIdentifier {
   optional string     description = 4;
 }
 
-
 message LocationIdentifier {
 
   enum LocationType {
     SH    = 1;  // Shelf
     WS    = 2;  // Workstation
     CB    = 3;  // Conveyor belt
-    ROBOT = 4;
+    WP    = 4;  // Way Point (additional navigation goal)
+    ROBOT = 5;  // On Robot
   }
 
   required LocationType type        = 1;  // The type of location

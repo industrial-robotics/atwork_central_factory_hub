@@ -35,6 +35,7 @@
 package atwork_pb_msgs;
 
 import "Inventory.proto";
+import "Time.proto";
 
 option java_package = "org.atwork.common_msgs";
 option java_outer_classname = "OrderInfoProtos";
@@ -50,6 +51,16 @@ message Order {
     FINISHED    = 6;  // The order has been processed successfully
   }
 
+  // Future work could change this to radians
+  // TODO discuss moving navigation to it's own msg and create
+  // a parent message.
+  enum Orientation {
+    NORTH = 1;
+    EAST  = 2;
+    SOUTH = 3;
+    WEST  = 4;
+  }
+
   // A unique identifier of this order
   required uint64 id = 1;
 
@@ -60,10 +71,11 @@ message Order {
   required ObjectIdentifier object = 3;
 
   // There are two different interpretations of this field:
-  // * When the destination field is set, the object(s) must be delivered to
-  //   this destination INSIDE of the container.
-  // * When the destination field is not set, the container represents the
-  //   location into which the object(s) must be delivered.
+  // 1. When the destination field is set, the object(s) must be delivered to
+  //     this destination INSIDE of the container.
+  // 2. When the destination field is not set, the container represents the
+  //     location into which the object(s) must be delivered.
+  // * PPT Cavities are considered to be a special case of a container.
   optional ObjectIdentifier container = 4;
 
   // The already delivered quantity of the object
@@ -86,6 +98,11 @@ message Order {
 
   // The team which is currently processing this order
   optional string processing_team = 9;
+
+  // TODO Navigation components could be moved to their own message in future
+  // In Navigation Message requires: destination, wait_time and orientation.
+  optional Time wait_time = 10;
+  optional Orientation orientation = 11;
 }
 
 
