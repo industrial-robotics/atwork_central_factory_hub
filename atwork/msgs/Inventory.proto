@@ -23,6 +23,7 @@ message ObjectIdentifier {
     CONTAINER_B   = 14; // A Container (Blue)
     CONTAINER_R   = 15; // A Container (Red)
     CAVITY        = 16; // A PPT Cavity
+    NAV_GOAL      = 17; // A Navigation Goal TODO: discuss alternative
   }
 
   // The object class (e.g. "EM-01") consists of the type ("EM") and a type
