@@ -1,7 +1,16 @@
-RoCKIn@Work Referee Box
-=======================
+RoboCup@Work Referee Box
+========================
 
-This is the repository of the referee box for the RoCKIn competition (http://rockinrobotchallenge.eu). This referee box is an adaption of the RoboCup Logistics League Sponsored by Festo (LLSF) referee box (http://www.robocup-logistics.org/refbox)
+This is the repository of the referee box for the RoboCup@Work competition for RoboCup World Cup 2016 in Leipzig.
+
+This referee box is only a small adaptation of the RoCKIn@Work referee box, which itself is an adaptiation of the RoboCup Logistics League referee box.
+
+#RoCKIn Instructions
+
+This README is from the RoCKIn at work central factory hub.
+
+
+TODO: A few small things have changed (```llsf-refbox``` to ```refbox```). Before public release this should be checked.
 
 
 ## Installation
