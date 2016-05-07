@@ -99,16 +99,10 @@ bool idle_handler() {
     }
 
     // Only activate in FBM2 during STOPPED or FINISHED state
-    if ((benchmark_state->scenario().type() == atwork_pb_msgs::BenchmarkScenario::FBM)
-        && (benchmark_state->scenario().type_id() == 2)
-        && ((benchmark_state->state() == atwork_pb_msgs::BenchmarkState::STOPPED)
-         || benchmark_state->state() == atwork_pb_msgs::BenchmarkState::FINISHED)) {
-      button_success->set_sensitive(true);
-      button_fail->set_sensitive(true);
-    } else {
-      button_success->set_sensitive(false);
-      button_fail->set_sensitive(false);
-    }
+    // Never used in RoboCup At Work.
+    button_success->set_sensitive(false);
+    button_fail->set_sensitive(false);
+    
   }
 
   return true;
@@ -161,30 +155,41 @@ void on_reset_click()
   std::string benchmark = combobox_benchmark->get_active_text();
 
   atwork_pb_msgs::SetBenchmarkScenario cmd_scenario;
-  if (benchmark == "FBM1") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
+  if (benchmark == "BNT1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BNT);
     cmd_scenario.mutable_scenario()->set_type_id(1);
-  } else if (benchmark == "FBM2") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
-    cmd_scenario.mutable_scenario()->set_type_id(2);
-  } else if (benchmark == "FBM3") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
-    cmd_scenario.mutable_scenario()->set_type_id(3);
-  } else if (benchmark == "TBM1") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+  } else if (benchmark == "BMT1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BMT);
     cmd_scenario.mutable_scenario()->set_type_id(1);
-  } else if (benchmark == "TBM2") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+  } else if (benchmark == "BTT1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "BTT2") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
     cmd_scenario.mutable_scenario()->set_type_id(2);
-  } else if (benchmark == "TBM3") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+  } else if (benchmark == "BTT3") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
     cmd_scenario.mutable_scenario()->set_type_id(3);
+  } else if (benchmark == "PPT1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::PPT);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "CBT1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::CBT);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "CBT2") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::CBT);
+    cmd_scenario.mutable_scenario()->set_type_id(2);
+  } else if (benchmark == "AWF1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::AWF);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "IRL1") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::IRL);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
   } else if (benchmark == "None") {
     cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::NONE);
     cmd_scenario.mutable_scenario()->set_type_id(0);
   }
   client.send(cmd_scenario);
-
 
   atwork_pb_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(atwork_pb_msgs::SetBenchmarkTransitionEvent::RESET);

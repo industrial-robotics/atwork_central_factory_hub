@@ -35,17 +35,27 @@
   ?*BC-VERSIONINFO-COUNT* = 10
 
   ; Benchmark times; seconds
-  ?*TBM-TIME*               =  600
-  ?*FBM1-TIME*              =  120  ; per run
-  ?*FBM2-PREPARATION-TIME*  =   30
-  ?*FBM2-EXECUTION-TIME*    =  210  ; per run
-  ?*FBM3-CALIBRATION-TIME*  =   60
-  ?*FBM3-PREPARATION-TIME*  =   60
-  ?*FBM3-EXECUTION-TIME*    =  120  ; per run
+  ?*BNT-EXECUTION-TIME*    =  300
+  ?*BNT-PREPARATION-TIME*  =  300
+  ?*BMT-EXECUTION-TIME*    =  300
+  ?*BMT-PREPARATION-TIME*  =  300
+  ?*BTT-EXECUTION-TIME*    =  300
+  ?*BTT-PREPARATION-TIME*  =  300
+  ?*PPT-EXECUTION-TIME*    =  300
+  ?*PPT-PREPARATION-TIME*  =  300
+  ?*CBT-EXECUTION-TIME*    =  300
+  ?*CBT-PREPARATION-TIME*  =  300
+  ?*AWF-EXECUTION-TIME*    =  300
+  ?*AWF-PREPARATION-TIME*  =  300
+  ?*IRL-EXECUTION-TIME*    =  300
+  ?*IRL-PREPARATION-TIME*  =  300
 
   ; Benchmark repetitions
-  ?*TBM-COUNT*    =  1
-  ?*FBM1-COUNT*   = 10
-  ?*FBM2-COUNT*   =  5
-  ?*FBM3-COUNT*   =  5
+  ?*BNT-COUNT*    =  1
+  ?*BMT-COUNT*    =  1
+  ?*BTT-COUNT*    =  1
+  ?*PPT-COUNT*    =  1
+  ?*CBT-COUNT*    =  1
+  ?*AWF-COUNT*    =  1
+  ?*IRL-COUNT*    =  1
 )

@@ -16,6 +16,8 @@
   (multislot destination-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot source-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot processing-team (type STRING) (cardinality 0 1))
+  (multislot wait-time (type INTEGER) (cardinality 0 1))
+  (multislot orientation (type SYMBOL) (allowed-values NORTH EAST SOUTH WEST) (cardinality 0 1))
 )
 
 (defmessage-handler Order init ()
@@ -60,6 +62,14 @@
 
   (if (<> (length$ ?self:processing-team) 0) then
     (pb-set-field ?o "processing_team" (nth$ 1 ?self:processing-team))
+  )
+
+  (if (<> (length$ ?self:wait-time) 0) then
+    (pb-set-field ?o "wait_time" (nth$ 1 ?self:wait-time))
+  )
+
+  (if (<> (length$ ?self:orientation) 0) then
+    (pb-set-field ?o "orientation" (nth$ 1 ?self:orientation))
   )
 
   (return ?o)

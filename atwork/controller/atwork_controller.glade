@@ -179,12 +179,16 @@
                         <property name="active">0</property>
                         <items>
                           <item translatable="yes">None</item>
-                          <item translatable="yes">TBM1</item>
-                          <item translatable="yes">TBM2</item>
-                          <item translatable="yes">TBM3</item>
-                          <item translatable="yes">FBM1</item>
-                          <item translatable="yes">FBM2</item>
-                          <item translatable="yes">FBM3</item>
+                          <item translatable="yes">BNT1</item>
+                          <item translatable="yes">BMT1</item>
+                          <item translatable="yes">BTT1</item>
+                          <item translatable="yes">BTT2</item>
+                          <item translatable="yes">BTT3</item>
+                          <item translatable="yes">PPT1</item>
+                          <item translatable="yes">CBT1</item>
+                          <item translatable="yes">CBT2</item>
+                          <item translatable="yes">AWF1</item>
+                          <item translatable="yes">IRL1</item>
                         </items>
                       </object>
                       <packing>

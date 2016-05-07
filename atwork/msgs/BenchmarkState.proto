@@ -37,11 +37,16 @@ option java_outer_classname = "BenchmarkStateProtos";
 message BenchmarkScenario {
   enum BenchmarkType {
     NONE = 0; // No benchmark running
-    TBM  = 1; // Task benchmark
-    FBM  = 2; // Functionality benchmark
+    BNT  = 1; // Basic Navigation Test
+    BMT  = 2; // Basic Manipulation Test
+    BTT  = 3; // Basic Transportation Test
+    PPT  = 4; // Precision Placement Test
+    CBT  = 5; // Conveyor Belt Test
+    AWF  = 6; // At-Work Final
+    IRL  = 7; // Industrial Robotics League Crossover Challenge
   }
 
-  // e.g. TASK_BENCHMARK 1 "TBM 1: Assembly aid tray"
+  // e.g. Basic Navigation Test: "BNT 1: Basic Navigation Test"
   required BenchmarkType type         = 1;
   required uint32        type_id      = 2;
   optional string        description  = 3;

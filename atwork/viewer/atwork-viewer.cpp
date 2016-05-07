@@ -231,12 +231,32 @@ bool idle_handler() {
           sstr_scenario << "None";
       break;
 
-      case atwork_pb_msgs::BenchmarkScenario::FBM:
-          sstr_scenario << "Functionality Benchmark " << benchmark_state->scenario().type_id();
+      case atwork_pb_msgs::BenchmarkScenario::BNT:
+          sstr_scenario << "Basic Navigation Test " << benchmark_state->scenario().type_id();
       break;
 
-      case atwork_pb_msgs::BenchmarkScenario::TBM:
-          sstr_scenario << "Task Benchmark " << benchmark_state->scenario().type_id();
+      case atwork_pb_msgs::BenchmarkScenario::BMT:
+          sstr_scenario << "Basic Manipulation Test " << benchmark_state->scenario().type_id();
+      break;
+
+      case atwork_pb_msgs::BenchmarkScenario::BTT:
+          sstr_scenario << "Basic Transportation Test " << benchmark_state->scenario().type_id();
+      break;
+
+      case atwork_pb_msgs::BenchmarkScenario::PPT:
+          sstr_scenario << "Precision Placement Test " << benchmark_state->scenario().type_id();
+      break;
+
+      case atwork_pb_msgs::BenchmarkScenario::CBT:
+          sstr_scenario << "Conveyor Belt Test " << benchmark_state->scenario().type_id();
+      break;
+
+      case atwork_pb_msgs::BenchmarkScenario::AWF:
+          sstr_scenario << "At Work Finals " << benchmark_state->scenario().type_id();
+      break;
+
+      case atwork_pb_msgs::BenchmarkScenario::IRL:
+          sstr_scenario << "Industrial Robotics League " << benchmark_state->scenario().type_id();
       break;
     }
     label_scenario->set_text(sstr_scenario.str());
@@ -377,6 +397,7 @@ bool idle_handler() {
       else if (order.has_container()) sstr << order.container().description();
 
       if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
+      if (order.has_orientation()) sstr << " [" << atwork_pb_msgs::Order_Orientation_Name(order.orientation()) << "]";
 
       sstr << std::endl;
     }

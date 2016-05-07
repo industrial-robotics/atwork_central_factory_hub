@@ -38,53 +38,26 @@
 (defrule init-object-identifiers
   (init)
   =>
-  ; Bearing box type A (class)
-  (make-instance [ax-01] of ObjectIdentifier (type AX) (type-id 1) (description "AX-01"))
+  ; Navigation Goal (class)
+  (make-instance [NAV_GOAL] of ObjectIdentifier (type NAV_GOAL) (type-id 1) (description "Navigation Goal"))
+  
+  ; Small Black Aluminium Profile (class)
+  (make-instance [F20_20_B] of ObjectIdentifier (type F20_20_B) (type-id 1) (description "Small Black Alu. Profile"))
 
-  ; Bearing (class)
-  (make-instance [ax-02] of ObjectIdentifier (type AX) (type-id 2) (description "AX-02"))
+  ; Small Grey Aluminium Profile (class)
+  (make-instance [F20_20_G] of ObjectIdentifier (type F20_20_G) (type-id 1) (description "Small Grey Alu. Profile"))
 
-  ; Axis (class)
-  (make-instance [ax-03] of ObjectIdentifier (type AX) (type-id 3) (description "AX-03"))
+  ; Large Black Aluminium Profile (class)
+  (make-instance [S40_40_B] of ObjectIdentifier (type S40_40_B) (type-id 1) (description "Large Black Alu. Profile"))
 
-  ; Shaft nut (class)
-  (make-instance [ax-04] of ObjectIdentifier (type AX) (type-id 4) (description "AX-04"))
+  ; Large Grey Aluminium Profile (class)
+  (make-instance [S40_40_G] of ObjectIdentifier (type S40_40_G) (type-id 1) (description "Large Grey Alu. Profile"))
 
-  ; Distance tube (class)
-  (make-instance [ax-05] of ObjectIdentifier (type AX) (type-id 5) (description "AX-05"))
+  ; Small Grey Aluminium Profile (class)
+  (make-instance [F20_20_G] of ObjectIdentifier (type M20_100) (type-id 1) (description "Bolt"))
 
-  ; Cover plate - faulty (class)
-  (make-instance [ax-06] of ObjectIdentifier (type AX) (type-id 6) (description "AX-06"))
-
-  ; Cover plate - machined (class)
-  (make-instance [ax-07] of ObjectIdentifier (type AX) (type-id 7) (description "AX-07"))
-
-  ; Cover plate - unusable(class)
-  (make-instance [ax-08] of ObjectIdentifier (type AX) (type-id 8) (description "AX-08"))
-
-  ; Motor with gearbox (class)
-  (make-instance [ax-09] of ObjectIdentifier (type AX) (type-id 9) (description "AX-09"))
-
-  ; Cover plate - unknown state (class)
-  (make-instance [ax-15] of ObjectIdentifier (type AX) (type-id 15) (description "AX-15"))
-
-  ; Bearing box type B (class)
-  (make-instance [ax-16] of ObjectIdentifier (type AX) (type-id 16) (description "AX-16"))
-
-  ; Assembly aid tray (class)
-  (make-instance [em-01] of ObjectIdentifier (type EM) (type-id 1) (description "EM-01"))
-
-  ; File card box (class)
-  (make-instance [em-02] of ObjectIdentifier (type EM) (type-id 2) (description "EM-02"))
-
-  ; Foam container (class)
-  (make-instance [em-03] of ObjectIdentifier (type EM) (type-id 3) (description "EM-03"))
-
-  ; Tray rack (class)
-  (make-instance [er-01] of ObjectIdentifier (type ER) (type-id 1) (description "ER-01"))
-
-  ; Common shelf container (class)
-  (make-instance [er-02] of ObjectIdentifier (type ER) (type-id 2) (description "ER-02"))
+  ; Small Grey Aluminium Profile (class)
+  (make-instance [F20_20_G] of ObjectIdentifier (type M20) (type-id 1) (description "Small Nut"))
 
 
   ; Assembly aid trays (instances)

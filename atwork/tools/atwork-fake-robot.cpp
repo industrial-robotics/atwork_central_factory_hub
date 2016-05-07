@@ -120,8 +120,13 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     std::cout << "  Benchmark scenario: ";
     switch (bs->scenario().type()) {
       case BenchmarkScenario::NONE: std::cout << "NONE"; break;
-      case BenchmarkScenario::FBM: std::cout << "FBM"; break;
-      case BenchmarkScenario::TBM: std::cout << "TBM"; break;
+      case BenchmarkScenario::BNT:  std::cout << "BNT"; break;
+      case BenchmarkScenario::BMT:  std::cout << "BMT"; break;
+      case BenchmarkScenario::BTT:  std::cout << "BTT"; break;
+      case BenchmarkScenario::PPT:  std::cout << "PPT"; break;
+      case BenchmarkScenario::CBT:  std::cout << "CBT"; break;
+      case BenchmarkScenario::AWF:  std::cout << "AWF"; break;
+      case BenchmarkScenario::IRL:  std::cout << "IRL"; break;
     }
     std::cout << " " << bs->scenario().type_id();
     if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";

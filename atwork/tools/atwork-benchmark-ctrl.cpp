@@ -57,8 +57,13 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
     std::cout << "Benchmark Scenario: ";
     switch (s->scenario().type()) {
       case atwork_pb_msgs::BenchmarkScenario::NONE: std::cout << "NONE"; break;
-      case atwork_pb_msgs::BenchmarkScenario::FBM: std::cout << "FBM"; break;
-      case atwork_pb_msgs::BenchmarkScenario::TBM: std::cout << "TBM"; break;
+      case atwork_pb_msgs::BenchmarkScenario::BNT:  std::cout << "BNT"; break;
+      case atwork_pb_msgs::BenchmarkScenario::BMT:  std::cout << "BMT"; break;
+      case atwork_pb_msgs::BenchmarkScenario::BTT:  std::cout << "BTT"; break;
+      case atwork_pb_msgs::BenchmarkScenario::PPT:  std::cout << "PPT"; break;
+      case atwork_pb_msgs::BenchmarkScenario::CBT:  std::cout << "CBT"; break;
+      case atwork_pb_msgs::BenchmarkScenario::AWF:  std::cout << "AWF"; break;
+      case atwork_pb_msgs::BenchmarkScenario::IRL:  std::cout << "IRL"; break;
     }
     std::cout << s->scenario().type_id();
     if (s->scenario().has_description()) std::cout << " (" << s->scenario().description() << ")";
@@ -154,24 +159,37 @@ int main(int argc, char **argv)
     if (has_scenario) {
       atwork_pb_msgs::SetBenchmarkScenario cmd;
 
-      if (scenario == "fbm1") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
+      // Instances from 2016 RoboCup At Work Rulebook
+      if (scenario == "bnt1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BNT);
         cmd.mutable_scenario()->set_type_id(1);
-      } else if (scenario == "fbm2") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
-        cmd.mutable_scenario()->set_type_id(2);
-      } else if (scenario == "fbm3") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
-        cmd.mutable_scenario()->set_type_id(3);
-      } else if (scenario == "tbm1") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+      } else if (scenario == "bmt1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BMT);
         cmd.mutable_scenario()->set_type_id(1);
-      } else if (scenario == "tbm2") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+      } else if (scenario == "btt1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "btt2") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
         cmd.mutable_scenario()->set_type_id(2);
-      } else if (scenario == "tbm3") {
-        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::TBM);
+      } else if (scenario == "btt3") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
         cmd.mutable_scenario()->set_type_id(3);
+      } else if (scenario == "ppt1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::PPT);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "cbt1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::CBT);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "cbt2") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::CBT);
+        cmd.mutable_scenario()->set_type_id(2);
+      } else if (scenario == "awf1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::AWF);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "irl1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::IRL);
+        cmd.mutable_scenario()->set_type_id(1);
       } else if (scenario == "none") {
         cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::NONE);
         cmd.mutable_scenario()->set_type_id(0);

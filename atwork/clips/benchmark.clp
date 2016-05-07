@@ -6,9 +6,14 @@
 
 (defclass BenchmarkScenario (is-a USER)
   ; NONE: No benchmark running
-  ; TBM: task benchmark
-  ; FBM: functionality benchmark
-  (slot type (type SYMBOL) (allowed-values NONE TBM FBM) (default NONE))
+  ; BNT:  Basic Navigation Test
+  ; BMT:  Basic Manipulation Test
+  ; BTT:  Basic Transportation Test
+  ; PPT:  Precision Placement Test
+  ; CBT:  Conveyor Belt Test
+  ; AWF:  At Work Final
+  ; IRL:  Industrial Robotics League Challenge
+  (slot type (type SYMBOL) (allowed-values NONE BNT BMT BTT PPT CBT AWF IRL) (default NONE))
   (slot type-id (type INTEGER) (default 0))
   (slot description (type STRING) (default ""))
 )

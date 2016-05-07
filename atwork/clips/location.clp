@@ -68,8 +68,12 @@
   (make-instance workstation-06 of LocationIdentifier (type WS) (instance-id 6) (description "WORKSTATION-06"))
   (make-instance workstation-07 of LocationIdentifier (type WS) (instance-id 7) (description "WORKSTATION-07"))
 
+  ; Waypoints
+  (make-instance waypoint-01 of LocationIdentifier (type WP) (instance-id 1) (description "Waypoint 01"))
+
   ; Conveyor belt
-  (make-instance conveyor_belt-01 of LocationIdentifier (type CB) (instance-id 1) (description "CONVEYOR_BELT-01"))
+  (make-instance conveyor_belt-01 of LocationIdentifier (type CB) (instance-id 1) (description "Conveyor Belt"))
+  (make-instance conveyor_belt-02 of LocationIdentifier (type CB) (instance-id 2) (description "Rotating Table"))
 
   ; Robot
   (make-instance robot of LocationIdentifier (type ROBOT) (instance-id 1) (description "ROBOT"))
