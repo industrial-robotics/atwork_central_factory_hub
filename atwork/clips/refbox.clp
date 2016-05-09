@@ -31,26 +31,3 @@
   (load* (resolve-file device-conveyor-belt.clp))
 )
 
-(defrule load-drilling-machine
-  (init)
-  (have-feature DrillingMachine)
-  =>
-  (printout t "Enabling Drilling Machine" crlf)
-  (load* (resolve-file device-drilling-machine.clp))
-)
-
-(defrule load-force-fitting-machine
-  (init)
-  (have-feature ForceFittingMachine)
-  =>
-  (printout t "Enabling Force Fitting Machine" crlf)
-  (load* (resolve-file device-force-fitting-machine.clp))
-)
-
-(defrule load-device-quality-control-camera
-  (init)
-  (have-feature QualityControlCamera)
-  =>
-  (printout t "Enabling Quality Control Camera" crlf)
-  (load* (resolve-file device-quality-control-camera.clp))
-)

@@ -39,7 +39,6 @@
 #include <protobuf_comm/client.h>
 #include <utils/system/argparser.h>
 
-#include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 
 using namespace protobuf_comm;
@@ -47,7 +46,6 @@ using namespace atwork_pb_msgs;
 using namespace fawkes;
 
 ProtobufStreamClient *client_ = 0;
-DrillingMachineStatus drilling_machine_status;
 ConveyorBeltStatus conveyor_belt_status;
 
 
@@ -55,45 +53,10 @@ ConveyorBeltStatus conveyor_belt_status;
 void handle_message(uint16_t comp_id, uint16_t msg_type,
       std::shared_ptr<google::protobuf::Message> msg)
 {
-  std::shared_ptr<DrillingMachineStatus> ds;
-  if ((ds = std::dynamic_pointer_cast<DrillingMachineStatus>(msg))) {
-    drilling_machine_status = *ds;
-  }
-
   std::shared_ptr<ConveyorBeltStatus> cs;
   if ((cs = std::dynamic_pointer_cast<ConveyorBeltStatus>(msg))) {
     conveyor_belt_status = *cs;
   }
-}
-
-
-bool control_drilling_machine(const std::string &command)
-{
-  if (!drilling_machine_status.has_state()) return false;
-
-  DrillingMachineStatus::State state = drilling_machine_status.state();
-  DrillingMachineCommand msg;
-
-  if (command == "down") {
-    if (state == DrillingMachineStatus::AT_BOTTOM) return true;
-    if (state == DrillingMachineStatus::MOVING_DOWN) return false;
-    if (state == DrillingMachineStatus::UNKNOWN) return false;
-
-    msg.set_command(DrillingMachineCommand::MOVE_DOWN);
-  } else if (command == "up") {
-    if (state == DrillingMachineStatus::AT_TOP) return true;
-    if (state == DrillingMachineStatus::MOVING_UP) return false;
-    if (state == DrillingMachineStatus::UNKNOWN) return false;
-
-    msg.set_command(DrillingMachineCommand::MOVE_UP);
-  } else {
-    std::cerr << "Command '" << command << "' is invalid for the drilling machine." << std::endl;
-    return true;
-  }
-
-  client_->send(msg);
-
-  return false;
 }
 
 
@@ -141,8 +104,6 @@ int main(int argc, char **argv)
   client_ = new ProtobufStreamClient();
 
   MessageRegister & message_register = client_->message_register();
-  message_register.add_message_type<DrillingMachineStatus>();
-  message_register.add_message_type<DrillingMachineCommand>();
   message_register.add_message_type<ConveyorBeltStatus>();
   message_register.add_message_type<ConveyorBeltCommand>();
 
@@ -153,9 +114,7 @@ int main(int argc, char **argv)
 
   bool quit = false;
   while (!quit) {
-    if (device == "drilling_machine") {
-      quit = control_drilling_machine(command);
-    } else if (device == "conveyor_belt") {
+    if (device == "conveyor_belt") {
       quit = control_conveyor_belt(command);
     } else {
       std::cerr << "Device '" << device << "' is invalid." << std::endl;

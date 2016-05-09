@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="window1">
@@ -412,95 +412,6 @@
                         <property name="position">0</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkFrame" id="frame10">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">out</property>
-                        <child>
-                          <object class="GtkAlignment" id="alignment10">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="top_padding">12</property>
-                            <property name="bottom_padding">12</property>
-                            <property name="left_padding">12</property>
-                            <property name="right_padding">12</property>
-                            <child>
-                              <object class="GtkLabel" id="label_drilling_machine">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Unknown</property>
-                                <attributes>
-                                  <attribute name="font-desc" value="Cantarell Bold 14"/>
-                                  <attribute name="foreground" value="#8a8ae2e23434"/>
-                                </attributes>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel" id="label21">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Drilling machine</property>
-                            <attributes>
-                              <attribute name="font-desc" value="Cantarell Bold 12"/>
-                            </attributes>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="padding">5</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFrame" id="frame4">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="label_xalign">0</property>
-                        <property name="shadow_type">out</property>
-                        <child>
-                          <object class="GtkAlignment" id="alignment4">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="top_padding">12</property>
-                            <property name="bottom_padding">12</property>
-                            <property name="left_padding">12</property>
-                            <property name="right_padding">12</property>
-                            <child>
-                              <object class="GtkLabel" id="label5">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Unknown</property>
-                                <attributes>
-                                  <attribute name="font-desc" value="Cantarell Bold 14"/>
-                                  <attribute name="foreground" value="#8a8ae2e23434"/>
-                                </attributes>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel" id="label3">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Force-fitting machine</property>
-                            <attributes>
-                              <attribute name="font-desc" value="Cantarell Bold 12"/>
-                            </attributes>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -615,8 +526,8 @@
                   <object class="GtkLabel" id="label_orders">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="lines">5</property>
                     <property name="xalign">0</property>
+                    <property name="lines">5</property>
                     <attributes>
                       <attribute name="font-desc" value="Cantarell 12"/>
                     </attributes>
@@ -690,6 +601,7 @@
                               <object class="GtkLabel" id="label_attention_messages">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">
 
 
@@ -702,7 +614,6 @@
 
 
 </property>
-                                <property name="xalign">0</property>
                                 <attributes>
                                   <attribute name="font-desc" value="Cantarell Bold 12"/>
                                 </attributes>

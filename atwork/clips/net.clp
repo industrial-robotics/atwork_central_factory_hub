@@ -433,46 +433,46 @@
   (pb-destroy ?vi)
 )
 
-(deffunction print-RobotStatus (?name ?team ?p)
-  (bind ?msg (str-cat "Status (" ?name "/" ?team "): "))
-  (bind ?has-data FALSE)
+;(deffunction print-RobotStatus (?name ?team ?p)
+;  (bind ?msg (str-cat "Status (" ?name "/" ?team "): "))
+;  (bind ?has-data FALSE)
+;
+;  (if (pb-has-field ?p "functionality") then
+;    (bind ?pb-functionality (pb-field-value ?p "functionality"))
+;    (bind ?msg (str-cat ?msg ?pb-functionality))
+;    (bind ?has-data TRUE)
+;  )
+;
+;  (if (pb-has-field ?p "capability") then
+;    (bind ?pb-capability (pb-field-value ?p "capability"))
+;    (bind ?msg (str-cat ?msg " [" ?pb-capability "]"))
+;    (bind ?has-data TRUE)
+;  )
+;
+;  (if (pb-has-field ?p "meta_data") then
+;    (bind ?pb-meta-data (pb-field-value ?p "meta_data"))
+;    (bind ?msg (str-cat ?msg ": " ?pb-meta-data))
+;    (bind ?has-data TRUE)
+;  )
+;
+;  (if (eq ?has-data TRUE) then
+;    (printout t ?msg crlf)
+;    (assert (attention-message (text ?msg)))
+;  )
+;)
 
-  (if (pb-has-field ?p "functionality") then
-    (bind ?pb-functionality (pb-field-value ?p "functionality"))
-    (bind ?msg (str-cat ?msg ?pb-functionality))
-    (bind ?has-data TRUE)
-  )
-
-  (if (pb-has-field ?p "capability") then
-    (bind ?pb-capability (pb-field-value ?p "capability"))
-    (bind ?msg (str-cat ?msg " [" ?pb-capability "]"))
-    (bind ?has-data TRUE)
-  )
-
-  (if (pb-has-field ?p "meta_data") then
-    (bind ?pb-meta-data (pb-field-value ?p "meta_data"))
-    (bind ?msg (str-cat ?msg ": " ?pb-meta-data))
-    (bind ?has-data TRUE)
-  )
-
-  (if (eq ?has-data TRUE) then
-    (printout t ?msg crlf)
-    (assert (attention-message (text ?msg)))
-  )
-)
-
-(defrule net-recv-RobotStatusReport
-  ?mf <- (protobuf-msg (type "atwork_pb_msgs.RobotStatusReport") (ptr ?p)
-         (rcvd-via ?via) (rcvd-from ?host ?port))
-  (robot (name ?name) (team ?team) (host ?host))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (bind ?pb-report (pb-field-list ?p "status"))
-  (foreach ?pb-status ?pb-report
-    (print-RobotStatus ?name ?team ?pb-status)
-  )
-)
+;(defrule net-recv-RobotStatusReport
+;  ?mf <- (protobuf-msg (type "atwork_pb_msgs.RobotStatusReport") (ptr ?p)
+;         (rcvd-via ?via) (rcvd-from ?host ?port))
+;  (robot (name ?name) (team ?team) (host ?host))
+;  =>
+;  (retract ?mf) ; message will be destroyed after rule completes
+;
+;  (bind ?pb-report (pb-field-list ?p "status"))
+;  (foreach ?pb-status ?pb-report
+;    (print-RobotStatus ?name ?team ?pb-status)
+;  )
+;)
 
 (defrule net-recv-LoggingStatus
   ?mf <- (protobuf-msg (type "atwork_pb_msgs.LoggingStatus") (ptr ?p)
@@ -488,46 +488,46 @@
     (modify ?robot (is-logging FALSE))
   )
 )
-
-(defrule net-recv-BenchmarkFeedback
-  ?mf <- (protobuf-msg (type "atwork_pb_msgs.BenchmarkFeedback") (ptr ?p)
-         (rcvd-at $?rcvd-at) (rcvd-from ?host ?port) (client-type PEER))
-  (robot (name ?name) (team ?team) (host ?host))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  ; Identify which phase the peer wants to terminate
-  (bind ?phase-to-terminate (pb-field-value ?p "phase_to_terminate"))
-
-  ; Identify the currently active phase
-  (bind ?state-machine (send [benchmark] get-state-machine))
-  (bind ?current-state (send ?state-machine get-current-state))
-  (bind ?current-phase (send ?current-state to-robot-phase))
-
-  ; Exit if the phase to terminate is not the same as the currently active phase
-  (if (neq ?phase-to-terminate ?current-phase) then
-    (if (debug 3) then (printout t "Ignoring BechmarkFeedback from robot "
-        ?name "/" ?team " because the specified phase is incorrect" crlf))
-    (return)
-  )
-
-
-  ; Forward the feedback to the benchmark's feedback handler
-  (bind ?command (send [benchmark] handle-feedback ?p ?rcvd-at ?name ?team))
-
-  ; Simply return if the benchmark should continue
-  (if (eq ?command CONTINUE) then (return))
-
-  ; Switch the state if the benchmark should finish
-  (bind ?state-pre (send ?state-machine get-current-state))
-  (send ?state-machine process-event FINISH)
-  (bind ?state-post (send ?state-machine get-current-state))
-
-  (if (neq ?state-pre ?state-post) then
-    (printout t "SENDING TO CLIENTS" crlf)
-    ; Forward the feedback to all clients
-    (do-for-all-facts ((?client network-client)) TRUE
-      (pb-send ?client:id ?p)
-    )
-  )
-)
+ 
+;(defrule net-recv-BenchmarkFeedback
+;  ?mf <- (protobuf-msg (type "atwork_pb_msgs.BenchmarkFeedback") (ptr ?p)
+;         (rcvd-at $?rcvd-at) (rcvd-from ?host ?port) (client-type PEER))
+;  (robot (name ?name) (team ?team) (host ?host))
+;  =>
+;  (retract ?mf) ; message will be destroyed after rule completes
+;
+;  ; Identify which phase the peer wants to terminate
+;  (bind ?phase-to-terminate (pb-field-value ?p "phase_to_terminate"))
+;
+;  ; Identify the currently active phase
+;  (bind ?state-machine (send [benchmark] get-state-machine))
+;  (bind ?current-state (send ?state-machine get-current-state))
+;  (bind ?current-phase (send ?current-state to-robot-phase))
+;
+;  ; Exit if the phase to terminate is not the same as the currently active phase
+;  (if (neq ?phase-to-terminate ?current-phase) then
+;    (if (debug 3) then (printout t "Ignoring BechmarkFeedback from robot "
+;        ?name "/" ?team " because the specified phase is incorrect" crlf))
+;    (return)
+;  )
+;
+;
+;  ; Forward the feedback to the benchmark's feedback handler
+;  (bind ?command (send [benchmark] handle-feedback ?p ?rcvd-at ?name ?team))
+;
+;  ; Simply return if the benchmark should continue
+;  (if (eq ?command CONTINUE) then (return))
+;
+;  ; Switch the state if the benchmark should finish
+;  (bind ?state-pre (send ?state-machine get-current-state))
+;  (send ?state-machine process-event FINISH)
+;  (bind ?state-post (send ?state-machine get-current-state))
+;
+;  (if (neq ?state-pre ?state-post) then
+;    (printout t "SENDING TO CLIENTS" crlf)
+;    ; Forward the feedback to all clients
+;    (do-for-all-facts ((?client network-client)) TRUE
+;      (pb-send ?client:id ?p)
+;    )
+;  )
+;)

@@ -44,11 +44,11 @@
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/Inventory.pb.h>
 #include <msgs/Order.pb.h>
-#include <msgs/DrillingMachine.pb.h>
+//#include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
-#include <msgs/Camera.pb.h>
-#include <msgs/BenchmarkFeedback.pb.h>
-#include <msgs/RobotStatusReport.pb.h>
+//#include <msgs/Camera.pb.h>
+//#include <msgs/BenchmarkFeedback.pb.h>
+//#include <msgs/RobotStatusReport.pb.h>
 #include <msgs/LoggingStatus.pb.h>
 
 #include <boost/asio.hpp>
@@ -198,19 +198,6 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     }
   }
 
-  std::shared_ptr<DrillingMachineStatus> dm;
-  if ((dm = std::dynamic_pointer_cast<DrillingMachineStatus>(msg))) {
-    std::cout << "Drilling machine status received: ";
-    switch (dm->state()) {
-      case DrillingMachineStatus::AT_BOTTOM: std::cout << "AT_BOTTOM"; break;
-      case DrillingMachineStatus::AT_TOP: std::cout << "AT_TOP"; break;
-      case DrillingMachineStatus::MOVING_DOWN: std::cout << "MOVING_DOWN"; break;
-      case DrillingMachineStatus::MOVING_UP: std::cout << "MOVING_UP"; break;
-      case DrillingMachineStatus::UNKNOWN: std::cout << "UNKNOWN"; break;
-    }
-    std::cout << std::endl;
-  }
-
   std::shared_ptr<TriggeredConveyorBeltStatus> cb;
   if ((cb = std::dynamic_pointer_cast<TriggeredConveyorBeltStatus>(msg))) {
     std::cout << "Conveyor belt status received: ";
@@ -246,37 +233,6 @@ handle_timer(const boost::system::error_code& error)
     peer_team_->send(signal);
 
 
-    // Request a camera image
-    /*
-    CameraCommand cam_cmd;
-    peer_team_->send(cam_cmd);
-    */
-
-    // Send benchnmark feedback
-    BenchmarkFeedback bf;
-    bf.mutable_object_pose()->mutable_position()->set_x(0.0);
-    bf.mutable_object_pose()->mutable_position()->set_y(0.0);
-    bf.mutable_object_pose()->mutable_position()->set_z(0.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_w(1.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_x(0.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_y(0.0);
-    bf.mutable_object_pose()->mutable_orientation()->set_z(0.0);
-    /*
-    bf.mutable_end_effector_pose()->mutable_position()->set_x(0.0);
-    bf.mutable_end_effector_pose()->mutable_position()->set_y(0.0);
-    bf.mutable_end_effector_pose()->mutable_position()->set_z(0.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_w(1.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_x(0.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_y(0.0);
-    bf.mutable_end_effector_pose()->mutable_orientation()->set_z(0.0);
-    */
-    bf.set_object_instance_name("AX-01");
-    bf.set_object_class_name("aluminium");
-    bf.set_grasp_notification(true);
-    bf.set_phase_to_terminate(current_benchmark_phase_);
-    peer_public_->send(bf);
-
-
     // Command the conveyor belt
     /*
     TriggeredConveyorBeltCommand cb_cmd;
@@ -285,33 +241,11 @@ handle_timer(const boost::system::error_code& error)
     peer_public_->send(cb_cmd);
     */
 
-    // Send robot status report
-    /**
-    RobotStatusReport report;
-    RobotStatus *status;
-    status = report.add_status();
-    status->set_capability(RobotStatus::TASK);
-    status->set_functionality("SchedulerComponent");
-    status->set_meta_data("Task execution active");
-    status = report.add_status();
-    status->set_capability(RobotStatus::NAVIGATION);
-    status->set_functionality("NavigationPlanner");
-    status->set_meta_data("Planning a path for the base");
-    peer_public_->send(report);
-    */
-
     // Send if the robot is logging offline benchmarking data
     LoggingStatus logging;
     logging.set_is_logging(true);
     peer_team_->send(logging);
 
-
-    // Accept an order
-    /*
-    OrderAcceptance acceptance;
-    acceptance.add_id(1);
-    peer_team_->send(acceptance);
-    */
 
     timer_->expires_at(timer_->expires_at()
           + boost::posix_time::milliseconds(2000));
@@ -354,9 +288,7 @@ main(int argc, char **argv)
   message_register.add_message_type<BenchmarkState>();
   message_register.add_message_type<Inventory>();
   message_register.add_message_type<OrderInfo>();
-  message_register.add_message_type<DrillingMachineStatus>();
   message_register.add_message_type<TriggeredConveyorBeltStatus>();
-  message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";
