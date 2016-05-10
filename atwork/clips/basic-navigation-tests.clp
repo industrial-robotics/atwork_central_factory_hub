@@ -1,5 +1,5 @@
 ;---------------------------------------------------------------------------
-;  task-benchmarks.clp - RoCKIn RefBox CLIPS task benchmarks
+;  basic-navigation-tests.clp - AtWork RefBox CLIPS - BNTs
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
@@ -59,44 +59,33 @@
   ; The location of the assembly aid tray should should not be reused
   (bind ?shelf-locations (delete-member$ ?shelf-locations ?er-02-01-location))
 
-  ; Orders
-  (slot-insert$ [order-info] orders 1
+  ; Tasks
+  (slot-insert$ [task-info] tasks 1
     ; 1st Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+      )))
     ; 2nd Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+      )))
+    ;(make-instance of Task (status OFFERED) (task-type TRANSPORTATION))
     ; 3rd Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
+    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+    )
+    ;(make-instance of Task (status OFFERED) (task-type UNKNOWN))
     ; 4th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
     ; 5th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
     ; 6th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
     ; 7th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
     ; 8th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
     ; 9th Navigation Goal
-    (make-instance of Order (status OFFERED) (object-id [NAV_GOAL])
-                            (destination-id (pick-random$ ?navigation-locations))
-                            (wait-time 5) (orientation (pick-random$ ?navigation-directions)))
   )
 )
 

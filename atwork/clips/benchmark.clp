@@ -74,12 +74,30 @@
     (slot-delete$ ?inventory items 1 (length$ (send ?inventory get-items)))
   )
 
-  ; Remove all orders from the order info
-  (do-for-all-instances ((?order-info OrderInfo))
-    (foreach ?order (send ?order-info get-orders)
-      (unmake-instance ?order)
+  ; Remove all tasks from the task info
+  (do-for-all-instances ((?task-info TaskInfo))
+    (printout t "removing tasks from task info")
+    (foreach ?task (send ?task-info get-tasks)
+      (bind ?tts (send ?task get-transportation-task))
+      (bind ?nts (send ?task get-transportation-task))
+
+      (if (<> (length$ ?tts) 0) then
+        (printout t "transportation-task not empty" ?task crlf)
+        (foreach ?tt ?tts
+          (unmake-instance ?tt)
+        )
+        (slot-delete$ ?task transportation-task 1 (length$ ?tts))
+      )
+      (if (<> (length$ ?nts) 0) then
+        (printout t "navigation-task not empty" ?task)
+        (foreach ?nt ?nts
+          (unmake-instance ?nt)
+        )
+        (slot-delete$ ?task navigation-task 1 (length$ ?nts))
+      )
+      (unmake-instance ?task)
     )
-    (slot-delete$ ?order-info orders 1 (length$ (send ?order-info get-orders)))
+    (slot-delete$ ?task-info tasks 1 (length$ (send ?task-info get-tasks)))
   )
 
 

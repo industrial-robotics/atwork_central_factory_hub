@@ -81,7 +81,7 @@
   (signal (type benchmark-state) (time (create$ 0 0)) (seq 1))
   (signal (type benchmark-info) (time (create$ 0 0)) (seq 1))
   (signal (type robot-info) (time (create$ 0 0)) (seq 1))
-  (signal (type order-info) (time (create$ 0 0)) (seq 1))
+  (signal (type task-info) (time (create$ 0 0)) (seq 1))
   (signal (type inventory) (time (create$ 0 0)) (seq 1))
   (signal (type drilling-machine) (time (create$ 0 0)) (seq 1))
   (signal (type conveyor-belt) (time (create$ 0 0)) (seq 1))

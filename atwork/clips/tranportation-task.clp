@@ -1,14 +1,10 @@
 ;---------------------------------------------------------------------------
-;  order.clp - RoCKIn RefBox CLIPS - order specification
+;  transportation-task.clp - RoCKIn RefBox CLIPS - transportation-task specification
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass Order (is-a USER) (role concrete)
-  (slot next-id (type INTEGER) (storage shared) (default 0))
-
-  (slot id (type INTEGER))
-  (slot status (type SYMBOL) (allowed-values OFFERED TIMEOUT IN_PROGRESS PAUSED ABORTED FINISHED))
+(defclass TransportationTask (is-a USER) (role concrete)
   (slot object-id (type INSTANCE) (allowed-classes ObjectIdentifier))
   (multislot container-id (type INSTANCE) (allowed-classes ObjectIdentifier) (cardinality 0 1))
   (slot quantity-delivered (type INTEGER) (default 0))
@@ -16,25 +12,12 @@
   (multislot destination-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot source-id (type INSTANCE) (allowed-classes LocationIdentifier) (cardinality 0 1))
   (multislot processing-team (type STRING) (cardinality 0 1))
-  (multislot wait-time (type INTEGER) (cardinality 0 1))
-  (multislot orientation (type SYMBOL) (allowed-values NORTH EAST SOUTH WEST) (cardinality 0 1))
 )
 
-(defmessage-handler Order init ()
-  ; first, initialize the other slots
-  (call-next-handler)
+(defmessage-handler TransportationTask create-msg ()
+  "Create a ProtoBuf message of an transportation-task"
 
-  ; then, overwrite the id slot from the class variable and increase the next id
-  (modify-instance ?self (id ?self:next-id) (next-id (+ ?self:next-id 1)))
-)
-
-(defmessage-handler Order create-msg ()
-  "Create a ProtoBuf message of an order"
-
-  (bind ?o (pb-create "atwork_pb_msgs.Order"))
-
-  (pb-set-field ?o "id" ?self:id)
-  (pb-set-field ?o "status" ?self:status)
+  (bind ?o (pb-create "atwork_pb_msgs.TransportationTask"))
 
   (bind ?oi (send ?self:object-id create-msg))
   (pb-set-field ?o "object" ?oi)  ; destroys ?oi
@@ -64,22 +47,6 @@
     (pb-set-field ?o "processing_team" (nth$ 1 ?self:processing-team))
   )
 
-  (if (<> (length$ ?self:wait-time) 0) then
-    (pb-set-field ?o "wait_time" (nth$ 1 ?self:wait-time))
-  )
-
-  (if (<> (length$ ?self:orientation) 0) then
-    (pb-set-field ?o "orientation" (nth$ 1 ?self:orientation))
-  )
-
   (return ?o)
 )
 
-
-; When all instances of a class are deleted, the shared slots are reset.
-; Prevent this by creating a dummy order, which does not get deleted.
-(defrule make-dummy-order
-  (init)
-  =>
-  (make-instance [dummy] of Order)
-)
