@@ -76,20 +76,20 @@
 
   ; Remove all tasks from the task info
   (do-for-all-instances ((?task-info TaskInfo))
-    (printout t "removing tasks from task info")
+    (printout t "resetting tasks in task info" crlf)
     (foreach ?task (send ?task-info get-tasks)
       (bind ?tts (send ?task get-transportation-task))
-      (bind ?nts (send ?task get-transportation-task))
+      (bind ?nts (send ?task get-navigation-task))
 
       (if (<> (length$ ?tts) 0) then
-        (printout t "transportation-task not empty" ?task crlf)
+        ;(printout t "transportation-task not empty" ?task crlf)
         (foreach ?tt ?tts
           (unmake-instance ?tt)
         )
         (slot-delete$ ?task transportation-task 1 (length$ ?tts))
       )
       (if (<> (length$ ?nts) 0) then
-        (printout t "navigation-task not empty" ?task)
+        ;(printout t "navigation-task not empty" ?task)
         (foreach ?nt ?nts
           (unmake-instance ?nt)
         )
