@@ -71,6 +71,9 @@
   (make-instance conveyorbelt-01 of LocationIdentifier (type CB) (instance-id 1) (description "Conveyor Belt"))
   (make-instance conveyorbelt-02 of LocationIdentifier (type CB) (instance-id 2) (description "Rotating Table"))
 
+  ; Precision Placement Platform
+  (make-instance precision-01 of LocationIdentifier (type PP) (instance-id 1) (description "Precision Platform"))
+
   ; Robot
   (make-instance robot of LocationIdentifier (type ROBOT) (instance-id 1) (description "Robot"))
 )
