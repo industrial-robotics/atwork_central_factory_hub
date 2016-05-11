@@ -1,0 +1,98 @@
+/***************************************************************************
+ *  TaskInfo.proto - atwork Protocol - Task Info message
+ *
+ *  Copyright  2016 Alexander Moriarty
+ ****************************************************************************/
+
+/*  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ * - Redistributions of source code must retain the above copyright
+ *   notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright
+ *   notice, this list of conditions and the following disclaimer in
+ *   the documentation and/or other materials provided with the
+ *   distribution.
+ * - Neither the name of the authors nor the names of its contributors
+ *   may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package atwork_pb_msgs;
+
+import "Inventory.proto";
+import "Time.proto";
+import "NavigationTask.proto";
+import "TransportationTask.proto";
+
+option java_package = "org.atwork.common_msgs";
+option java_outer_classname = "TaskInfoProtos";
+
+message Task {
+  // Status changes can be triggered by a (robot) peer or a controller
+  enum Status {
+    OFFERED     = 1;  // The task is offered by the RefBox and can be processed by a team/robot
+    TIMEOUT     = 2;  // The task has not been accepted in time or processing took too long
+    IN_PROGRESS = 3;  // A team/robot is currently processing this task
+    PAUSED      = 4;  // Temporarily pause processing this task
+    ABORTED     = 5;  // Stop working on this task
+    FINISHED    = 6;  // The task has been processed successfully
+  }
+
+  // Task Types which are supported
+  enum TaskType {
+    UNKNOWN         = 0;
+    TRANSPORTATION  = 1;
+    NAVIGATION      = 2;
+  }
+
+  // A unique identifier of this task
+  required uint64 id = 1;
+
+  // The type of this task
+  required TaskType type = 2;
+
+  // The status of this task as specified in the Status enumeration
+  required Status status = 3;
+
+  optional TransportationTask transportation_task = 4;
+  optional NavigationTask navigation_task = 5;
+}
+
+
+message TaskInfo {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 310;
+  }
+
+  // All tasks which are currently available
+  repeated Task tasks = 1;
+}
+
+/** TODO: TaskAcceptance has been removed from now.
+message TaskAcceptance {
+  enum CompType {
+    COMP_ID  = 2000;
+    MSG_TYPE = 311;
+  }
+
+  // A list of task IDs (as offered by the RefBox) which the robot is
+  // processing
+  repeated uint64 id = 1;
+}
+*/

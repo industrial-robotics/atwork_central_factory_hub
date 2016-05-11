@@ -15,8 +15,8 @@
   ?*DRILLING-MACHINE-PERIOD* = 0.1
   ?*CONVEYOR-BELT-PERIOD* = 0.1
   ?*FORCE-FITTING-MACHINE-PERIOD* = 0.1
-  ?*BC-ORDERINFO-PERIOD* = 2.0
-  ?*BC-ORDERINFO-BURST-PERIOD* = 0.5
+  ?*BC-TASKINFO-PERIOD* = 2.0
+  ?*BC-TASKINFO-BURST-PERIOD* = 0.5
 
   ; This value is set by the rule config-timer-interval from config.yaml
   ?*TIMER-INTERVAL* = 0.0
@@ -27,7 +27,7 @@
   ?*PEER-TIME-DIFFERENCE-WARNING* = 3.0
 
   ; number of burst updates before falling back to slower updates
-  ?*BC-ORDERINFO-BURST-COUNT* = 10
+  ?*BC-TASKINFO-BURST-COUNT* = 10
 
   ; How often and in what period should the version information
   ; be send over the network when a new peer is detected?
@@ -35,20 +35,20 @@
   ?*BC-VERSIONINFO-COUNT* = 10
 
   ; Benchmark times; seconds
-  ?*BNT-EXECUTION-TIME*    =  300
   ?*BNT-PREPARATION-TIME*  =  300
-  ?*BMT-EXECUTION-TIME*    =  300
+  ?*BNT-EXECUTION-TIME*    =  300
   ?*BMT-PREPARATION-TIME*  =  300
-  ?*BTT-EXECUTION-TIME*    =  300
+  ?*BMT-EXECUTION-TIME*    =  300
   ?*BTT-PREPARATION-TIME*  =  300
-  ?*PPT-EXECUTION-TIME*    =  300
+  ?*BTT-EXECUTION-TIME*    =  300
   ?*PPT-PREPARATION-TIME*  =  300
-  ?*CBT-EXECUTION-TIME*    =  300
+  ?*PPT-EXECUTION-TIME*    =  300
   ?*CBT-PREPARATION-TIME*  =  300
-  ?*AWF-EXECUTION-TIME*    =  300
+  ?*CBT-EXECUTION-TIME*    =  300
   ?*AWF-PREPARATION-TIME*  =  300
-  ?*IRL-EXECUTION-TIME*    =  300
+  ?*AWF-EXECUTION-TIME*    =  300
   ?*IRL-PREPARATION-TIME*  =  300
+  ?*IRL-EXECUTION-TIME*    =  300
 
   ; Benchmark repetitions
   ?*BNT-COUNT*    =  1

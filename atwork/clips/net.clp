@@ -371,54 +371,54 @@
   (pb-destroy ?pb-inventory)
 )
 
-(defrule net-send-OrderInfo
+(defrule net-send-TaskInfo
   (time $?now)
-  ?sf <- (signal (type order-info) (seq ?seq) (count ?count)
-     (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-ORDERINFO-BURST-COUNT*)
-                 then ?*BC-ORDERINFO-PERIOD*
-                 else ?*BC-ORDERINFO-BURST-PERIOD*))))
+  ?sf <- (signal (type task-info) (seq ?seq) (count ?count)
+     (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-TASKINFO-BURST-COUNT*)
+                 then ?*BC-TASKINFO-PERIOD*
+                 else ?*BC-TASKINFO-BURST-PERIOD*))))
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   =>
   (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
 
-  (bind ?oi (send [order-info] create-msg))
-  (pb-broadcast ?peer-id-public ?oi)
+  (bind ?ti (send [task-info] create-msg))
+  (pb-broadcast ?peer-id-public ?ti)
 
   (do-for-all-facts ((?client network-client)) TRUE
-    (pb-send ?client:id ?oi)
+    (pb-send ?client:id ?ti)
   )
 
-  (pb-destroy ?oi)
+  (pb-destroy ?ti)
 )
 
-(defrule net-recv-OrderAcceptance
-  ?mf <- (protobuf-msg (type "atwork_pb_msgs.OrderAcceptance") (ptr ?p) (rcvd-at $?rcvd-at)
-           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
-  ?rf <- (robot (name ?name) (host ?from-host) (port ?from-port) (team ?team))
-  =>
-  (retract ?mf) ; message will be destroyed after rule completes
-
-  (bind ?pb-order-ids (pb-field-list ?p "id"))
-
-  (foreach ?id ?pb-order-ids
-    (do-for-all-instances ((?order Order)) (eq ?order:id ?id)
-      (bind ?processing-team (send ?order get-processing-team))
-
-      ; Check if any team is already processing the order
-      (if (eq (length$ ?processing-team) 0) then
-        (printout t ?name "/" ?team " accepts order " ?id crlf)
-        (slot-insert$ ?order processing-team 1 ?team)
-      else
-        (bind ?processing-team (nth$ 1 ?processing-team))
-
-        ; Check if the requesting team is processing the order
-        (if (neq (str-compare ?processing-team ?team) 0) then
-          (printout t ?name "/" ?team " tries to accept order " ?id ", but the order is already processed by " ?processing-team crlf)
-        )
-      )
-    )
-  )
-)
+;(defrule net-recv-OrderAcceptance
+;  ?mf <- (protobuf-msg (type "atwork_pb_msgs.OrderAcceptance") (ptr ?p) (rcvd-at $?rcvd-at)
+;           (rcvd-from ?from-host ?from-port) (rcvd-via ?via))
+;  ?rf <- (robot (name ?name) (host ?from-host) (port ?from-port) (team ?team))
+;  =>
+;  (retract ?mf) ; message will be destroyed after rule completes
+;
+;  (bind ?pb-order-ids (pb-field-list ?p "id"))
+;
+;  (foreach ?id ?pb-order-ids
+;    (do-for-all-instances ((?order Order)) (eq ?order:id ?id)
+;      (bind ?processing-team (send ?order get-processing-team))
+;
+;      ; Check if any team is already processing the order
+;      (if (eq (length$ ?processing-team) 0) then
+;        (printout t ?name "/" ?team " accepts order " ?id crlf)
+;        (slot-insert$ ?order processing-team 1 ?team)
+;      else
+;        (bind ?processing-team (nth$ 1 ?processing-team))
+;
+;        ; Check if the requesting team is processing the order
+;        (if (neq (str-compare ?processing-team ?team) 0) then
+;          (printout t ?name "/" ?team " tries to accept order " ?id ", but the order is already processed by " ?processing-team crlf)
+;        )
+;      )
+;    )
+;  )
+;)
 
 (defrule net-send-VersionInfo
   (time $?now)

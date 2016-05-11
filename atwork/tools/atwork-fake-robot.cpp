@@ -43,7 +43,7 @@
 #include <msgs/VersionInfo.pb.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/Inventory.pb.h>
-#include <msgs/Order.pb.h>
+#include <msgs/TaskInfo.pb.h>
 //#include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 //#include <msgs/Camera.pb.h>
@@ -170,6 +170,7 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
     }
   }
 
+  /**
   std::shared_ptr<OrderInfo> o;
   if ((o = std::dynamic_pointer_cast<OrderInfo>(msg))) {
     std::cout << "OrderInfo received" << std::endl;
@@ -197,6 +198,7 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
       if (order.has_processing_team()) std::cout << "    Processing team: " << order.processing_team() << std::endl;
     }
   }
+  **/
 
   std::shared_ptr<TriggeredConveyorBeltStatus> cb;
   if ((cb = std::dynamic_pointer_cast<TriggeredConveyorBeltStatus>(msg))) {
@@ -287,7 +289,7 @@ main(int argc, char **argv)
   message_register.add_message_type<VersionInfo>();
   message_register.add_message_type<BenchmarkState>();
   message_register.add_message_type<Inventory>();
-  message_register.add_message_type<OrderInfo>();
+  //message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<TriggeredConveyorBeltStatus>();
 
   std::string cfg_prefix =

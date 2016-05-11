@@ -29,7 +29,7 @@ llsfrb:
     debug-level: 2
     unwatch-facts: [time, signal]
     unwatch-rules: [retract-time,
-                    net-send-beacon, net-send-BenchmarkState, net-send-OrderInfo,
+                    net-send-beacon, net-send-BenchmarkState, net-send-TaskInfo,
                     net-send-Inventory, net-send-VersionInfo,
                     net-send-ConveyorBeltStatus]
 

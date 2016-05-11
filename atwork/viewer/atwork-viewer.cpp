@@ -13,7 +13,7 @@
 #include <msgs/RobotInfo.pb.h>
 #include <msgs/AttentionMessage.pb.h>
 #include <msgs/Inventory.pb.h>
-#include <msgs/Order.pb.h>
+#include <msgs/TaskInfo.pb.h>
 
 #include <gtkmm.h>
 #include <pangomm.h>
@@ -32,7 +32,7 @@ std::shared_ptr<atwork_pb_msgs::BenchmarkState> benchmark_state;
 std::shared_ptr<atwork_pb_msgs::ConveyorBeltStatus> conveyor_belt_state;
 std::shared_ptr<atwork_pb_msgs::RobotInfo> robot_info;
 std::shared_ptr<atwork_pb_msgs::Inventory> inventory;
-std::shared_ptr<atwork_pb_msgs::OrderInfo> order_info;
+std::shared_ptr<atwork_pb_msgs::TaskInfo> task_info;
 std::deque<std::string> attention_msgs(12);
 
 
@@ -113,8 +113,8 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
     inventory = std::dynamic_pointer_cast<atwork_pb_msgs::Inventory>(msg);
   }
 
-  if (std::dynamic_pointer_cast<atwork_pb_msgs::OrderInfo>(msg)) {
-    order_info = std::dynamic_pointer_cast<atwork_pb_msgs::OrderInfo>(msg);
+  if (std::dynamic_pointer_cast<atwork_pb_msgs::TaskInfo>(msg)) {
+    task_info = std::dynamic_pointer_cast<atwork_pb_msgs::TaskInfo>(msg);
   }
 
   std::shared_ptr<atwork_pb_msgs::AttentionMessage> am;
@@ -322,28 +322,43 @@ bool idle_handler() {
     label_inventory->set_text(sstr.str());
   }
 
-
-  if (order_info) {
+  
+  if (task_info) {
     Gtk::Label *label_orders = 0;
     builder->get_widget("label_orders", label_orders);
 
     std::stringstream sstr;
-    for (int i = 0; i < order_info->orders_size(); i++) {
-      const atwork_pb_msgs::Order &order = order_info->orders(i);
-
+    for (int i = 0; i < task_info->tasks_size(); i++) {
+      const atwork_pb_msgs::Task &task = task_info->tasks(i);
+      switch (task.type()) {
+        case atwork_pb_msgs::Task::NAVIGATION:
+          if (task.has_navigation_task()) {
+            sstr << task.navigation_task().location().description() << " --> ";
+            sstr << atwork_pb_msgs::NavigationTask_Orientation_Name(task.navigation_task().orientation()) << std::endl;
+          }
+          break;
+        case atwork_pb_msgs::Task::TRANSPORTATION:
+          sstr << "[Transportation Task]" << std::endl;
+          break;
+        case atwork_pb_msgs::Task::UNKNOWN:
+          sstr << "[WARNING Unknown Task]" << std::endl;
+          break;
+      }
+/*
       if (order.has_quantity_requested()) sstr << order.quantity_requested() << " ";
       sstr << order.object().description() << " -> ";
       if (order.has_destination()) sstr << order.destination().description();
       else if (order.has_container()) sstr << order.container().description();
 
       if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
-      if (order.has_orientation()) sstr << " [" << atwork_pb_msgs::Order_Orientation_Name(order.orientation()) << "]";
 
       sstr << std::endl;
+*/
     }
 
     label_orders->set_text(sstr.str());
   }
+  
 
   std::stringstream sstr_attention_messages;
   Gtk::Label *label_attention_messages = 0;
@@ -375,7 +390,7 @@ int main(int argc, char **argv)
   message_register.add_message_type<atwork_pb_msgs::RobotInfo>();
   message_register.add_message_type<atwork_pb_msgs::AttentionMessage>();
   message_register.add_message_type<atwork_pb_msgs::Inventory>();
-  message_register.add_message_type<atwork_pb_msgs::OrderInfo>();
+  message_register.add_message_type<atwork_pb_msgs::TaskInfo>();
 
 
   Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.atwork.viewer");

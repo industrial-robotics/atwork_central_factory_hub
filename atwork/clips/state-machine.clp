@@ -96,6 +96,12 @@
   ; benchmark time is shared between several states
   (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
 )
+
+(defclass TimeoutState (is-a State) (role concrete)
+  ; benchmark time is shared between several states
+  (slot time (type INSTANCE) (allowed-classes BenchmarkTime))
+)
+
 (defclass FinishedState (is-a State) (role concrete))
 
 
@@ -188,6 +194,21 @@
   (return STOPPED)
 )
 
+(defmessage-handler TimeoutState on-enter (?prev-state)
+  (printout t "Starting benchmark " crlf)
+  (assert (attention-message (text "Starting benchmark") (time 15)))
+
+  ; reset the times of the benchmark
+  (send ?self:time put-start-time (now))
+  (send ?self:time put-timer 0.0)
+)
+(defmessage-handler TimeoutState on-update ()
+  (bind ?state-machine (send ?self get-state-machine))
+  (send ?state-machine process-event START)
+)
+(defmessage-handler TimeoutState to-robot-state ()
+  (return STOPPED)
+)
 
 (defmessage-handler FinishedState to-robot-state ()
   (return FINISHED)
