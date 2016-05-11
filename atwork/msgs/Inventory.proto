@@ -22,8 +22,6 @@ message ObjectIdentifier {
     MOTOR         = 13; //
     CONTAINER_B   = 14; // A Container (Blue)
     CONTAINER_R   = 15; // A Container (Red)
-    CAVITY        = 16; // A PPT Cavity
-    NAV_GOAL      = 17; // A Navigation Goal TODO: discuss alternative
   }
 
   // The object class (e.g. "EM-01") consists of the type ("EM") and a type
@@ -48,7 +46,8 @@ message LocationIdentifier {
     WS    = 2;  // Workstation
     CB    = 3;  // Conveyor belt
     WP    = 4;  // Way Point (additional navigation goal)
-    ROBOT = 5;  // On Robot
+    PP    = 5;  // Precision Placement Location
+    ROBOT = 6;  // On Robot
   }
 
   required LocationType type        = 1;  // The type of location

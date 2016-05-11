@@ -156,11 +156,11 @@
 
 
 
-(defrule init-tbm
+(defrule init-bnt
   (init)
-  ?bm <- (object (is-a Benchmark))
+  ?bnt <- (object (is-a Benchmark))
   =>
   (make-instance [BNT1] of BasicNavigationTest1 (type BNT) (type-id 1) (description "Basic Navigation Test 1"))
 
-  (slot-insert$ ?bm registered-scenarios 1 [BNT1])
+  (slot-insert$ ?bnt registered-scenarios 1 [BNT1])
 )
