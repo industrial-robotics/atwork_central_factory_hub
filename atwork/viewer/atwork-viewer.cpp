@@ -332,7 +332,10 @@ bool idle_handler() {
       const atwork_pb_msgs::Task &task = task_info->tasks(i);
       switch (task.type()) {
         case atwork_pb_msgs::Task::NAVIGATION:
-          sstr << "[Navigation Task]" << std::endl;
+          if (task.has_navigation_task()) {
+            sstr << task.navigation_task().location().description() << " --> ";
+            sstr << atwork_pb_msgs::NavigationTask_Orientation_Name(task.navigation_task().orientation()) << std::endl;
+          }
           break;
         case atwork_pb_msgs::Task::TRANSPORTATION:
           sstr << "[Transportation Task]" << std::endl;
@@ -348,7 +351,6 @@ bool idle_handler() {
       else if (order.has_container()) sstr << order.container().description();
 
       if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
-      if (order.has_orientation()) sstr << " [" << atwork_pb_msgs::Order_Orientation_Name(order.orientation()) << "]";
 
       sstr << std::endl;
 */

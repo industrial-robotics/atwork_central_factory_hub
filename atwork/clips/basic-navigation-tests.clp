@@ -7,26 +7,48 @@
 (defclass BasicNavigationTest1 (is-a BenchmarkScenario) (role concrete))
 
 (defmessage-handler BasicNavigationTest1 setup (?time ?state-machine)
-  (make-instance [stopped-state] of StoppedState
+  (make-instance [prep-timeup-state] of TimeoutState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
+  (make-instance [prep-stopped-state] of StoppedState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
+  (make-instance [prep-running-state] of RunningState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BNT-PREPARATION-TIME*))
+  (make-instance [prep-paused-state] of PausedState
+    (phase PREPARATION) (state-machine ?state-machine))
+
+  (make-instance [exec-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
-  (make-instance [running-state] of RunningState
+  (make-instance [exec-running-state] of RunningState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BNT-EXECUTION-TIME*))
-  (make-instance [paused-state] of PausedState
+  (make-instance [exec-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
-  (make-instance [finished-state] of FinishedState
+  (make-instance [exec-finished-state] of FinishedState
     (phase EXECUTION) (state-machine ?state-machine))
 
-  (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition STOP            [stopped-state])
-  (send [running-state]    add-transition PAUSE           [paused-state])
-  (send [running-state]    add-transition TIMEOUT         [finished-state])
-  (send [running-state]    add-transition FINISH          [finished-state])
-  (send [paused-state]     add-transition START           [running-state])
-  (send [paused-state]     add-transition STOP            [stopped-state])
+  (send [prep-stopped-state]    add-transition START           [prep-running-state])
+  (send [prep-running-state]    add-transition PAUSE           [prep-paused-state])
+  (send [prep-running-state]    add-transition STOP            [exec-stopped-state])
+  (send [prep-running-state]    add-transition TIMEOUT         [prep-timeup-state])
+  (send [prep-running-state]    add-transition FINISH          [prep-timeup-state])
+  (send [prep-paused-state]     add-transition START           [prep-running-state])
+  (send [prep-paused-state]     add-transition STOP            [exec-stopped-state])
+
+  (send [prep-timeup-state]     add-transition START         [exec-running-state])
+
+  (send [exec-stopped-state]    add-transition START           [exec-running-state])
+  (send [exec-running-state]    add-transition PAUSE           [exec-paused-state])
+  (send [exec-running-state]    add-transition STOP            [exec-finished-state])
+  (send [exec-running-state]    add-transition TIMEOUT         [exec-finished-state])
+  (send [exec-running-state]    add-transition FINISH          [exec-finished-state])
+  (send [exec-paused-state]     add-transition START           [exec-running-state])
+  (send [exec-paused-state]     add-transition STOP            [exec-stopped-state])
 
   (make-instance ?state-machine of StateMachine
-    (current-state [stopped-state])
-    (states [stopped-state] [running-state] [paused-state] [finished-state])
+    (current-state [prep-stopped-state])
+    (states
+      [prep-stopped-state] [prep-running-state] [prep-paused-state] [prep-finished-state]
+      [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
+    )
   )
 
 
@@ -67,25 +89,63 @@
         (location-id (pick-random$ ?navigation-locations))
         (wait-time 5)
         (orientation (pick-random$ ?navigation-directions))
-      )))
+    )))
     ; 2nd Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
         (wait-time 5)
         (orientation (pick-random$ ?navigation-directions))
-      )))
-    ;(make-instance of Task (status OFFERED) (task-type TRANSPORTATION))
+    )))
     ; 3rd Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-    )
-    ;(make-instance of Task (status OFFERED) (task-type UNKNOWN))
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 4th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 5th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 6th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 7th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 8th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
     ; 9th Navigation Goal
+    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+      (navigation-task (make-instance of NavigationTask
+        (location-id (pick-random$ ?navigation-locations))
+        (wait-time 5)
+        (orientation (pick-random$ ?navigation-directions))
+    )))
   )
 )
 
