@@ -17,7 +17,7 @@
 (load* (resolve-file benchmark.clp))
 (load* (resolve-file basic-navigation-tests.clp))
 (load* (resolve-file basic-manipulation-tests.clp))
-;(load* (resolve-file basic-transporation-tests.clp))
+(load* (resolve-file basic-transportation-tests.clp))
 ;(load* (resolve-file precision-placement-tests.clp))
 ;(load* (resolve-file conveyor-belt-tests.clp))
 ;(load* (resolve-file at-work-finals.clp))
