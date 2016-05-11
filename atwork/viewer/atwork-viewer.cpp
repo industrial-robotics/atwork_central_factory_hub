@@ -338,22 +338,23 @@ bool idle_handler() {
           }
           break;
         case atwork_pb_msgs::Task::TRANSPORTATION:
-          sstr << "[Transportation Task]" << std::endl;
+          if (task.has_transportation_task()) {
+            if (task.transportation_task().has_quantity_requested())
+                sstr << task.transportation_task().quantity_requested() << " ";
+            sstr << task.transportation_task().object().description() << " -> ";
+            if (task.transportation_task().has_destination())
+                sstr << task.transportation_task().destination().description();
+            else if (task.transportation_task().has_container())
+                sstr << task.transportation_task().container().description();
+            if (task.transportation_task().has_processing_team())
+                sstr << " [" << task.transportation_task().processing_team() << "]";
+            sstr << std::endl;
+          }
           break;
         case atwork_pb_msgs::Task::UNKNOWN:
           sstr << "[WARNING Unknown Task]" << std::endl;
           break;
       }
-/*
-      if (order.has_quantity_requested()) sstr << order.quantity_requested() << " ";
-      sstr << order.object().description() << " -> ";
-      if (order.has_destination()) sstr << order.destination().description();
-      else if (order.has_container()) sstr << order.container().description();
-
-      if (order.has_processing_team()) sstr << " [" << order.processing_team() << "]";
-
-      sstr << std::endl;
-*/
     }
 
     label_orders->set_text(sstr.str());

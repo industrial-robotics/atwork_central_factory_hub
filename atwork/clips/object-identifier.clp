@@ -6,7 +6,23 @@
 
 (defclass ObjectIdentifier (is-a USER) (role concrete)
   ; the object id (see rulebook), such as AX-01 consists of *type* and *type-id*
-  (slot type (type SYMBOL) (allowed-values EM AX ER))
+  (slot type (type SYMBOL) (allowed-symbols
+    F20_20_B     ; // Small Aluminium Profile (Black)
+    F20_20_G     ; // Small Aluminium Profile (Grey)
+    S40_40_B     ; // Big Aluminium Profile (Black)
+    S40_40_G     ; // Big Aluminium Profile (Grey)
+    M20_100      ; // Screw (Bolt)
+    M20          ; // Small Nut
+    M30          ; // Large Nut
+    R20          ; // Plastic Tube
+    BEARING_BOX  ; //
+    BEARING      ; //
+    AXIS         ; //
+    DISTANCE_TUBE; //
+    MOTOR        ; //
+    CONTAINER_B  ; // A Container (Blue)
+    CONTAINER_R  ; // A Container (Red)
+  ))
   (slot type-id (type INTEGER))
 
   (multislot instance-id (type INTEGER) (cardinality 0 1))
@@ -38,53 +54,19 @@
 (defrule init-object-identifiers
   (init)
   =>
-  ; Navigation Goal (class)
-  (make-instance [NAV_GOAL] of ObjectIdentifier (type NAV_GOAL) (type-id 1) (description "Navigation Goal"))
-  
-  ; Small Black Aluminium Profile (class)
-  (make-instance [F20_20_B] of ObjectIdentifier (type F20_20_B) (type-id 1) (description "Small Black Alu. Profile"))
-
-  ; Small Grey Aluminium Profile (class)
-  (make-instance [F20_20_G] of ObjectIdentifier (type F20_20_G) (type-id 1) (description "Small Grey Alu. Profile"))
-
-  ; Large Black Aluminium Profile (class)
-  (make-instance [S40_40_B] of ObjectIdentifier (type S40_40_B) (type-id 1) (description "Large Black Alu. Profile"))
-
-  ; Large Grey Aluminium Profile (class)
-  (make-instance [S40_40_G] of ObjectIdentifier (type S40_40_G) (type-id 1) (description "Large Grey Alu. Profile"))
-
-  ; Small Grey Aluminium Profile (class)
-  (make-instance [F20_20_G] of ObjectIdentifier (type M20_100) (type-id 1) (description "Bolt"))
-
-  ; Small Grey Aluminium Profile (class)
-  (make-instance [F20_20_G] of ObjectIdentifier (type M20) (type-id 1) (description "Small Nut"))
-
-
-  ; Assembly aid trays (instances)
-  (make-instance [em-01-01] of ObjectIdentifier (type EM) (type-id 1) (instance-id 1) (description "EM-01-01"))
-  (make-instance [em-01-02] of ObjectIdentifier (type EM) (type-id 1) (instance-id 2) (description "EM-01-02"))
-  (make-instance [em-01-03] of ObjectIdentifier (type EM) (type-id 1) (instance-id 3) (description "EM-01-03"))
-
-  ; File card box (instances)
-  (make-instance [em-02-01] of ObjectIdentifier (type EM) (type-id 2) (instance-id 1) (description "EM-02-01"))
-  (make-instance [em-02-02] of ObjectIdentifier (type EM) (type-id 2) (instance-id 2) (description "EM-02-02"))
-  (make-instance [em-02-03] of ObjectIdentifier (type EM) (type-id 2) (instance-id 3) (description "EM-02-03"))
-
-  ; Foam container (instances)
-  (make-instance [em-03-01] of ObjectIdentifier (type EM) (type-id 3) (instance-id 1) (description "EM-03-01"))
-
-  ; Tray rack (instances)
-  (make-instance [er-01-01] of ObjectIdentifier (type ER) (type-id 1) (instance-id 1) (description "ER-01-01"))
-
-  ; Common shelf container (instances)
-  (make-instance [er-02-01] of ObjectIdentifier (type ER) (type-id 2) (instance-id  1) (description "ER-02-01"))
-  (make-instance [er-02-02] of ObjectIdentifier (type ER) (type-id 2) (instance-id  2) (description "ER-02-02"))
-  (make-instance [er-03-03] of ObjectIdentifier (type ER) (type-id 2) (instance-id  3) (description "ER-02-03"))
-  (make-instance [er-02-04] of ObjectIdentifier (type ER) (type-id 2) (instance-id  4) (description "ER-02-04"))
-  (make-instance [er-02-05] of ObjectIdentifier (type ER) (type-id 2) (instance-id  5) (description "ER-02-05"))
-  (make-instance [er-02-06] of ObjectIdentifier (type ER) (type-id 2) (instance-id  6) (description "ER-02-06"))
-  (make-instance [er-02-07] of ObjectIdentifier (type ER) (type-id 2) (instance-id  7) (description "ER-02-07"))
-  (make-instance [er-02-08] of ObjectIdentifier (type ER) (type-id 2) (instance-id  8) (description "ER-02-08"))
-  (make-instance [er-02-09] of ObjectIdentifier (type ER) (type-id 2) (instance-id  9) (description "ER-02-09"))
-  (make-instance [er-02-10] of ObjectIdentifier (type ER) (type-id 2) (instance-id 10) (description "ER-02-10"))
+  (make-instance [F20_20_B]      of ObjectIdentifier (type F20_20_B)      (type-id 1) (description "Small Black Alu. Profile"))
+  (make-instance [F20_20_G]      of ObjectIdentifier (type F20_20_G)      (type-id 1) (description "Small Grey Alu. Profile"))
+  (make-instance [S40_40_B]      of ObjectIdentifier (type S40_40_B)      (type-id 1) (description "Large Black Alu. Profile"))
+  (make-instance [S40_40_G]      of ObjectIdentifier (type S40_40_G)      (type-id 1) (description "Large Grey Alu. Profile"))
+  (make-instance [M20_100]       of ObjectIdentifier (type M20_100)       (type-id 1) (description "Bolt"))
+  (make-instance [M20]           of ObjectIdentifier (type M20)           (type-id 1) (description "Small Nut"))
+  (make-instance [M30]           of ObjectIdentifier (type M30)           (type-id 1) (description "Large Nut"))
+  (make-instance [R20]           of ObjectIdentifier (type R20)           (type-id 1) (description "Plastic Tube"))
+  (make-instance [BEARING_BOX]   of ObjectIdentifier (type BEARING_BOX)   (type-id 1) (description "Bearing Box"))
+  (make-instance [BEARING]       of ObjectIdentifier (type BEARING)       (type-id 1) (description "Bearing"))
+  (make-instance [AXIS]          of ObjectIdentifier (type AXIS)          (type-id 1) (description "Axis"))
+  (make-instance [DISTANCE_TUBE] of ObjectIdentifier (type DISTANCE_TUBE) (type-id 1) (description "Distance Tube"))
+  (make-instance [MOTOR]         of ObjectIdentifier (type MOTOR)         (type-id 1) (description "Motor"))
+  (make-instance [CONTAINER_B]   of ObjectIdentifier (type CONTAINER_B)   (type-id 1) (description "Blue Container"))
+  (make-instance [CONTAINER_R]   of ObjectIdentifier (type CONTAINER_R)   (type-id 1) (description "Red Container"))
 )
