@@ -52,25 +52,11 @@
   )
 
 
-  (bind ?shelf-locations (create$
-        [shelf-01] [shelf-02]
-  ))
-  (bind ?workstation-locations (create$
-        [workstation-01] [workstation-02] [workstation-03] [workstation-04]
-        [workstation-05] [workstation-06] [workstation-07] [workstation-08]
-        [workstation-09] [workstation-10] [workstation-11] [workstation-12]
-        [precision-01]
-  ))
-  (bind ?conveyor-locations (create$
-        [conveyorbelt-01] [conveyorbelt-02]
-  ))
-  (bind ?waypoint-locations (create$
-        [waypoint-01] [waypoint-02] [waypoint-03] [waypoint-04] [waypoint-05]
-        [waypoint-06] [waypoint-07] [waypoint-08] [waypoint-09] [waypoint-10]
-        [waypoint-11] [waypoint-12] [waypoint-13] [waypoint-14] [waypoint-15]
-  ))
   (bind ?navigation-locations (create$
-        ?shelf-locations ?workstation-locations ?conveyor-locations ?waypoint-locations
+        ?*WORKSTATION-0CM-LOCATIONS* ?*WORKSTATION-5CM-LOCATIONS*
+        ?*WORKSTATION-10CM-LOCATIONS* ?*WORKSTATION-15CM-LOCATIONS*
+        ?*SHELF-LOCATIONS* ?*CONVEYOR-LOCATIONS*
+        ?*WAYPOINT-LOCATIONS* ?*PRECISION-LOCATIONS*
   ))
   (bind ?navigation-directions (create$
         NORTH EAST SOUTH WEST

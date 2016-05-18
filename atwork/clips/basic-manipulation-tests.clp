@@ -51,13 +51,9 @@
     )
   )
 
-  (bind ?manipulation-robocup-objects (create$
-    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]
-  ))
+  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   
-  (bind ?manipulation-rockin-objects (create$
-    [BEARING_BOX] [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
-  ))
+  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
   ; set static location for source
   (bind ?source-location [workstation-05])
