@@ -87,63 +87,63 @@
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 2nd Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 3rd Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 4th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 5th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 6th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 7th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 8th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
     ; 9th Navigation Goal
     (make-instance of Task (status OFFERED) (task-type NAVIGATION)
       (navigation-task (make-instance of NavigationTask
         (location-id (pick-random$ ?navigation-locations))
-        (wait-time 5)
+        (wait-time 3)
         (orientation (pick-random$ ?navigation-directions))
     )))
   )
