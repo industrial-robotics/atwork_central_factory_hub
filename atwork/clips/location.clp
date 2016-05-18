@@ -36,8 +36,6 @@
   ; Shelves
   (make-instance shelf-01 of LocationIdentifier (type SH) (instance-id  1) (description "Shelf 1"))
   (make-instance shelf-02 of LocationIdentifier (type SH) (instance-id  2) (description "Shelf 2"))
-  (make-instance shelf-03 of LocationIdentifier (type SH) (instance-id  3) (description "Shelf 3"))
-  (make-instance shelf-04 of LocationIdentifier (type SH) (instance-id  4) (description "Shelf 4"))
 
   ; Workstations
   (make-instance workstation-01 of LocationIdentifier (type WS) (instance-id 1) (description "Workstation 1"))
@@ -49,6 +47,8 @@
   (make-instance workstation-07 of LocationIdentifier (type WS) (instance-id 7) (description "Workstation 7"))
   (make-instance workstation-08 of LocationIdentifier (type WS) (instance-id 8) (description "Workstation 8"))
   (make-instance workstation-09 of LocationIdentifier (type WS) (instance-id 9) (description "Workstation 9"))
+  (make-instance workstation-10 of LocationIdentifier (type WS) (instance-id 10) (description "Workstation 10"))
+  (make-instance workstation-11 of LocationIdentifier (type WS) (instance-id 11) (description "Workstation 11"))
 
   ; Waypoints
   (make-instance waypoint-01 of LocationIdentifier (type WP) (instance-id 1) (description "Waypoint 1"))

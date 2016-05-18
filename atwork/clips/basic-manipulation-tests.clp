@@ -51,29 +51,24 @@
     )
   )
 
-  (bind ?manipulation-objects (create$
-    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20] [BEARING_BOX]
-    [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
+  (bind ?manipulation-robocup-objects (create$
+    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]
+  ))
+  
+  (bind ?manipulation-rockin-objects (create$
+    [BEARING_BOX] [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
   ))
 
-  (bind ?workstation-locations (create$
-        [workstation-01] [workstation-02] [workstation-03] [workstation-04]
-        [workstation-05] [workstation-06] [workstation-07] [workstation-08]
-        [workstation-09]
-  ))
+  ; set static location for source
+  (bind ?source-location [workstation-10])
+  ; set static location for destination
+  (bind ?destination-location [workstation-11])
 
-  ; Randomize a location for source
-  (bind ?source-location (pick-random$ ?workstation-locations))
-  ; The location of the assembly aid tray should should not be reused
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location))
-  ; Randomize a location for destination
-  (bind ?destination-location (pick-random$ ?workstation-locations))
-
-  (bind ?item-1 (pick-random$ ?manipulation-objects))
-  (bind ?item-2 (pick-random$ ?manipulation-objects))
-  (bind ?item-3 (pick-random$ ?manipulation-objects))
-  (bind ?item-4 (pick-random$ ?manipulation-objects))
-  (bind ?item-5 (pick-random$ ?manipulation-objects))
+  (bind ?item-1 (pick-random$ ?manipulation-robocup-objects))
+  (bind ?item-2 (pick-random$ ?manipulation-robocup-objects))
+  (bind ?item-3 (pick-random$ ?manipulation-robocup-objects))
+  (bind ?item-4 (pick-random$ ?manipulation-rockin-objects))
+  (bind ?item-5 (pick-random$ ?manipulation-rockin-objects))
 
   ; Inventory
   (slot-insert$ [inventory] items 1

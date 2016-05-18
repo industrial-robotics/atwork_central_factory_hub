@@ -53,7 +53,7 @@
 
 
   (bind ?shelf-locations (create$
-        [shelf-01] [shelf-02] [shelf-03] [shelf-04]
+        [shelf-01] [shelf-02]
   ))
   (bind ?workstation-locations (create$
         [workstation-01] [workstation-02] [workstation-03] [workstation-04]
