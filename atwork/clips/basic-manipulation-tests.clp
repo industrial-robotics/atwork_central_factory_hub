@@ -60,9 +60,9 @@
   ))
 
   ; set static location for source
-  (bind ?source-location [workstation-10])
+  (bind ?source-location [workstation-05])
   ; set static location for destination
-  (bind ?destination-location [workstation-11])
+  (bind ?destination-location [workstation-06])
 
   (bind ?item-1 (pick-random$ ?manipulation-robocup-objects))
   (bind ?item-2 (pick-random$ ?manipulation-robocup-objects))
