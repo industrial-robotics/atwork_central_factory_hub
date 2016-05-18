@@ -46,21 +46,21 @@ llsfrb:
 
     b-it-bots-peer:
       host: !ipv4 192.168.1.255
-      #port: !udp-port 4446
-      send-port: !udp-port 4446
-      recv-port: !udp-port 4447
+      port: !udp-port 4446
+      #send-port: !udp-port 4446
+      #recv-port: !udp-port 4447
 
     smARTLab-peer:
       host: !ipv4 192.168.1.255
-      #port: !udp-port 4448
-      send-port: !udp-port 4448
-      recv-port: !udp-port 4449
+      port: !udp-port 4448
+      #send-port: !udp-port 4448
+      #recv-port: !udp-port 4449
 
     SPQR-peer:
       host: !ipv4 192.168.1.255
-      #port: !udp-port 4450
-      send-port: !udp-port 4450
-      recv-port: !udp-port 4451
+      port: !udp-port 4450
+      #send-port: !udp-port 4450
+      #recv-port: !udp-port 4451
 
   mongodb:
     enable: false
