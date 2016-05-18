@@ -5,16 +5,9 @@ This is the repository of the referee box for the RoboCup@Work competition for R
 
 This referee box is only a small adaptation of the RoCKIn@Work referee box, which itself is an adaptiation of the RoboCup Logistics League referee box.
 
-#RoCKIn Instructions
-
-This README is from the RoCKIn at work central factory hub.
-
-
-TODO: A few small things have changed (```llsf-refbox``` to ```refbox```). Before public release this should be checked.
-
 
 ## Installation
-The RoCKIn Central Factory Hub (CFH) can be installed on most Linux distributions. However, some require dependencies being built from source. The currently supported setup is Ubuntu 14.04, with Boost 1.54. For other non-supported distributions and setups see Alternative Installation Hints at the end of this readme.
+The RoboCup@Work Central Factory Hub (CFH) can be installed on most Linux distributions. However, some require dependencies being built from source. The currently supported setup is Ubuntu 14.04, with Boost 1.54. For other non-supported distributions and setups see Alternative Installation Hints at the end of this readme.
 
 ### Officially Supported Setup: Ubuntu 14.04, Boost 1.54
 
@@ -29,7 +22,7 @@ The RoCKIn Central Factory Hub (CFH) can be installed on most Linux distribution
         sudo apt-get install libmodbus-dev libclips-dev clips libclipsmm-dev \
                              protobuf-compiler libprotobuf-dev libprotoc-dev \
                              boost1.54-all-dev libmodbus-dev \
-                             libglibmm-2.4-dev libgtkmm-3.0-dev \
+                             libglibmm-2.4-dev libgtkmm-3.0-dev libncurses5-dev \
                              libncursesw5-dev libyaml-cpp-dev libavahi-client-dev git \
                              libssl-dev libelf-dev mongodb-dev mongodb-clients \
                              mongodb libzmq3-dev
@@ -38,7 +31,7 @@ The RoCKIn Central Factory Hub (CFH) can be installed on most Linux distribution
 
 3. Clone this repository:
         
-        git clone https://github.com/rockin-robot-challenge/at_work_central_factory_hub.git
+        git clone https://github.com/robocup-at-work/at_work_central_factory_hub.git
 
 4. Build the Central Factory Hub:
         
@@ -88,7 +81,7 @@ Only a few common options are outlined here.
 
 ## Run the RoCKIn@Work Central Factory Hub
 
-    ./bin/llsf-refbox
+    ./bin/refbox
     
 
 ## FAQ
