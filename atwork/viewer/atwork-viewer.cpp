@@ -344,8 +344,8 @@ bool idle_handler() {
             sstr << task.transportation_task().object().description() << " -> ";
             if (task.transportation_task().has_destination())
                 sstr << task.transportation_task().destination().description();
-            else if (task.transportation_task().has_container())
-                sstr << task.transportation_task().container().description();
+            if (task.transportation_task().has_container())
+                sstr << std::endl << "\t [in: " << task.transportation_task().container().description() << "]";
             if (task.transportation_task().has_processing_team())
                 sstr << " [" << task.transportation_task().processing_team() << "]";
             sstr << std::endl;
