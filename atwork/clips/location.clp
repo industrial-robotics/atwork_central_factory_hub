@@ -49,6 +49,7 @@
   (make-instance workstation-09 of LocationIdentifier (type WS) (instance-id 9) (description "Workstation 9"))
   (make-instance workstation-10 of LocationIdentifier (type WS) (instance-id 10) (description "Workstation 10"))
   (make-instance workstation-11 of LocationIdentifier (type WS) (instance-id 11) (description "Workstation 11"))
+  (make-instance workstation-12 of LocationIdentifier (type WS) (instance-id 12) (description "Workstation 12"))
 
   ; Waypoints
   (make-instance waypoint-01 of LocationIdentifier (type WP) (instance-id 1) (description "Waypoint 1"))
