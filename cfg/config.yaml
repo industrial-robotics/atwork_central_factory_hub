@@ -111,7 +111,7 @@ llsfrb:
       #recv-port: !udp-port 4467
 
   mongodb:
-    enable: false
+    enable: true
     hostport: localhost
     collections:
       text-log: llsfrb.log
