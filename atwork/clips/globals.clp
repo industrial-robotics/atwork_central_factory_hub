@@ -58,4 +58,38 @@
   ?*CBT-COUNT*    =  1
   ?*AWF-COUNT*    =  1
   ?*IRL-COUNT*    =  1
+
+  ?*ROBOCUP-OBJECTS* = (create$
+    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]
+  )
+  ?*ROCKIN-OBJECTS* = (create$
+    [BEARING_BOX] [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
+  )
+
+  ?*SHELF-LOCATIONS* = (create$
+    [shelf-01] [shelf-02]
+  )
+  ?*WORKSTATION-0CM-LOCATIONS* = (create$
+    [workstation-01] [workstation-07] [workstation-11]
+  )
+  ?*WORKSTATION-5CM-LOCATIONS* = (create$
+    [workstation-12] [workstation-08]
+  )
+  ?*WORKSTATION-10CM-LOCATIONS* = (create$
+    [workstation-02] [workstation-03] [workstation-05] [workstation-06]
+  )
+  ?*WORKSTATION-15CM-LOCATIONS* = (create$
+    [workstation-04] [workstation-09] [workstation-10]
+  )
+  ?*PRECISION-LOCATIONS* = (create$
+    [precision-01]
+  )
+  ?*CONVEYOR-LOCATIONS* = (create$
+    [conveyorbelt-01] [conveyorbelt-02]
+  )
+  ?*WAYPOINT-LOCATIONS* = (create$
+    [waypoint-01] [waypoint-02] [waypoint-03] [waypoint-04] [waypoint-05]
+    [waypoint-06] [waypoint-07] [waypoint-08] [waypoint-09] [waypoint-10]
+    [waypoint-11] [waypoint-12] [waypoint-13] [waypoint-14] [waypoint-15]
+  )
 )

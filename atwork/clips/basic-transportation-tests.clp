@@ -51,29 +51,18 @@
     )
   )
 
-  (bind ?transportation-objects (create$
-    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]
-  ))
+  (bind ?transportation-objects ?*ROBOCUP-OBJECTS*)
 
-  (bind ?workstation-locations (create$
-        [workstation-01] [workstation-02] [workstation-03] [workstation-04]
-        [workstation-05] [workstation-06] [workstation-07] [workstation-08]
-        [workstation-09]
-  ))
+  (bind ?decoy-objects (create$ ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*))
+
+  (bind ?workstation-locations ?*WORKSTATION-10CM-LOCATIONS*)
 
   ; Randomize first source location
   (bind ?source-location-1 (pick-random$ ?workstation-locations))
-  ; The source locations should should not be reused
   (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-1))
   ; Randomize second source location
   (bind ?source-location-2 (pick-random$ ?workstation-locations))
-  ; The source locations should should not be reused
   (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-2))
-  ; Randomize third source location
-  (bind ?source-location-3 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-3))
-  ; Randomize a location for destination
-  (bind ?destination-location (pick-random$ ?workstation-locations))
 
   (bind ?item-1 (pick-random$ ?transportation-objects))
   (bind ?item-2 (pick-random$ ?transportation-objects))
@@ -85,9 +74,9 @@
   (slot-insert$ [inventory] items 1
     (make-instance of Item (object-id ?item-1) (location-id ?source-location-1))
     (make-instance of Item (object-id ?item-2) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location-2))
+    (make-instance of Item (object-id ?item-3) (location-id ?source-location-1))
     (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location-3))
+    (make-instance of Item (object-id ?item-5) (location-id ?source-location-2))
   )
 
   ; Tasks
@@ -113,7 +102,7 @@
         (object-id ?item-3)
         (quantity-requested 1)
         (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-2)
+        (source-id ?source-location-1)
     )))
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
@@ -128,7 +117,7 @@
         (object-id ?item-5)
         (quantity-requested 1)
         (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-3)
+        (source-id ?source-location-2)
     )))
   )
 )
