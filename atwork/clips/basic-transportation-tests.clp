@@ -70,13 +70,29 @@
   (bind ?item-4 (pick-random$ ?transportation-objects))
   (bind ?item-5 (pick-random$ ?transportation-objects))
 
+  ; Remove items from decoy set
+  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-1))
+  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-2))
+  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-3))
+  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-4))
+  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-5))
+  ; Pick 3 random decoy objects
+  (bind ?decoy-1 (pick-random$ ?decoy-objects))
+  (bind ?decoy-2 (pick-random$ ?decoy-objects))
+  (bind ?decoy-3 (pick-random$ ?decoy-objects))
+
   ; Inventory
   (slot-insert$ [inventory] items 1
+    ; source location 1
     (make-instance of Item (object-id ?item-1) (location-id ?source-location-1))
     (make-instance of Item (object-id ?item-2) (location-id ?source-location-1))
     (make-instance of Item (object-id ?item-3) (location-id ?source-location-1))
+    (make-instance of Item (object-id ?decoy-1) (location-id ?source-location-1))
+    ; source location 2
     (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
     (make-instance of Item (object-id ?item-5) (location-id ?source-location-2))
+    (make-instance of Item (object-id ?decoy-2) (location-id ?source-location-2))
+    (make-instance of Item (object-id ?decoy-3) (location-id ?source-location-2))
   )
 
   ; Tasks
@@ -178,11 +194,21 @@
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
-  (bind ?item-1 (pick-random$ ?manipulation-robocup-objects))
-  (bind ?item-2 (pick-random$ ?manipulation-robocup-objects))
-  (bind ?item-3 (pick-random$ ?manipulation-rockin-objects))
-  (bind ?item-4 (pick-random$ ?manipulation-rockin-objects))
-  (bind ?item-5 (pick-random$ ?manipulation-rockin-objects))
+  (bind ?manipulation-objects (create$
+    (pick-random$ ?manipulation-robocup-objects)
+    (pick-random$ ?manipulation-robocup-objects)
+    (pick-random$ ?manipulation-rockin-objects)
+    (pick-random$ ?manipulation-rockin-objects)
+    (pick-random$ ?manipulation-rockin-objects)
+  ))
+
+  (bind ?manipulation-objects (randomize$ ?manipulation-objects))
+
+  (bind ?item-1 (nth$ 1 ?manipulation-objects))
+  (bind ?item-2 (nth$ 2 ?manipulation-objects))
+  (bind ?item-3 (nth$ 3 ?manipulation-objects))
+  (bind ?item-4 (nth$ 4 ?manipulation-objects))
+  (bind ?item-5 (nth$ 5 ?manipulation-objects))
 
   (bind ?workstation-locations ?*WORKSTATION-10CM-LOCATIONS*)
 
@@ -199,6 +225,19 @@
   (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-3))
   (bind ?destination-location-4 (pick-random$ ?workstation-locations))
 
+  (bind ?destination-locations (create$
+    ?destination-location-1
+    ?destination-location-2
+    ?destination-location-3
+    ?destination-location-4
+  ))
+
+  (bind ?destination-locations (randomize$ ?destination-locations))
+
+  (bind ?destination-location-1 (nth$ 1 ?destination-locations))
+  (bind ?destination-location-2 (nth$ 2 ?destination-locations))
+  (bind ?destination-location-3 (nth$ 3 ?destination-locations))
+  (bind ?destination-location-4 (nth$ 4 ?destination-locations))
 
   ; Inventory
   (slot-insert$ [inventory] items 1
