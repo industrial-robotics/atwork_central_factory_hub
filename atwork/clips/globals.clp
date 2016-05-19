@@ -46,7 +46,7 @@
   ?*CBT-PREPARATION-TIME*  =  300
   ?*CBT-EXECUTION-TIME*    =  300
   ?*AWF-PREPARATION-TIME*  =  300
-  ?*AWF-EXECUTION-TIME*    =  300
+  ?*AWF-EXECUTION-TIME*    =  600
   ?*IRL-PREPARATION-TIME*  =  300
   ?*IRL-EXECUTION-TIME*    =  300
 
@@ -87,6 +87,8 @@
   ?*CONVEYOR-LOCATIONS* = (create$
     [conveyorbelt-01] [conveyorbelt-02]
   )
+  ?*ROTATING-TABLE-LOCATIONS* = (create$ [conveyorbelt-02] )
+  ?*CONVEYOR-BELT-LOCATIONS* = (create$ [conveyorbelt-01] )
   ?*WAYPOINT-LOCATIONS* = (create$
     [waypoint-01] [waypoint-02] [waypoint-03] [waypoint-04] [waypoint-05]
     [waypoint-06] [waypoint-07] [waypoint-08] [waypoint-09] [waypoint-10]
