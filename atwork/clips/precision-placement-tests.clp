@@ -51,37 +51,25 @@
     )
   )
 
-  (bind ?precision-objects (create$
-    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20] [BEARING_BOX]
-    [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
-  ))
-
-  (bind ?workstation-locations (create$
-        [workstation-01] [workstation-02] [workstation-03] [workstation-04]
-        [workstation-05] [workstation-06] [workstation-07] [workstation-08]
-        [workstation-09]
-  ))
+  (bind ?precision-objects ?*ROBOCUP-OBJECTS*)
+  (bind ?source-locations ?*WORKSTATION-10CM-LOCATIONS*)
+  (bind ?destination-locations ?*PRECISION-LOCATIONS*)
 
   ; Randomize a location for source
-  (bind ?source-location (pick-random$ ?workstation-locations))
-  ; The location of the assembly aid tray should should not be reused
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location))
+  (bind ?source-location (pick-random$ ?source-locations))
+
   ; Randomize a location for destination
-  (bind ?destination-location [precision-01])
+  (bind ?destination-location (pick-random$ ?destination-locations))
 
   (bind ?item-1 (pick-random$ ?precision-objects))
   (bind ?item-2 (pick-random$ ?precision-objects))
   (bind ?item-3 (pick-random$ ?precision-objects))
-  (bind ?item-4 (pick-random$ ?precision-objects))
-  (bind ?item-5 (pick-random$ ?precision-objects))
 
   ; Inventory
   (slot-insert$ [inventory] items 1
     (make-instance of Item (object-id ?item-1) (location-id ?source-location))
     (make-instance of Item (object-id ?item-2) (location-id ?source-location))
     (make-instance of Item (object-id ?item-3) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-4) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location))
   )
 
   ; Tasks
@@ -102,24 +90,10 @@
         (destination-id ?destination-location)
         (source-id ?source-location)
     )))
+    ; 3rd Placement Task
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
         (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-4)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    ; 5th Placement Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-5)
         (quantity-requested 1)
         (destination-id ?destination-location)
         (source-id ?source-location)
