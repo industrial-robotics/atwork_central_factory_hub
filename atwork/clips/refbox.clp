@@ -20,7 +20,7 @@
 (load* (resolve-file basic-transportation-tests.clp))
 (load* (resolve-file precision-placement-tests.clp))
 (load* (resolve-file conveyor-belt-tests.clp))
-;(load* (resolve-file at-work-finals.clp))
+(load* (resolve-file at-work-finals.clp))
 ;(load* (resolve-file industrial-robotics-league-challenges.clp))
 (load* (resolve-file net.clp))
 (load* (resolve-file robots.clp))
