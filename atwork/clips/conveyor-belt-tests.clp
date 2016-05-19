@@ -51,11 +51,7 @@
     )
   )
 
-  (bind ?manipulation-objects (create$
-    [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]
-    ;[BEARING_BOX] [BEARING] [AXIS] [DISTANCE_TUBE] [MOTOR]
-  ))
-
+  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
   (bind ?source-location [conveyorbelt-01])
   (bind ?destination-location [robot])
 
