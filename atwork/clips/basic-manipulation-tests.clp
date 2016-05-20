@@ -60,61 +60,48 @@
   ; set static location for destination
   (bind ?destination-location [workstation-06])
 
-  (bind ?item-1 (pick-random$ ?manipulation-robocup-objects))
-  (bind ?item-2 (pick-random$ ?manipulation-robocup-objects))
-  (bind ?item-3 (pick-random$ ?manipulation-robocup-objects))
-  (bind ?item-4 (pick-random$ ?manipulation-rockin-objects))
-  (bind ?item-5 (pick-random$ ?manipulation-rockin-objects))
+  ; 3 RoboCup objects
+  (loop-for-count 3
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-robocup-objects))
 
-  ; Inventory
-  (slot-insert$ [inventory] items 1
-    (make-instance of Item (object-id ?item-1) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-2) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-4) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location))
+    ; Add to inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    ; Manipulation Task
+    (slot-insert$ [task-info] tasks 1
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id ?destination-location)
+          (source-id ?source-location)))
+      )
+    )
   )
 
-  ; Tasks
-  (slot-insert$ [task-info] tasks 1
-    ; 1st Manipulation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    ; 2nd Manipulation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-2)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-4)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    ; 5th Manipulation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-5)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
+  ; 2 RoCKIn objects (TODO: Selected by team)
+  (loop-for-count 2
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-rockin-objects))
+
+    ; Add to inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    ; Manipulation Task
+    (slot-insert$ [task-info] tasks 1
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id ?destination-location)
+          (source-id ?source-location)))
+      )
+    )
   )
 )
 
