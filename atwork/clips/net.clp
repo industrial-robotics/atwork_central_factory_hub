@@ -360,12 +360,24 @@
     (assert (attention-message (text "Too many items in the inventory! Please reset the benchmark")))
     (return)
   )
+  ; Identify the currently active phase
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
+  (bind ?current-phase (send ?current-state to-robot-phase))
+  (bind ?robot-state   (send ?current-state to-robot-state))
 
   (bind ?pb-inventory (send [inventory] create-msg))
-  (pb-broadcast ?peer-id-public ?pb-inventory)
 
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?pb-inventory)
+  )
+
+  (if (eq (str-compare ?robot-state RUNNING)
+          (str-compare ?current-phase EXECUTION) 0)
+    then
+      (pb-broadcast ?peer-id-public ?pb-inventory)
+    else
+      (if (debug 3) then (printout t "Not sending Inventory to peers." crlf))
   )
 
   (pb-destroy ?pb-inventory)
