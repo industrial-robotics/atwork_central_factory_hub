@@ -346,13 +346,37 @@
   (pb-destroy ?ri)
 )
 
-(defrule net-send-Inventory
+(defrule net-send-Inventory-client
   (time $?now)
-  ?f <- (signal (type inventory) (time $?t&:(timeout ?now ?t ?*INVENTORY-PERIOD*)) (seq ?seq))
-  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  ?f <- (signal (type inventory-client) (time $?t&:(timeout ?now ?t ?*BC-INVENTORY-PERIOD*)) (seq ?seq))
   =>
   (modify ?f (time ?now) (seq (+ ?seq 1)))
 
+  (bind ?item-count (length (send [inventory] get-items)))
+  (if (>= ?item-count 23)
+   then
+    (printout t "Too many items in the inventory! Please reset the benchmark" crlf)
+    (assert (attention-message (text "Too many items in the inventory! Please reset the benchmark")))
+    (return)
+  )
+
+  (bind ?pb-inventory (send [inventory] create-msg))
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?pb-inventory)
+  )
+
+  (pb-destroy ?pb-inventory)
+)
+
+(defrule net-send-Inventory-peer
+  (time $?now)
+  ?f <- (signal (type inventory) (seq ?seq) (count ?count)
+     (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-INVENTORY-BURST-COUNT*)
+                 then ?*BC-INVENTORY-PERIOD*
+                 else ?*BC-INVENTORY-BURST-PERIOD*))))
+  (network-peer (group "PUBLIC") (id ?peer-id-public))
+  =>
   (bind ?item-count (length (send [inventory] get-items)))
   (if (>= ?item-count 23)
    then
@@ -368,14 +392,11 @@
 
   (bind ?pb-inventory (send [inventory] create-msg))
 
-  (do-for-all-facts ((?client network-client)) TRUE
-    (pb-send ?client:id ?pb-inventory)
-  )
-
-  (if (eq (str-compare ?robot-state RUNNING)
-          (str-compare ?current-phase EXECUTION) 0)
+  (if (and (eq ?robot-state RUNNING)
+           (eq ?current-phase EXECUTION))
     then
       (pb-broadcast ?peer-id-public ?pb-inventory)
+      (modify ?f (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
     else
       (if (debug 3) then (printout t "Not sending Inventory to peers." crlf))
   )
@@ -383,7 +404,24 @@
   (pb-destroy ?pb-inventory)
 )
 
-(defrule net-send-TaskInfo
+(defrule net-send-TaskInfo-client
+  (time $?now)
+  ?sf <- (signal (type task-info-client) (seq ?seq) (count ?count)
+     (time $?t&:(timeout ?now ?t ?*BC-TASKINFO-PERIOD*)))
+  =>
+  (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
+
+  (bind ?ti (send [task-info] create-msg))
+
+  (do-for-all-facts ((?client network-client)) TRUE
+    (pb-send ?client:id ?ti)
+  )
+
+  (pb-destroy ?ti)
+)
+
+
+(defrule net-send-TaskInfo-peer
   (time $?now)
   ?sf <- (signal (type task-info) (seq ?seq) (count ?count)
      (time $?t&:(timeout ?now ?t (if (> ?count ?*BC-TASKINFO-BURST-COUNT*)
@@ -391,8 +429,6 @@
                  else ?*BC-TASKINFO-BURST-PERIOD*))))
   (network-peer (group "PUBLIC") (id ?peer-id-public))
   =>
-  (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
-
   ; Identify the currently active phase
   (bind ?state-machine (send [benchmark] get-state-machine))
   (bind ?current-state (send ?state-machine get-current-state))
@@ -401,14 +437,11 @@
 
   (bind ?ti (send [task-info] create-msg))
 
-  (do-for-all-facts ((?client network-client)) TRUE
-    (pb-send ?client:id ?ti)
-  )
-
-  (if (eq (str-compare ?robot-state RUNNING)
-          (str-compare ?current-phase EXECUTION) 0)
+  (if (and (eq ?robot-state RUNNING)
+           (eq ?current-phase EXECUTION))
     then
       (pb-broadcast ?peer-id-public ?ti)
+      (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
     else
       (if (debug 3) then (printout t "Not sending TaskInfo to peers." crlf))
   )

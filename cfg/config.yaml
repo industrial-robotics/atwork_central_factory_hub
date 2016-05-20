@@ -29,9 +29,10 @@ llsfrb:
     debug-level: 2
     unwatch-facts: [time, signal]
     unwatch-rules: [retract-time,
-                    net-send-beacon, net-send-BenchmarkState, net-send-TaskInfo,
-                    net-send-Inventory, net-send-VersionInfo,
-                    net-send-ConveyorBeltStatus]
+                    net-send-beacon, net-send-BenchmarkState,
+                    net-send-TaskInfo-peer, net-send-TaskInfo-client,
+                    net-send-Inventory-peer, net-send-Inventory-client,
+                    net-send-VersionInfo, net-send-ConveyorBeltStatus]
 
   comm:
     protobuf-dirs: ["@BASEDIR@/atwork/msgs"]
