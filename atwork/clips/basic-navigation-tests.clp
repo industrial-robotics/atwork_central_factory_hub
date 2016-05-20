@@ -62,99 +62,20 @@
         NORTH EAST SOUTH WEST
   ))
 
-  ; Pick random location and remove from location pool
-  (bind ?location-1 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-1))
-  ; Pick random location and remove from location pool
-  (bind ?location-2 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-2))
-  ; Pick random location and remove from location pool
-  (bind ?location-3 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-3))
-  ; Pick random location and remove from location pool
-  (bind ?location-4 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-4))
-  ; Pick random location and remove from location pool
-  (bind ?location-5 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-5))
-  ; Pick random location and remove from location pool
-  (bind ?location-6 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-6))
-  ; Pick random location and remove from location pool
-  (bind ?location-7 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-7))
-  ; Pick random location and remove from location pool
-  (bind ?location-8 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-8))
-  ; Pick random location and remove from location pool
-  (bind ?location-9 (pick-random$ ?navigation-locations))
-  (bind ?navigation-locations (delete-member$ ?navigation-locations ?location-9))
+  (loop-for-count 9
+    ; Pick random location and remove from location pool
+    (bind ?location (pick-random$ ?navigation-locations))
+    (bind ?navigation-locations (delete-member$ ?navigation-locations ?location))
 
-  ; Tasks
-  (slot-insert$ [task-info] tasks 1
-    ; 1st Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-1)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 2nd Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-2)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 3rd Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-3)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 4th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-4)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 5th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-5)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 6th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-6)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 7th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-7)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 8th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-8)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
-    ; 9th Navigation Goal
-    (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-      (navigation-task (make-instance of NavigationTask
-        (location-id ?location-9)
-        (wait-time 3)
-        (orientation (pick-random$ ?navigation-directions))
-    )))
+    ; Task
+    (slot-insert$ [task-info] tasks 1
+      (make-instance of Task (status OFFERED) (task-type NAVIGATION)
+        (navigation-task (make-instance of NavigationTask
+          (location-id ?location)
+          (wait-time 3)
+          (orientation (pick-random$ ?navigation-directions))))
+      )
+    )
   )
 )
 
