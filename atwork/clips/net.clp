@@ -393,11 +393,24 @@
   =>
   (modify ?sf (time ?now) (seq (+ ?seq 1)) (count (+ ?count 1)))
 
+  ; Identify the currently active phase
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
+  (bind ?current-phase (send ?current-state to-robot-phase))
+  (bind ?robot-state   (send ?current-state to-robot-state))
+
   (bind ?ti (send [task-info] create-msg))
-  (pb-broadcast ?peer-id-public ?ti)
 
   (do-for-all-facts ((?client network-client)) TRUE
     (pb-send ?client:id ?ti)
+  )
+
+  (if (eq (str-compare ?robot-state RUNNING)
+          (str-compare ?current-phase EXECUTION) 0)
+    then
+      (pb-broadcast ?peer-id-public ?ti)
+    else
+      (if (debug 3) then (printout t "Not sending TaskInfo to peers." crlf))
   )
 
   (pb-destroy ?ti)
