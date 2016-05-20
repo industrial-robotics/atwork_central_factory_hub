@@ -11,7 +11,8 @@
   ?*BENCHMARKSTATE-PERIOD* = 0.1
   ?*BENCHMARKINFO-PERIOD* = 0.1
   ?*ROBOTINFO-PERIOD* = 0.25
-  ?*INVENTORY-PERIOD* = 1.0
+  ?*BC-INVENTORY-PERIOD* = 1.0
+  ?*BC-INVENTORY-BURST-PERIOD* = 0.5
   ?*DRILLING-MACHINE-PERIOD* = 0.1
   ?*CONVEYOR-BELT-PERIOD* = 0.1
   ?*FORCE-FITTING-MACHINE-PERIOD* = 0.1
@@ -28,6 +29,7 @@
 
   ; number of burst updates before falling back to slower updates
   ?*BC-TASKINFO-BURST-COUNT* = 10
+  ?*BC-INVENTORY-BURST-COUNT* = 10
 
   ; How often and in what period should the version information
   ; be send over the network when a new peer is detected?
