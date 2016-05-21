@@ -146,16 +146,17 @@
   (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-2))
 
   (bind ?destination-location-1 (pick-random$ ?*SHELF-LOCATIONS*))
-  (bind ?destination-location-2 [conveyorbelt-02])
+  (bind ?destination-location-2 (pick-random$ ?workstation-locations))
+  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-2))
   (bind ?destination-location-3 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-3))
-  (bind ?destination-location-4 (pick-random$ ?workstation-locations))
+  (bind ?destination-location-4 [conveyorbelt-02])
 
   (bind ?destination-locations (create$
     ?destination-location-1
     ?destination-location-2
     ?destination-location-3
-    ?destination-location-4
+    ; Do not include rotating table
+    ;?destination-location-4
   ))
 
   (bind ?destination-locations (randomize$ ?destination-locations))
@@ -163,7 +164,7 @@
   (bind ?destination-location-1 (nth$ 1 ?destination-locations))
   (bind ?destination-location-2 (nth$ 2 ?destination-locations))
   (bind ?destination-location-3 (nth$ 3 ?destination-locations))
-  (bind ?destination-location-4 (nth$ 4 ?destination-locations))
+  ;(bind ?destination-location-4 (nth$ 4 ?destination-locations))
 
   ; Inventory
   (slot-insert$ [inventory] items 1
@@ -172,8 +173,8 @@
     (make-instance of Item (object-id ?item-3) (location-id ?source-location-1))
     (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
     (make-instance of Item (object-id ?item-5) (location-id ?source-location-2))
-    (make-instance of Item (object-id [CONTAINER_B]) (location-id ?destination-location-4))
-    (make-instance of Item (object-id [CONTAINER_R]) (location-id ?destination-location-4))
+    (make-instance of Item (object-id [CONTAINER_B]) (location-id ?destination-location-1))
+    (make-instance of Item (object-id [CONTAINER_R]) (location-id ?destination-location-1))
   )
 
   ; Tasks
@@ -183,7 +184,7 @@
       (transportation-task (make-instance of TransportationTask
         (object-id ?item-1)
         (quantity-requested 1)
-        (destination-id ?destination-location-1)
+        (destination-id ?destination-location-4)
         (source-id ?source-location-1)
     )))
     ; 2nd Transportation Task
@@ -206,7 +207,7 @@
         (object-id ?item-4)
         (container-id [CONTAINER_B])
         (quantity-requested 1)
-        (destination-id ?destination-location-4)
+        (destination-id ?destination-location-1)
         (source-id ?source-location-2)
     )))
     ; 5th Transportation Task
@@ -215,7 +216,7 @@
         (object-id ?item-5)
         (container-id [CONTAINER_R])
         (quantity-requested 1)
-        (destination-id ?destination-location-4)
+        (destination-id ?destination-location-1)
         (source-id ?source-location-2)
     )))
   )
