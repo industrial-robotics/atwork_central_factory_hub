@@ -392,7 +392,8 @@
     ?destination-location-2
     ?destination-location-3
     ?destination-location-4
-    ?destination-location-5
+    ; Do not include rotating table, we need to know this location
+    ;?destination-location-5
   ))
   ; Shuffle list of destination locations
   (bind ?destination-locations (randomize$ ?destination-locations))
@@ -401,7 +402,8 @@
   (bind ?destination-location-2 (nth$ 2 ?destination-locations))
   (bind ?destination-location-3 (nth$ 3 ?destination-locations))
   (bind ?destination-location-4 (nth$ 4 ?destination-locations))
-  (bind ?destination-location-5 (nth$ 5 ?destination-locations))
+  ; Do not include rotating table, we need to know this location
+  ;(bind ?destination-location-5 (nth$ 5 ?destination-locations))
 
 
   ; Remove items from decoy set
