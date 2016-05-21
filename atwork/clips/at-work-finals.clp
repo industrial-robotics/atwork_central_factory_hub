@@ -4,11 +4,9 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-;; AWF 1
+(defclass AtWorkFinal (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defclass AtWorkFinal2016 (is-a BenchmarkScenario) (role concrete))
-
-(defmessage-handler AtWorkFinal2016 setup (?time ?state-machine)
+(defmessage-handler AtWorkFinal setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
@@ -52,7 +50,18 @@
       [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
     )
   )
+)
 
+(defmessage-handler AtWorkFinal handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+;; AWF 1
+
+(defclass AtWorkFinal2016 (is-a AtWorkFinal) (role concrete))
+
+(defmessage-handler AtWorkFinal2016 setup (?time ?state-machine)
+  (call-next-handler)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
@@ -325,9 +334,6 @@
 
 )
 
-(defmessage-handler AtWorkFinal2016 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
 ;; END AWF1
 
 (defrule init-awf
