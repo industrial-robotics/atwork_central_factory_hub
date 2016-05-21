@@ -4,9 +4,9 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass BasicTransportationTest1 (is-a BenchmarkScenario) (role concrete))
+(defclass BasicTransportationTest (is-a BenchmarkScenario) (role concrete))
 
-(defmessage-handler BasicTransportationTest1 setup (?time ?state-machine)
+(defmessage-handler BasicTransportationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
@@ -50,6 +50,16 @@
       [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
     )
   )
+)
+
+(defmessage-handler BasicTransportationTest handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+(defclass BasicTransportationTest1 (is-a BasicTransportationTest) (role concrete))
+
+(defmessage-handler BasicTransportationTest1 setup (?time ?state-machine)
+  (call-next-handler)
 
   (bind ?transportation-objects ?*ROBOCUP-OBJECTS*)
 
@@ -99,58 +109,13 @@
   )
 )
 
-(defmessage-handler BasicTransportationTest1 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
 
 ;; BTT 2
 
-(defclass BasicTransportationTest2 (is-a BenchmarkScenario) (role concrete))
+(defclass BasicTransportationTest2 (is-a BasicTransportationTest) (role concrete))
 
 (defmessage-handler BasicTransportationTest2 setup (?time ?state-machine)
-  (make-instance [prep-timeup-state] of TimeoutState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
-  (make-instance [prep-stopped-state] of StoppedState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
-  (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT-PREPARATION-TIME*))
-  (make-instance [prep-paused-state] of PausedState
-    (phase PREPARATION) (state-machine ?state-machine))
-
-  (make-instance [exec-stopped-state] of StoppedState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
-  (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT-EXECUTION-TIME*))
-  (make-instance [exec-paused-state] of PausedState
-    (phase EXECUTION) (state-machine ?state-machine))
-  (make-instance [exec-finished-state] of FinishedState
-    (phase EXECUTION) (state-machine ?state-machine))
-
-  (send [prep-stopped-state]    add-transition START           [prep-running-state])
-  (send [prep-running-state]    add-transition PAUSE           [prep-paused-state])
-  (send [prep-running-state]    add-transition STOP            [exec-stopped-state])
-  (send [prep-running-state]    add-transition TIMEOUT         [prep-timeup-state])
-  (send [prep-running-state]    add-transition FINISH          [prep-timeup-state])
-  (send [prep-paused-state]     add-transition START           [prep-running-state])
-  (send [prep-paused-state]     add-transition STOP            [exec-stopped-state])
-
-  (send [prep-timeup-state]     add-transition START         [exec-running-state])
-
-  (send [exec-stopped-state]    add-transition START           [exec-running-state])
-  (send [exec-running-state]    add-transition PAUSE           [exec-paused-state])
-  (send [exec-running-state]    add-transition STOP            [exec-finished-state])
-  (send [exec-running-state]    add-transition TIMEOUT         [exec-finished-state])
-  (send [exec-running-state]    add-transition FINISH          [exec-finished-state])
-  (send [exec-paused-state]     add-transition START           [exec-running-state])
-  (send [exec-paused-state]     add-transition STOP            [exec-stopped-state])
-
-  (make-instance ?state-machine of StateMachine
-    (current-state [prep-stopped-state])
-    (states
-      [prep-stopped-state] [prep-running-state] [prep-paused-state] [prep-finished-state]
-      [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
-    )
-  )
+  (call-next-handler)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
@@ -256,59 +221,12 @@
   )
 )
 
-(defmessage-handler BasicTransportationTest2 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
-
 ;; BTT 3
 
-(defclass BasicTransportationTest3 (is-a BenchmarkScenario) (role concrete))
+(defclass BasicTransportationTest3 (is-a BasicTransportationTest) (role concrete))
 
 (defmessage-handler BasicTransportationTest3 setup (?time ?state-machine)
-  (make-instance [prep-timeup-state] of TimeoutState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
-  (make-instance [prep-stopped-state] of StoppedState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
-  (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT-PREPARATION-TIME*))
-  (make-instance [prep-paused-state] of PausedState
-    (phase PREPARATION) (state-machine ?state-machine))
-
-  (make-instance [exec-stopped-state] of StoppedState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time))
-  (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT-EXECUTION-TIME*))
-  (make-instance [exec-paused-state] of PausedState
-    (phase EXECUTION) (state-machine ?state-machine))
-  (make-instance [exec-finished-state] of FinishedState
-    (phase EXECUTION) (state-machine ?state-machine))
-
-  (send [prep-stopped-state]    add-transition START           [prep-running-state])
-  (send [prep-running-state]    add-transition PAUSE           [prep-paused-state])
-  (send [prep-running-state]    add-transition STOP            [exec-stopped-state])
-  (send [prep-running-state]    add-transition TIMEOUT         [prep-timeup-state])
-  (send [prep-running-state]    add-transition FINISH          [prep-timeup-state])
-  (send [prep-paused-state]     add-transition START           [prep-running-state])
-  (send [prep-paused-state]     add-transition STOP            [exec-stopped-state])
-
-  (send [prep-timeup-state]     add-transition START         [exec-running-state])
-
-  (send [exec-stopped-state]    add-transition START           [exec-running-state])
-  (send [exec-running-state]    add-transition PAUSE           [exec-paused-state])
-  (send [exec-running-state]    add-transition STOP            [exec-finished-state])
-  (send [exec-running-state]    add-transition TIMEOUT         [exec-finished-state])
-  (send [exec-running-state]    add-transition FINISH          [exec-finished-state])
-  (send [exec-paused-state]     add-transition START           [exec-running-state])
-  (send [exec-paused-state]     add-transition STOP            [exec-stopped-state])
-
-  (make-instance ?state-machine of StateMachine
-    (current-state [prep-stopped-state])
-    (states
-      [prep-stopped-state] [prep-running-state] [prep-paused-state] [prep-finished-state]
-      [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
-    )
-  )
-
+  (call-next-handler)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
@@ -504,9 +422,6 @@
 
 )
 
-(defmessage-handler BasicTransportationTest3 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
 ;; END BTT3
 
 (defrule init-btt
