@@ -4,7 +4,7 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass BasicTransportationTest (is-a BenchmarkScenario) (role concrete))
+(defclass BasicTransportationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
 (defmessage-handler BasicTransportationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
