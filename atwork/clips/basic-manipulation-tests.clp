@@ -4,9 +4,9 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass BasicManipulationTest1 (is-a BenchmarkScenario) (role concrete))
+(defclass BasicManipulationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler BasicManipulationTest1 setup (?time ?state-machine)
+(defmessage-handler BasicManipulationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
@@ -50,6 +50,18 @@
       [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
     )
   )
+)
+
+(defmessage-handler BasicManipulationTest handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+;; BMT 1
+
+(defclass BasicManipulationTest1 (is-a BasicManipulationTest) (role concrete))
+
+(defmessage-handler BasicManipulationTest1 setup (?time ?state-machine)
+  (call-next-handler)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   
@@ -105,9 +117,6 @@
   )
 )
 
-(defmessage-handler BasicManipulationTest1 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
 
 (defrule init-bmt
   (init)
