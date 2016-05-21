@@ -4,9 +4,10 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass BasicNavigationTest1 (is-a BenchmarkScenario) (role concrete))
+;; Generic BNT
+(defclass BasicNavigationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler BasicNavigationTest1 setup (?time ?state-machine)
+(defmessage-handler BasicNavigationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
@@ -50,7 +51,18 @@
       [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
     )
   )
+)
 
+(defmessage-handler BasicNavigationTest handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+;; BNT 1
+
+(defclass BasicNavigationTest1 (is-a BasicNavigationTest) (role concrete))
+
+(defmessage-handler BasicNavigationTest1 setup (?time ?state-machine)
+  (call-next-handler)
 
   (bind ?navigation-locations (create$
         ?*WORKSTATION-0CM-LOCATIONS* ?*WORKSTATION-5CM-LOCATIONS*
@@ -78,12 +90,6 @@
     )
   )
 )
-
-(defmessage-handler BasicNavigationTest1 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
-
-
 
 
 (defrule init-bnt
