@@ -4,9 +4,9 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass PrecisionPlacementTest1 (is-a BenchmarkScenario) (role concrete))
+(defclass PrecisionPlacementTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler PrecisionPlacementTest1 setup (?time ?state-machine)
+(defmessage-handler PrecisionPlacementTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
@@ -50,6 +50,18 @@
       [exec-stopped-state] [exec-running-state] [exec-paused-state] [exec-finished-state]
     )
   )
+)
+
+(defmessage-handler PrecisionPlacementTest handle-feedback (?pb-msg ?time ?name ?team)
+  (return FINISH)     ; Always finish the benchmark on feedback
+)
+
+;; PPT 1
+
+(defclass PrecisionPlacementTest1 (is-a PrecisionPlacementTest) (role concrete))
+
+(defmessage-handler PrecisionPlacementTest1 setup (?time ?state-machine)
+  (call-next-handler)
 
   (bind ?precision-objects ?*ROBOCUP-OBJECTS*)
   (bind ?source-locations ?*WORKSTATION-10CM-LOCATIONS*)
@@ -61,49 +73,26 @@
   ; Randomize a location for destination
   (bind ?destination-location (pick-random$ ?destination-locations))
 
-  (bind ?item-1 (pick-random$ ?precision-objects))
-  (bind ?item-2 (pick-random$ ?precision-objects))
-  (bind ?item-3 (pick-random$ ?precision-objects))
+  (loop-for-count 3
+    (bind ?item (pick-random$ ?precision-objects))
+    (bind ?precision-objects (delete-member$ ?precision-objects ?item))
 
-  ; Inventory
-  (slot-insert$ [inventory] items 1
-    (make-instance of Item (object-id ?item-1) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-2) (location-id ?source-location))
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location))
-  )
-
-  ; Tasks
-  (slot-insert$ [task-info] tasks 1
-    ; 1st Placement Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    ; 2nd Placement Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-2)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
-    ; 3rd Placement Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id ?destination-location)
-        (source-id ?source-location)
-    )))
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+    ; Tasks
+    (slot-insert$ [task-info] tasks 1
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id ?destination-location)
+          (source-id ?source-location))))
+    )
   )
 )
 
-(defmessage-handler PrecisionPlacementTest1 handle-feedback (?pb-msg ?time ?name ?team)
-  (return FINISH)     ; Always finish the benchmark on feedback
-)
 
 (defrule init-ppt
   (init)
