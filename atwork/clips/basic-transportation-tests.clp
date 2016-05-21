@@ -57,84 +57,45 @@
 
   (bind ?workstation-locations ?*WORKSTATION-10CM-LOCATIONS*)
 
-  ; Randomize first source location
-  (bind ?source-location-1 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-1))
-  ; Randomize second source location
-  (bind ?source-location-2 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-2))
-
-  (bind ?item-1 (pick-random$ ?transportation-objects))
-  (bind ?item-2 (pick-random$ ?transportation-objects))
-  (bind ?item-3 (pick-random$ ?transportation-objects))
-  (bind ?item-4 (pick-random$ ?transportation-objects))
-  (bind ?item-5 (pick-random$ ?transportation-objects))
-
-  ; Remove items from decoy set
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-1))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-2))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-3))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-4))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-5))
-  ; Pick 3 random decoy objects
-  (bind ?decoy-1 (pick-random$ ?decoy-objects))
-  (bind ?decoy-2 (pick-random$ ?decoy-objects))
-  (bind ?decoy-3 (pick-random$ ?decoy-objects))
-
-  ; Inventory
-  (slot-insert$ [inventory] items 1
-    ; source location 1
-    (make-instance of Item (object-id ?item-1) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-2) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?decoy-1) (location-id ?source-location-1))
-    ; source location 2
-    (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?decoy-2) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?decoy-3) (location-id ?source-location-2))
+  ; Source locations must exist before adding to it.
+  (bind ?source-locations (create$ ))
+  ; Draw 2 source locations in a loop, this counter could be configured in the future.
+  (loop-for-count (?counter 1 2) do
+    (bind ?location  (pick-random$ ?workstation-locations))
+    (bind ?source-locations (create$ ?source-locations ?location))
+    (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
   )
 
-  ; Tasks
-  (slot-insert$ [task-info] tasks 1
-    ; 1st Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
-        (quantity-requested 1)
-        (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-1)
-    )))
-    ; 2nd Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-2)
-        (quantity-requested 1)
-        (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-1)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-1)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-4)
-        (quantity-requested 1)
-        (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-2)
-    )))
-    ; 5th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-5)
-        (quantity-requested 1)
-        (destination-id (pick-random$ ?workstation-locations))
-        (source-id ?source-location-2)
-    )))
+  (loop-for-count (?counter 1 5) do
+    (bind ?item (pick-random$ ?transportation-objects))
+    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
+    ; Get a source location from source locations.
+    ; Try to evenly distribute source locations.
+    (bind ?source-location (nth$ (+ 1 (mod ?counter (length ?source-locations))) ?source-locations))
+
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item)
+                             (location-id ?source-location))
+    )
+
+    ; Insert a task with random destination into tasks
+    (slot-insert$ [task-info] tasks 1
+      ; 1st Transportation Task
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id (pick-random$ ?workstation-locations))
+          (source-id ?source-location))))
+    )
+  )
+  (loop-for-count (?counter 1 3) do
+    ; Get a source location from source locations.
+    ; Try to evenly distribute source locations.
+    (bind ?source-location (nth$ (+ 1 (mod ?counter (length ?source-locations))) ?source-locations))
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id (pick-random$ ?decoy-objects)) (location-id ?source-location))
+    )
   )
 )
 
