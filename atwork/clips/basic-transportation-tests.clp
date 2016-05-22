@@ -117,108 +117,122 @@
 (defmessage-handler BasicTransportationTest2 setup (?time ?state-machine)
   (call-next-handler)
 
-  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
-  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
+  (bind ?robocup-objects          ?*ROBOCUP-OBJECTS*)
+  (bind ?rockin-objects           ?*ROCKIN-OBJECTS*)
+  (bind ?workstation-locations    ?*WORKSTATION-10CM-LOCATIONS*)
+  (bind ?shelf-locations          ?*SHELF-LOCATIONS*)
+  (bind ?rotating-table-locations ?*ROTATING-TABLE-LOCATIONS*)
 
-  (bind ?manipulation-objects (create$
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-  ))
+  ; create empty list of objects for transportation
+  (bind ?transportation-objects (create$ ))
+  ; pick two objects from the robocup set
+  (loop-for-count 2
+    (bind ?transportation-objects (create$ ?transportation-objects
+      (pick-random$ ?robocup-objects)))
+  )
+  ; pick two objects from the RoCKIn set
+  (loop-for-count 3
+    (bind ?transportation-objects (create$ ?transportation-objects
+      (pick-random$ ?rockin-objects)))
+  )
+  ; shuffle the objects
+  (bind ?transportation-objects (randomize$ ?transportation-objects))
 
-  (bind ?manipulation-objects (randomize$ ?manipulation-objects))
-
-  (bind ?item-1 (nth$ 1 ?manipulation-objects))
-  (bind ?item-2 (nth$ 2 ?manipulation-objects))
-  (bind ?item-3 (nth$ 3 ?manipulation-objects))
-  (bind ?item-4 (nth$ 4 ?manipulation-objects))
-  (bind ?item-5 (nth$ 5 ?manipulation-objects))
-
-  (bind ?workstation-locations ?*WORKSTATION-10CM-LOCATIONS*)
-
-  ; Randomize first source location
-  (bind ?source-location-1 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-1))
-  ; Randomize second source location
-  (bind ?source-location-2 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-2))
-
-  (bind ?destination-location-1 (pick-random$ ?*SHELF-LOCATIONS*))
-  (bind ?destination-location-2 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-2))
-  (bind ?destination-location-3 (pick-random$ ?workstation-locations))
-  (bind ?destination-location-4 [conveyorbelt-02])
-
-  (bind ?destination-locations (create$
-    ?destination-location-1
-    ?destination-location-2
-    ?destination-location-3
-    ; Do not include rotating table
-    ;?destination-location-4
-  ))
-
-  (bind ?destination-locations (randomize$ ?destination-locations))
-
-  (bind ?destination-location-1 (nth$ 1 ?destination-locations))
-  (bind ?destination-location-2 (nth$ 2 ?destination-locations))
-  (bind ?destination-location-3 (nth$ 3 ?destination-locations))
-  ;(bind ?destination-location-4 (nth$ 4 ?destination-locations))
-
-  ; Inventory
-  (slot-insert$ [inventory] items 1
-    (make-instance of Item (object-id ?item-1) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-2) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location-2))
-    (make-instance of Item (object-id [CONTAINER_B]) (location-id ?destination-location-1))
-    (make-instance of Item (object-id [CONTAINER_R]) (location-id ?destination-location-1))
+  ; Source locations must exist before adding to it.
+  (bind ?source-locations (create$ ))
+  ; Draw 2 source locations in a loop, this counter could be configured in the future.
+  (loop-for-count (?counter 1 2) do
+    (bind ?location  (pick-random$ ?workstation-locations))
+    (bind ?source-locations (create$ ?source-locations ?location))
+    (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
   )
 
-  ; Tasks
+  ; Create a list for desintation locations start with one shelf
+  (bind ?location (pick-random$ ?shelf-locations))
+  (bind ?destination-locations (create$ ?location))
+  (loop-for-count 2 do
+    (bind ?location (pick-random$ ?workstation-locations))
+    (bind ?destination-locations (create$ ?destination-locations ?location))
+    (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
+  )
+  ; shuffle the list of destination locations
+  (bind ?destination-locations (randomize$ ?destination-locations))
+
+  ; Need 5 transportation tasks
+  ; but on the last we create 2... one for each container. and the rotating table is done later.
+  (bind ?last 3)
+  (loop-for-count (?counter 1 ?last) do
+    (bind ?item (nth$ ?counter ?transportation-objects))
+    ; Get a source location from source locations.
+    ; Try to evenly distribute source locations.
+    (bind ?source-location (nth$ (+ 1 (mod ?counter (length ?source-locations))) ?source-locations))
+    (bind ?destination-location (nth$ (+ 1 (mod ?counter (length ?destination-locations))) ?destination-locations))
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item)
+                             (location-id ?source-location))
+    )
+    ; On the last iteration we add an extra item for the second container
+    (if (neq ?counter ?last) then
+      ; Task
+      (slot-insert$ [task-info] tasks 1
+        (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+          (transportation-task (make-instance of TransportationTask
+            (object-id ?item)
+            (quantity-requested 1)
+            (destination-id ?destination-location)
+            (source-id ?source-location))))
+      )
+    else
+      ; 1st item for container
+      (slot-insert$ [task-info] tasks 1
+        (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+          (transportation-task (make-instance of TransportationTask
+            (object-id ?item)
+            (container-id [CONTAINER_R])
+            (quantity-requested 1)
+            (destination-id ?destination-location)
+            (source-id ?source-location))))
+      )
+      ; increase the counter and get next item and source location. Can not bind to counter in side loop.
+      (bind ?last (+ 1 ?last))
+      (bind ?item (nth$ ?last ?transportation-objects))
+      (bind ?source-location (nth$ (+ 1 (mod ?last (length ?source-locations))) ?source-locations))
+      ; Inventory
+      (slot-insert$ [inventory] items 1
+        (make-instance of Item (object-id ?item)
+                               (location-id ?source-location))
+      )
+      ; 2nd item for container
+      (slot-insert$ [task-info] tasks 1
+        (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+          (transportation-task (make-instance of TransportationTask
+            (object-id ?item)
+            (container-id [CONTAINER_B])
+            (quantity-requested 1)
+            (destination-id ?destination-location)
+            (source-id ?source-location))))
+      )
+    )
+  )
+  ; One object must be placed on the rotating table
+  (bind ?last (+ 1 ?last))
+  (bind ?item (nth$ ?last ?transportation-objects))
+  (bind ?source-location (nth$ (+ 1 (mod ?last (length ?source-locations))) ?source-locations))
+  (bind ?destination-location (pick-random$ ?rotating-table-locations))
+  ; Inventory
+  (slot-insert$ [inventory] items 1
+    (make-instance of Item (object-id ?item)
+                           (location-id ?source-location))
+  )
+  ; Task
   (slot-insert$ [task-info] tasks 1
-    ; 1st Transportation Task
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
+        (object-id ?item)
         (quantity-requested 1)
-        (destination-id ?destination-location-4)
-        (source-id ?source-location-1)
-    )))
-    ; 2nd Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-2)
-        (quantity-requested 1)
-        (destination-id ?destination-location-2)
-        (source-id ?source-location-1)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id ?destination-location-3)
-        (source-id ?source-location-1)
-    )))
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-4)
-        (container-id [CONTAINER_B])
-        (quantity-requested 1)
-        (destination-id ?destination-location-1)
-        (source-id ?source-location-2)
-    )))
-    ; 5th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-5)
-        (container-id [CONTAINER_R])
-        (quantity-requested 1)
-        (destination-id ?destination-location-1)
-        (source-id ?source-location-2)
-    )))
+        (destination-id ?destination-location)
+        (source-id ?source-location))))
   )
 )
 
