@@ -60,8 +60,8 @@
 
 (defclass BasicManipulationTest1 (is-a BasicManipulationTest) (role concrete))
 
-(defmessage-handler BasicManipulationTest1 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler BasicManipulationTest1 generate ()
+  (printout t "Generating new BasicManipulationTest1" crlf)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   

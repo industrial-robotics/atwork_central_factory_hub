@@ -61,8 +61,8 @@
 
 (defclass BasicNavigationTest1 (is-a BasicNavigationTest) (role concrete))
 
-(defmessage-handler BasicNavigationTest1 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler BasicNavigationTest1 generate ()
+  (printout t "Generating new BasicNavigationTest1" crlf)
 
   (bind ?navigation-locations (create$
         ?*WORKSTATION-0CM-LOCATIONS* ?*WORKSTATION-5CM-LOCATIONS*

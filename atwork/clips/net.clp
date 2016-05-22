@@ -213,12 +213,22 @@
 
   (bind ?pb-event (pb-field-value ?p "event"))
 
-  (if (eq ?pb-event RESET) then
-    (send [benchmark] switch-scenario)
-  else
-    (printout t "RECV TRANSITION EVENT: " ?pb-event crlf)
-    (bind ?state-machine (send [benchmark] get-state-machine))
-    (send ?state-machine process-event ?pb-event)
+  (switch ?pb-event
+    (case RESET then
+      (send [benchmark] switch-scenario))
+    (case SHUFFLE then
+      (bind ?current-scenario (send [benchmark] get-current-scenario))
+      (send [benchmark] cleanup)
+      (send ?current-scenario generate))
+    (case SKIP then
+      (bind ?state-machine (send [benchmark] get-state-machine))
+      (send ?state-machine process-event STOP)
+      (send ?state-machine process-event START)
+    )
+    (default
+      (printout t "RECV TRANSITION EVENT: " ?pb-event crlf)
+      (bind ?state-machine (send [benchmark] get-state-machine))
+      (send ?state-machine process-event ?pb-event))
   )
 )
 
