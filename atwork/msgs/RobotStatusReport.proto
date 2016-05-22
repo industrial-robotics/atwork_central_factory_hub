@@ -11,30 +11,23 @@ message RobotStatus {
   }
 
   enum Capability {
-    // Navigation (e.g. planning or execution)
-    NAVIGATION = 0;
-
-    // Manipulation (e.g. grasp planning/execution, arm motion
-    // planning/execution)
-    MANIPULATION = 1;
-
-    // Perception (e.g. RGB or depth image processing)
-    PERCEPTION = 2;
-
-    // Task planning or task execution
-    TASK = 3;
+    UNKNOWN      = 0; //
+    NAVIGATION   = 1; // Navigation (e.g. planning or execution)
+    MANIPULATION = 2; // Manipulation (e.g. grasp planning/execution,
+                      //                    arm motion planning/execution)
+    PERCEPTION   = 3; // Perception (e.g. RGB or depth image processing)
+    TASK         = 4; // Task planning or task execution
   }
-
 
   // The currently active capability
   optional Capability capability = 1;
 
-  // The functionality which provides the above capability (e.g. a software
-  // component)
+  // The functionality which provides the above capability
+  // (e.g. a software component)
   optional string functionality = 2;
 
-  // Arbitrary information to further describe the capability (e.g. error codes
-  // or detected objects).
+  // Arbitrary information to further describe the capability
+  // (e.g. error codes or detected objects).
   optional string meta_data = 3;
 }
 
