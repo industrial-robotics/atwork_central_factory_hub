@@ -136,6 +136,12 @@ message SetBenchmarkTransitionEvent {
 
     // Transition from RUNNING to PAUSED state
     PAUSE = 3;
+
+    // STOP the current state and START the next state
+    SKIP = 4;
+
+    // Trigger Task & Invetory generation for the current benchmark scenario
+    SHUFFLE = 5;
   }
 
   // The requested transition
