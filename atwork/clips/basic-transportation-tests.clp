@@ -58,13 +58,11 @@
 
 (defclass BasicTransportationTest1 (is-a BasicTransportationTest) (role concrete))
 
-(defmessage-handler BasicTransportationTest1 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler BasicTransportationTest1 generate ()
+  (printout t "Generating new BasicTransportationTest1" crlf)
 
   (bind ?transportation-objects ?*ROBOCUP-OBJECTS*)
-
   (bind ?decoy-objects (create$ ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*))
-
   (bind ?workstation-locations ?*WORKSTATION-10CM-LOCATIONS*)
 
   ; Source locations must exist before adding to it.
@@ -114,8 +112,8 @@
 
 (defclass BasicTransportationTest2 (is-a BasicTransportationTest) (role concrete))
 
-(defmessage-handler BasicTransportationTest2 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler BasicTransportationTest2 generate ()
+  (printout t "Generating new BasicTransportationTest2" crlf)
 
   (bind ?robocup-objects          ?*ROBOCUP-OBJECTS*)
   (bind ?rockin-objects           ?*ROCKIN-OBJECTS*)
@@ -240,8 +238,8 @@
 
 (defclass BasicTransportationTest3 (is-a BasicTransportationTest) (role concrete))
 
-(defmessage-handler BasicTransportationTest3 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler BasicTransportationTest3 generate ()
+  (printout t "Generating new BasicTransportationTest3" crlf)
 
   ; Get Globals
   (bind ?robocup-objects                ?*ROBOCUP-OBJECTS*)

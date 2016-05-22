@@ -33,6 +33,8 @@
 (defmessage-handler BenchmarkScenario setup (?time ?state-machine)
 )
 
+(defmessage-handler BenchmarkScenario generate ())
+
 (defmessage-handler BenchmarkScenario handle-feedback (?pb-msg ?time ?name ?team)
   (return CONTINUE)
 )
@@ -62,10 +64,7 @@
   (slot state-machine (type INSTANCE) (allowed-classes StateMachine))
 )
 
-(defmessage-handler Benchmark switch-scenario ()
-  (send ?self put-current-scenario ?self:requested-scenario)
-
-
+(defmessage-handler Benchmark cleanup ()
   ; Remove all items from the inventory
   (do-for-all-instances ((?inventory Inventory))
     (foreach ?item (send ?inventory get-items)
@@ -100,10 +99,16 @@
     (slot-delete$ ?task-info tasks 1 (length$ (send ?task-info get-tasks)))
   )
 
-
   ; TODO: Remove all states and their transitions
 
+)
 
+(defmessage-handler Benchmark switch-scenario ()
+  (if (neq ?self:current-scenario ?self:requested-scenario) then
+    (send ?self put-current-scenario ?self:requested-scenario)
+    (send ?self cleanup)
+    (send ?self:current-scenario generate)
+  )
   (send ?self:current-scenario setup ?self:time ?self:state-machine)
 )
 
