@@ -60,8 +60,8 @@
 
 (defclass PrecisionPlacementTest1 (is-a PrecisionPlacementTest) (role concrete))
 
-(defmessage-handler PrecisionPlacementTest1 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler PrecisionPlacementTest1 generate ()
+  (printout t "Generating new PrecisionPlacementTest1" crlf)
 
   (bind ?precision-objects ?*ROBOCUP-OBJECTS*)
   (bind ?source-locations ?*WORKSTATION-10CM-LOCATIONS*)

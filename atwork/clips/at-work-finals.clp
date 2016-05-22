@@ -60,8 +60,8 @@
 
 (defclass AtWorkFinal2016 (is-a AtWorkFinal) (role concrete))
 
-(defmessage-handler AtWorkFinal2016 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler AtWorkFinal2016 generate ()
+  (printout t "Generating new AtWorkFinal2016" crlf)
 
   (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
