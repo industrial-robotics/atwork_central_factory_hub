@@ -60,8 +60,8 @@
 
 (defclass ConveyorBeltTest1 (is-a ConveyorBeltTest) (role concrete))
 
-(defmessage-handler ConveyorBeltTest1 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler ConveyorBeltTest1 generate ()
+  (printout t "Generating new ConveyorBeltTest1" crlf)
 
   (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
   (bind ?source-location [conveyorbelt-01])
@@ -93,8 +93,8 @@
 
 (defclass ConveyorBeltTest2 (is-a ConveyorBeltTest) (role concrete))
 
-(defmessage-handler ConveyorBeltTest2 setup (?time ?state-machine)
-  (call-next-handler)
+(defmessage-handler ConveyorBeltTest2 generate ()
+  (printout t "Generating new ConveyorBeltTest2" crlf)
 
   (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
   (bind ?source-location [conveyorbelt-02])
