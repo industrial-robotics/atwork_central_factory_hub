@@ -125,12 +125,12 @@
 
   ; create empty list of objects for transportation
   (bind ?transportation-objects (create$ ))
-  ; pick two objects from the robocup set
+  ; pick objects from the robocup set
   (loop-for-count 2
     (bind ?transportation-objects (create$ ?transportation-objects
       (pick-random$ ?robocup-objects)))
   )
-  ; pick two objects from the RoCKIn set
+  ; pick bjects from the RoCKIn set
   (loop-for-count 3
     (bind ?transportation-objects (create$ ?transportation-objects
       (pick-random$ ?rockin-objects)))
@@ -243,198 +243,163 @@
 (defmessage-handler BasicTransportationTest3 setup (?time ?state-machine)
   (call-next-handler)
 
-  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
-  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
-  (bind ?manipulation-objects (create$
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-robocup-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-    (pick-random$ ?manipulation-rockin-objects)
-  ))
+  ; Get Globals
+  (bind ?robocup-objects                ?*ROBOCUP-OBJECTS*)
+  (bind ?rockin-objects                 ?*ROCKIN-OBJECTS*)
+  (bind ?shelf-locations                ?*SHELF-LOCATIONS*)
+  (bind ?rotating-table-locations       ?*ROTATING-TABLE-LOCATIONS*)
+  (bind ?workstation-locations (create$ ?*WORKSTATION-0CM-LOCATIONS*
+                                        ?*WORKSTATION-10CM-LOCATIONS*
+                                        ?*WORKSTATION-15CM-LOCATIONS*))
+  (bind ?workstation-0cm-locations      ?*WORKSTATION-0CM-LOCATIONS*)
+  (bind ?workstation-10cm-locations     ?*WORKSTATION-10CM-LOCATIONS*)
+  (bind ?workstation-15cm-locations     ?*WORKSTATION-15CM-LOCATIONS*)
+  (bind ?decoy-objects (create$         ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*))
+  (bind ?decoy-objects (create$         ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*))
 
-  (bind ?manipulation-objects (randomize$ ?manipulation-objects))
+  ; create empty list of objects for transportation
+  (bind ?transportation-objects (create$ ))
+  ; pick 4 objects from the robocup set
+  (loop-for-count 4 do
+    (bind ?item (pick-random$ ?robocup-objects))
+    (bind ?transportation-objects (create$ ?transportation-objects ?item))
+    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
+  )
+  ; pick 3 objects from the RoCKIn set
+  (loop-for-count 3 do
+    (bind ?item (pick-random$ ?rockin-objects))
+    (bind ?transportation-objects (create$ ?transportation-objects ?item))
+    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
+  )
+  ; shuffle the objects
+  (bind ?transportation-objects (randomize$ ?transportation-objects))
 
-  (bind ?item-1 (nth$ 1 ?manipulation-objects))
-  (bind ?item-2 (nth$ 2 ?manipulation-objects))
-  (bind ?item-3 (nth$ 3 ?manipulation-objects))
-  (bind ?item-4 (nth$ 4 ?manipulation-objects))
-  (bind ?item-5 (nth$ 5 ?manipulation-objects))
-  (bind ?item-6 (nth$ 6 ?manipulation-objects))
-  (bind ?item-7 (nth$ 7 ?manipulation-objects))
-
-  (bind ?workstation-locations (create$
-    ?*WORKSTATION-0CM-LOCATIONS*
-    ?*WORKSTATION-10CM-LOCATIONS*
-    ?*WORKSTATION-15CM-LOCATIONS*
-  ))
-  (bind ?workstation-0cm-locations ?*WORKSTATION-0CM-LOCATIONS*)
-  (bind ?workstation-10cm-locations ?*WORKSTATION-10CM-LOCATIONS*)
-  (bind ?workstation-15cm-locations ?*WORKSTATION-15CM-LOCATIONS*)
-  (bind ?decoy-objects (create$ ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*))
-
-  ; Pick source locations
-  ; Then remove picked locations from both overall set and hieght specific set
-  ; pick first source location from 0 cm locations
-  (bind ?source-location-1 (pick-random$ ?workstation-0cm-locations))
-  (bind ?workstation-0cm-locations (delete-member$ ?workstation-0cm-locations ?source-location-1))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-1))
-  ; pick second source location from 10 cm locations
-  (bind ?source-location-2 (pick-random$ ?workstation-0cm-locations))
-  (bind ?workstation-10cm-locations (delete-member$ ?workstation-10cm-locations ?source-location-2))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-2))
-  ; pick third source location from 15 cm locations
-  (bind ?source-location-3 (pick-random$ ?workstation-15cm-locations))
-  (bind ?workstation-15cm-locations (delete-member$ ?workstation-15cm-locations ?source-location-3))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-3))
-  ; Randomize firth source location from any height
-  (bind ?source-location-4 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?source-location-4))
-
-  ; Create list of all source locations
-  (bind ?source-locations (create$
-    ?source-location-1
-    ?source-location-2
-    ?source-location-3
-    ?source-location-4
-  ))
+  ; Source Locations
+  (bind ?source-locations (create$ ))
+  (loop-for-count (?counter 1 3) do
+    (switch (mod ?counter 3)
+      (case 1 then
+        (bind ?location (pick-random$ ?workstation-0cm-locations))
+        (bind ?workstation-0cm-locations (delete-member$ ?workstation-0cm-locations ?location)))
+      (case 2 then
+        (bind ?location (pick-random$ ?workstation-15cm-locations))
+        (bind ?workstation-15cm-locations (delete-member$ ?workstation-15cm-locations ?location)))
+      (default
+        (bind ?location (pick-random$ ?workstation-10cm-locations))
+        (bind ?workstation-10cm-locations (delete-member$ ?workstation-10cm-locations ?location))))
+    (bind ?source-locations (create$ ?source-locations ?location))
+    (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
+  )
+  ; Randomly pick last source location from any height
+  (bind ?location (pick-random$ ?workstation-locations))
+  (bind ?source-locations (create$ ?source-locations ?location))
+  (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
   ; Shuffle list of source locations
   (bind ?source-locations (randomize$ ?source-locations))
-  ; Take new source locations from shuffled order
-  (bind ?source-location-1 (nth$ 1 ?source-locations))
-  (bind ?source-location-2 (nth$ 2 ?source-locations))
-  (bind ?source-location-3 (nth$ 3 ?source-locations))
-  (bind ?source-location-4 (nth$ 4 ?source-locations))
 
-  ; Draw destination locations according to task instances
-  (bind ?destination-location-1 (pick-random$  ?workstation-0cm-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-1))
-  (bind ?destination-location-2 (pick-random$  ?workstation-10cm-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-2))
-  (bind ?destination-location-3 (pick-random$  ?workstation-15cm-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-3))
-  (bind ?destination-location-4 (pick-random$ ?workstation-locations))
-  (bind ?workstation-locations (delete-member$ ?workstation-locations ?destination-location-4))
-  (bind ?destination-location-5 [conveyorbelt-02])
+  ; Destination Locations
+  (bind ?destination-locations (create$ ))
+  (loop-for-count (?counter 1 3) do
+    (switch (mod ?counter 3)
+      (case 1 then
+        (bind ?location (pick-random$ ?workstation-0cm-locations)))
+      (case 2 then
+        (bind ?location (pick-random$ ?workstation-15cm-locations)))
+      (default
+        (bind ?location (pick-random$ ?workstation-10cm-locations))))
+    (bind ?destination-locations (create$ ?destination-locations ?location))
+    (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
+  )
+  ; Randomly pick last source location from any height
+  (bind ?location (pick-random$ ?workstation-locations))
+  (bind ?destination-locations (create$ ?destination-locations ?location))
 
-  ; Create list of destination locations from drawn destination locations
-  (bind ?destination-locations (create$
-    ?destination-location-1
-    ?destination-location-2
-    ?destination-location-3
-    ?destination-location-4
-    ; Do not include rotating table, we need to know this location
-    ;?destination-location-5
-  ))
-  ; Shuffle list of destination locations
+  ; Shuffle list of source locations
   (bind ?destination-locations (randomize$ ?destination-locations))
-  ; Take new locations from shuffled locations
-  (bind ?destination-location-1 (nth$ 1 ?destination-locations))
-  (bind ?destination-location-2 (nth$ 2 ?destination-locations))
-  (bind ?destination-location-3 (nth$ 3 ?destination-locations))
-  (bind ?destination-location-4 (nth$ 4 ?destination-locations))
-  ; Do not include rotating table, we need to know this location
-  ;(bind ?destination-location-5 (nth$ 5 ?destination-locations))
 
-
-  ; Remove items from decoy set
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-1))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-2))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-3))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-4))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-5))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-6))
-  (bind ?decoy-objects (delete-member$ ?decoy-objects ?item-7))
-  ; Pick 3 random decoy objects
-  (bind ?decoy-1 (pick-random$ ?decoy-objects))
-  (bind ?decoy-2 (pick-random$ ?decoy-objects))
-  (bind ?decoy-3 (pick-random$ ?decoy-objects))
-
+  ; Need 7 transportation tasks
+  ; but on the last we create 2... one for each container. and the rotating table is done later.
+  (bind ?last 5)
+  (loop-for-count (?counter 1 ?last) do
+    (bind ?item (nth$ ?counter ?transportation-objects))
+    ; Get a source location from source locations.
+    ; Try to evenly distribute source locations.
+    (bind ?source-location (nth$ (+ 1 (mod ?counter (length ?source-locations))) ?source-locations))
+    (bind ?destination-location (nth$ (+ 1 (mod ?counter (length ?destination-locations))) ?destination-locations))
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item)
+                             (location-id ?source-location))
+    )
+    ; On the last iteration we add an extra item for the second container
+    (if (neq ?counter ?last)
+      then
+        ; Task
+        (slot-insert$ [task-info] tasks 1
+          (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+            (transportation-task (make-instance of TransportationTask
+              (object-id ?item)
+              (quantity-requested 1)
+              (destination-id ?destination-location)
+              (source-id ?source-location))))
+        )
+      else
+        ; 1st item for container
+        (slot-insert$ [task-info] tasks 1
+          (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+            (transportation-task (make-instance of TransportationTask
+            (object-id ?item)
+            (container-id [CONTAINER_R])
+            (quantity-requested 1)
+            (destination-id ?destination-location)
+            (source-id ?source-location)))))
+        ; increase the counter and get next item and source location. Can not bind to counter in side loop.
+        (bind ?last (+ 1 ?last))
+        (bind ?item (nth$ ?last ?transportation-objects))
+        (bind ?source-location (nth$ (+ 1 (mod ?last (length ?source-locations))) ?source-locations))
+        ; Inventory
+        (slot-insert$ [inventory] items 1
+          (make-instance of Item (object-id ?item)
+                                 (location-id ?source-location)))
+        ; 2nd item for container
+        (slot-insert$ [task-info] tasks 1
+          (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+            (transportation-task (make-instance of TransportationTask
+              (object-id ?item)
+              (container-id [CONTAINER_B])
+              (quantity-requested 1)
+              (destination-id ?destination-location)
+              (source-id ?source-location)))))
+    )
+  )
+  ; One object must be placed on the rotating table
+  (bind ?last (+ 1 ?last))
+  (bind ?item (nth$ ?last ?transportation-objects))
+  (bind ?source-location (nth$ (+ 1 (mod ?last (length ?source-locations))) ?source-locations))
+  (bind ?destination-location (pick-random$ ?rotating-table-locations))
   ; Inventory
   (slot-insert$ [inventory] items 1
-    ; source location 1
-    (make-instance of Item (object-id ?item-1) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?item-2) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?decoy-1) (location-id ?source-location-1))
-    ; source location 2
-    (make-instance of Item (object-id ?item-3) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?item-4) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?decoy-2) (location-id ?source-location-2))
-    ; source location 3
-    (make-instance of Item (object-id ?item-5) (location-id ?source-location-3))
-    (make-instance of Item (object-id ?item-6) (location-id ?source-location-3))
-    ; source location 4
-    (make-instance of Item (object-id ?item-7) (location-id ?source-location-4))
-    (make-instance of Item (object-id ?decoy-3) (location-id ?source-location-4))
-    ; destination location 4
-    (make-instance of Item (object-id [CONTAINER_B]) (location-id ?destination-location-4))
-    (make-instance of Item (object-id [CONTAINER_R]) (location-id ?destination-location-4))
+    (make-instance of Item (object-id ?item)
+                           (location-id ?source-location))
   )
-
-  ; Tasks
+  ; Task
   (slot-insert$ [task-info] tasks 1
-    ; 1st Transportation Task
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
+        (object-id ?item)
         (quantity-requested 1)
-        (destination-id ?destination-location-1)
-        (source-id ?source-location-1)
-    )))
-    ; 2nd Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-2)
-        (quantity-requested 1)
-        (destination-id ?destination-location-2)
-        (source-id ?source-location-1)
-    )))
-    ; 3rd Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-3)
-        (quantity-requested 1)
-        (destination-id ?destination-location-3)
-        (source-id ?source-location-2)
-    )))
-    ; 4th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-4)
-        (quantity-requested 1)
-        (destination-id ?destination-location-3)
-        (source-id ?source-location-2)
-    )))
-    ; 5th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-5)
-        (quantity-requested 1)
-        (destination-id ?destination-location-5)
-        (source-id ?source-location-3)
-    )))
-    ; 6th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-6)
-        (container-id [CONTAINER_R])
-        (quantity-requested 1)
-        (destination-id ?destination-location-4)
-        (source-id ?source-location-3)
-    )))
-    ; 7th Transportation Task
-    (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-      (transportation-task (make-instance of TransportationTask
-        (object-id ?item-7)
-        (container-id [CONTAINER_R])
-        (quantity-requested 1)
-        (destination-id ?destination-location-4)
-        (source-id ?source-location-4)
-    )))
+        (destination-id ?destination-location)
+        (source-id ?source-location))))
   )
 
+  (loop-for-count (?counter 1 3) do
+    ; Get a source location from source locations.
+    ; Try to evenly distribute source locations.
+    (bind ?source-location (nth$ (+ 1 (mod ?counter (length ?source-locations))) ?source-locations))
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id (pick-random$ ?decoy-objects)) (location-id ?source-location))
+    )
+  )
 )
 
 ;; END BTT3
