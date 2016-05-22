@@ -8,6 +8,7 @@
 #include <utils/system/argparser.h>
 
 #include <protobuf_comm/client.h>
+#include <msgs/BenchmarkControl.pb.h>
 #include <msgs/BenchmarkState.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 
@@ -55,27 +56,37 @@ bool idle_handler() {
     Gtk::Button *button_start = 0;
     Gtk::Button *button_pause = 0;
     Gtk::Button *button_stop = 0;
+    Gtk::Button *button_shuffle= 0;
+    Gtk::Button *button_next = 0;
     builder->get_widget("button_start", button_start);
     builder->get_widget("button_pause", button_pause);
     builder->get_widget("button_stop", button_stop);
+    builder->get_widget("button_shuffle", button_shuffle);
+    builder->get_widget("button_next", button_next);
 
     switch (benchmark_state->state()) {
       case atwork_pb_msgs::BenchmarkState::STOPPED:
         button_start->set_sensitive(true);
         button_pause->set_sensitive(false);
         button_stop->set_sensitive(false);
+        button_shuffle->set_sensitive(true);
+        button_next->set_sensitive(false);
       break;
 
       case atwork_pb_msgs::BenchmarkState::RUNNING:
         button_start->set_sensitive(false);
         button_pause->set_sensitive(true);
         button_stop->set_sensitive(true);
+        button_shuffle->set_sensitive(false);
+        button_next->set_sensitive(true);
       break;
 
       case atwork_pb_msgs::BenchmarkState::PAUSED:
         button_start->set_sensitive(true);
         button_pause->set_sensitive(false);
         button_stop->set_sensitive(false);
+        button_shuffle->set_sensitive(false);
+        button_next->set_sensitive(false);
       break;
 
       case atwork_pb_msgs::BenchmarkState::FINISHED:
@@ -83,10 +94,14 @@ bool idle_handler() {
             button_start->set_sensitive(false);
             button_pause->set_sensitive(false);
             button_stop->set_sensitive(false);
+            button_shuffle->set_sensitive(false);
+            button_next->set_sensitive(false);
         } else {
             button_start->set_sensitive(true);
             button_pause->set_sensitive(false);
             button_stop->set_sensitive(false);
+            button_shuffle->set_sensitive(false);
+            button_next->set_sensitive(false);
         }
       break;
     }
@@ -128,6 +143,26 @@ void on_stop_click()
 
   atwork_pb_msgs::SetBenchmarkTransitionEvent cmd_event;
   cmd_event.set_event(atwork_pb_msgs::SetBenchmarkTransitionEvent::STOP);
+  client.send(cmd_event);
+}
+
+
+void on_shuffle_click()
+{
+  if (!client.connected()) return;
+
+  atwork_pb_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(atwork_pb_msgs::SetBenchmarkTransitionEvent::SHUFFLE);
+  client.send(cmd_event);
+}
+
+
+void on_next_click()
+{
+  if (!client.connected()) return;
+
+  atwork_pb_msgs::SetBenchmarkTransitionEvent cmd_event;
+  cmd_event.set_event(atwork_pb_msgs::SetBenchmarkTransitionEvent::SKIP);
   client.send(cmd_event);
 }
 
@@ -223,12 +258,16 @@ int main(int argc, char **argv)
   Gtk::Button *button_start = 0;
   Gtk::Button *button_pause = 0;
   Gtk::Button *button_stop = 0;
+  Gtk::Button *button_shuffle= 0;
+  Gtk::Button *button_next = 0;
   Gtk::Button *button_reset = 0;
   Gtk::Button *button_cb_start = 0;
   Gtk::Button *button_cb_stop = 0;
   builder->get_widget("button_start", button_start);
   builder->get_widget("button_pause", button_pause);
   builder->get_widget("button_stop", button_stop);
+  builder->get_widget("button_shuffle", button_shuffle);
+  builder->get_widget("button_next", button_next);
   builder->get_widget("button_reset", button_reset);
   builder->get_widget("button_cb_start", button_cb_start);
   builder->get_widget("button_cb_stop", button_cb_stop);
@@ -237,6 +276,8 @@ int main(int argc, char **argv)
   button_start->signal_clicked().connect(sigc::ptr_fun(&on_start_click));
   button_pause->signal_clicked().connect(sigc::ptr_fun(&on_pause_click));
   button_stop->signal_clicked().connect(sigc::ptr_fun(&on_stop_click));
+  button_shuffle->signal_clicked().connect(sigc::ptr_fun(&on_shuffle_click));
+  button_next->signal_clicked().connect(sigc::ptr_fun(&on_next_click));
   button_reset->signal_clicked().connect(sigc::ptr_fun(&on_reset_click));
   button_cb_start->signal_clicked().connect(sigc::ptr_fun(&on_cb_start_click));
   button_cb_stop->signal_clicked().connect(sigc::ptr_fun(&on_cb_stop_click));
