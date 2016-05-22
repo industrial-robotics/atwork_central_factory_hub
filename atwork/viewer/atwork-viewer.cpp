@@ -119,7 +119,10 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
   std::shared_ptr<atwork_pb_msgs::AttentionMessage> am;
   if ((am = std::dynamic_pointer_cast<atwork_pb_msgs::AttentionMessage>(msg))) {
-    attention_msgs.push_back(am->message());
+    if(am->message().size() < 100)
+      attention_msgs.push_back(am->message());
+    else
+      attention_msgs.push_back(am->message().substr(0,100));
     if (attention_msgs.size() > 12) attention_msgs.pop_front();
   }
 }
