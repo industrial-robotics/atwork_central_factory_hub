@@ -26,7 +26,6 @@ std::string host;
 int port;
 Glib::RefPtr<Gtk::Builder> builder;
 std::vector<Gtk::Widget *> robot_widgets;
-std::chrono::time_point<std::chrono::system_clock> last_gui_update;
 boost::mutex mutex;
 std::shared_ptr<atwork_pb_msgs::BenchmarkState> benchmark_state;
 std::shared_ptr<atwork_pb_msgs::ConveyorBeltStatus> conveyor_belt_state;
@@ -129,14 +128,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
 
 
 
-bool idle_handler() {
-  if ((std::chrono::system_clock::now() - last_gui_update) < std::chrono::milliseconds(100)) {
-    usleep(10000);
-    return true;
-  }
-  last_gui_update = std::chrono::system_clock::now();
-
-
+bool timeout_handler() {
   // Prevent simultaneous access to the refbox state from gui and network
   boost::mutex::scoped_lock lock(mutex);
 
@@ -405,7 +397,7 @@ int main(int argc, char **argv)
   window->set_title("@Work RefboxViewer");
   window->show_all();
 
-  Glib::signal_idle().connect(sigc::ptr_fun(&idle_handler));
+  Glib::signal_timeout().connect(sigc::ptr_fun(&timeout_handler), 100);
 
   client.signal_received().connect(handle_message);
   client.signal_disconnected().connect(handle_disconnect);
