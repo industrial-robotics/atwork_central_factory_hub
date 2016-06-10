@@ -182,7 +182,7 @@ bool idle_handler() {
         label_state->set_text("Stopped");
       break;
     }
-    attr_list_state.insert(fg_color_state);
+    attr_list_state.change(fg_color_state);
     label_state->set_attributes(attr_list_state);
 
 
@@ -208,7 +208,7 @@ bool idle_handler() {
         label_phase->set_text("Preparation");
       break;
     }
-    attr_list_phase.insert(fg_color_phase);
+    attr_list_phase.change(fg_color_phase);
     label_phase->set_attributes(attr_list_phase);
 
 
