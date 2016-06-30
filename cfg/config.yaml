@@ -37,82 +37,82 @@ llsfrb:
   comm:
     protobuf-dirs: ["@BASEDIR@/atwork/msgs"]
 
-    server-port: !tcp-port 4444
+    server-port: !tcp-port 5444
 
     public-peer:
-      host: !ipv4 192.168.1.255
-      #port: !udp-port 4444
-      send-port: !udp-port 4444
-      recv-port: !udp-port 4445
+      host: !ipv4 192.168.80.255
+      #port: !udp-port 5444
+      send-port: !udp-port 5444
+      recv-port: !udp-port 5445
 
     b-it-bots-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4446
-      #send-port: !udp-port 4446
-      #recv-port: !udp-port 4447
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5446
+      #send-port: !udp-port 5446
+      #recv-port: !udp-port 5447
 
     smARTLab-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4448
-      #send-port: !udp-port 4448
-      #recv-port: !udp-port 4449
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5448
+      #send-port: !udp-port 5448
+      #recv-port: !udp-port 5449
 
     SPQR-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4450
-      #send-port: !udp-port 4450
-      #recv-port: !udp-port 4451
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5450
+      #send-port: !udp-port 5450
+      #recv-port: !udp-port 5451
 
     V-Climber-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4452
-      #send-port: !udp-port 4452
-      #recv-port: !udp-port 4453
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5452
+      #send-port: !udp-port 5452
+      #recv-port: !udp-port 5453
 
     LUHbots-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4454
-      #send-port: !udp-port 4454
-      #recv-port: !udp-port 4455
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5454
+      #send-port: !udp-port 5454
+      #recv-port: !udp-port 5455
 
     WF-Wolves-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4456
-      #send-port: !udp-port 4456
-      #recv-port: !udp-port 4457
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5456
+      #send-port: !udp-port 5456
+      #recv-port: !udp-port 5457
 
     AutonOHM-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4458
-      #send-port: !udp-port 4458
-      #recv-port: !udp-port 4459
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5458
+      #send-port: !udp-port 5458
+      #recv-port: !udp-port 5459
 
     RobOTTO-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4460
-      #send-port: !udp-port 4460
-      #recv-port: !udp-port 4461
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5460
+      #send-port: !udp-port 5460
+      #recv-port: !udp-port 5461
 
     Ace-IAUK-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4462
-      #send-port: !udp-port 4462
-      #recv-port: !udp-port 4463
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5462
+      #send-port: !udp-port 5462
+      #recv-port: !udp-port 5463
 
     AMSTT-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4464
-      #send-port: !udp-port 4464
-      #recv-port: !udp-port 4465
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5464
+      #send-port: !udp-port 5464
+      #recv-port: !udp-port 5465
 
     Robo-Erectus-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4466
-      #send-port: !udp-port 4466
-      #recv-port: !udp-port 4467
+      host: !ipv4 192.168.80.255
+      port: !udp-port 5466
+      #send-port: !udp-port 5466
+      #recv-port: !udp-port 5467
 
   mongodb:
-    enable: true
+    enable: false 
     hostport: localhost
     collections:
       text-log: llsfrb.log
@@ -136,4 +136,4 @@ llsfrb:
 
   shell:
     refbox-host: !ipv4 localhost
-    refbox-port: 4444
+    refbox-port: 5444
