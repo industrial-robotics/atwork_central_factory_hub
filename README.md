@@ -46,11 +46,11 @@ The Work Central Factory Hub (CFH) can be installed on most Linux distributions.
 
 3. Clone this repository:
         
-        git clone https://github.com/industrial-robotics/at_work_central_factory_hub.git
+        git clone https://github.com/industrial-robotics/atwork_central_factory_hub.git
 
 4. Build the Central Factory Hub:
         
-        cd at_work_central_factory_hub
+        cd atwork_central_factory_hub
         make
 
 5. Go to Configuration Section before running the CFH.
@@ -114,7 +114,7 @@ Because my subnet Mask is 255.255.255.0 and my Broadcast address is: 192.168.122
             mongodb:
               enable: false
 
-Full configuration details and explainations are found in the following PDF documentation: https://github.com/industrial-robotics/at_work_central_factory_hub_doc
+Full configuration details and explainations are found in the following PDF documentation: https://github.com/industrial-robotics/atwork_central_factory_hub_doc
 
 Only a few common options are outlined here.
 
