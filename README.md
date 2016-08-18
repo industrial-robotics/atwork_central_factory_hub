@@ -1,9 +1,7 @@
-RoboCup@Work Referee Box
+@Work Referee Box
 ========================
 
-This is the repository of the referee box for the RoboCup@Work competition for RoboCup World Cup 2016 in Leipzig.
-
-This referee box is only a small adaptation of the RoCKIn@Work referee box, which itself is an adaptiation of the RoboCup Logistics League referee box.
+This is the repository of the referee box for Work competitions.
 
 ## Contents
 
@@ -14,9 +12,9 @@ This referee box is only a small adaptation of the RoCKIn@Work referee box, whic
 
 ## Overview
 
-The Central Factory Hub, or RefBox (as it's commonly called) is an application which provides interfaces for communicating with devices and robots in the RoboCup@Work arena. The RefBox itself isn't doing automated refereeing (yet), however it does generate task specifications to ensure the referees are not being biased. The RefBox keeps track of the time, and makes sure the task specification is given to the team when the timer starts, and not earlier. To communicate with devices in the arena, like rotating tables, teams send commands to the Referee Box, and the Referee Box acts as a proxy between the devices ensuring the communication is logged, and done appropriately. The Referee Box can accept control commands from the referees, and will not accept control commands from teams.
+The Central Factory Hub, or RefBox (as it's commonly called) is an application which provides interfaces for communicating with devices and robots in the @Work arena. The RefBox itself isn't doing automated refereeing (yet), however it does generate task specifications to ensure the referees are not being biased. The RefBox keeps track of the time, and makes sure the task specification is given to the team when the timer starts, and not earlier. To communicate with devices in the arena, like rotating tables, teams send commands to the Referee Box, and the Referee Box acts as a proxy between the devices ensuring the communication is logged, and done appropriately. The Referee Box can accept control commands from the referees, and will not accept control commands from teams.
 
-The ```refbox``` has two types of clients with which it communicates differently either UDP or TCP. UDP communication is used between the RefBox and the teams, because this is a wireless communication channel and isn't reliable (especially on site at RoboCup). TCP is used for the devices which are controlled by the Referees and Technical Committee.
+The ```refbox``` has two types of clients with which it communicates differently either UDP or TCP. UDP communication is used between the RefBox and the teams, because this is a wireless communication channel and isn't reliable (especially on site at a competition). TCP is used for the devices which are controlled by the Referees and Technical Committee.
 
 The ```refbox``` application itself works in the background and only prints some log output to the console.
 
@@ -24,7 +22,7 @@ To view the status of the Central Factory, you must launch the ```atwork-viewer`
 
 
 ## Installation
-The RoboCup@Work Central Factory Hub (CFH) can be installed on most Linux distributions. However, some require dependencies being built from source. The currently supported setup is Ubuntu 14.04, with Boost 1.54. For other non-supported distributions and setups see Alternative Installation Hints at the end of this readme.
+The Work Central Factory Hub (CFH) can be installed on most Linux distributions. However, some require dependencies being built from source. The currently supported setup is Ubuntu 14.04, with Boost 1.54. For other non-supported distributions and setups see Alternative Installation Hints at the end of this readme.
 
 ### Officially Supported Setup: Ubuntu 14.04, Boost 1.54
 
@@ -48,7 +46,7 @@ The RoboCup@Work Central Factory Hub (CFH) can be installed on most Linux distri
 
 3. Clone this repository:
         
-        git clone https://github.com/robocup-at-work/at_work_central_factory_hub.git
+        git clone https://github.com/industrial-robotics/at_work_central_factory_hub.git
 
 4. Build the Central Factory Hub:
         
@@ -80,7 +78,7 @@ virbr0    Link encap:Ethernet  HWaddr de:c9:5a:c2:6b:43
 Because my subnet Mask is 255.255.255.0 and my Broadcast address is: 192.168.122.255 I would set the ```host``` configuration value to ```192.168.122.255```. 
 
 ### Typical Configuration for testing in your own lab
-(at RoboCup the TC/OC will configure the RefBox).
+(at competition the TC/OC will configure the RefBox).
 
 1. Configure the CFH with your editor
     
@@ -116,7 +114,7 @@ Because my subnet Mask is 255.255.255.0 and my Broadcast address is: 192.168.122
             mongodb:
               enable: false
 
-Full configuration details and explainations are found in the RoCKIn PDF documentation (https://github.com/rockin-robot-challenge/at_work_central_factory_hub_doc). 
+Full configuration details and explainations are found in the following PDF documentation: https://github.com/industrial-robotics/at_work_central_factory_hub_doc
 
 Only a few common options are outlined here.
 
