@@ -19,7 +19,7 @@ include $(BUILDSYSDIR)/protobuf.mk
 include $(BUILDSYSDIR)/boost.mk
 include $(SRCDIR)/mongodb.mk
 
-REQ_BOOST_LIBS = thread asio system signals2
+REQ_BOOST_LIBS = regex thread asio system signals2
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
 
 CFLAGS += $(CFLAGS_CPP11)

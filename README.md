@@ -26,23 +26,37 @@ The Work Central Factory Hub (CFH) can be installed on most Linux distributions.
 
 ### Officially Supported Setup: Ubuntu 14.04, Boost 1.54
 
+Note: Ubuntu 16.04 requires some addition steps because legacy mongodb is required.
+
 1. Add [Tim Niemueller's PPA](https://launchpad.net/~timn/+archive/ubuntu/clips):
       
         sudo add-apt-repository ppa:timn/clips
-    (Note: This PPA currently only works for Ubuntu 12.04, 12.10 and 14.04.)
+    (Note: This PPA currently only works for Ubuntu 12.04, 12.10, 14.04 and 16.04)
     
-2. Install the dependencies for both LLSFRB and CFH:
+2. Install the dependencies for both LLSFRB and CFH (12.04, 12.10, 14.04):
         
         sudo apt-get update
         sudo apt-get install libmodbus-dev libclips-dev clips libclipsmm-dev \
                              protobuf-compiler libprotobuf-dev libprotoc-dev \
-                             boost1.54-all-dev libmodbus-dev \
+                             libmodbus-dev \
                              libglibmm-2.4-dev libgtkmm-3.0-dev libncurses5-dev \
                              libncursesw5-dev libyaml-cpp-dev libavahi-client-dev git \
-                             libssl-dev libelf-dev mongodb-dev mongodb-clients \
+                             libssl-dev libelf-dev mongodb-clients \
                              mongodb libzmq3-dev
 
-     (Note: Boost 1.54 is specified to avoid causing apt-get broken package problems with ROS. If you are using another version of Boost see Alternative Setup.)
+     (If using 14.04 or older, use boost1.54 and mongodb-dev)
+
+        sudo apt-get install mongodb-dev boost1.54-all-dev
+
+     (If using 16.04, use default boost, and install legacy mongo-cxx-driver from source)
+
+        sudo apt-get install scons libboost-all-dev
+        git clone https://github.com/mongodb/mongo-cxx-driver
+        git checkout legacy-1.1.2
+        sudo scons --prefix=/usr/local install --disable-warnings-as-errors
+
+     (Note 1: Boost 1.54 is specified to avoid causing apt-get broken package problems with ROS. If you are using another version of Boost see Alternative Setup.)
+     (Note 2: Instructions for legacy mongo-cxx-driver can be found here: https://github.com/linux-on-ibm-z/docs/wiki/Building-CXX-MongoDB-Driver )
 
 3. Clone this repository:
         
