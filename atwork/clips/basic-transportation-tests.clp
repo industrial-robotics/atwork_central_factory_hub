@@ -117,14 +117,14 @@
 
   (bind ?robocup-objects          ?*ROBOCUP-OBJECTS*)
   (bind ?rockin-objects           ?*ROCKIN-OBJECTS*)
-  (bind ?workstation-locations    ?*WORKSTATION-10CM-LOCATIONS*)
+  (bind ?workstation-locations    (create$ ?*WORKSTATION-10CM-LOCATIONS* ?*WORKSTATION-5CM-LOCATIONS*))
   (bind ?shelf-locations          ?*SHELF-LOCATIONS*)
   (bind ?rotating-table-locations ?*ROTATING-TABLE-LOCATIONS*)
 
   ; create empty list of objects for transportation
   (bind ?transportation-objects (create$ ))
   ; pick objects from the robocup set
-  (loop-for-count 2
+  (loop-for-count 3
     (bind ?transportation-objects (create$ ?transportation-objects
       (pick-random$ ?robocup-objects)))
   )
@@ -146,9 +146,9 @@
   )
 
   ; Create a list for desintation locations start with one shelf
-  (bind ?location (pick-random$ ?shelf-locations))
-  (bind ?destination-locations (create$ ?location))
-  (loop-for-count 2 do
+  ;(bind ?location (pick-random$ ?shelf-locations))
+  (bind ?destination-locations (create$))
+  (loop-for-count 3 do
     (bind ?location (pick-random$ ?workstation-locations))
     (bind ?destination-locations (create$ ?destination-locations ?location))
     (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
@@ -158,7 +158,7 @@
 
   ; Need 5 transportation tasks
   ; but on the last we create 2... one for each container. and the rotating table is done later.
-  (bind ?last 3)
+  (bind ?last 4)
   (loop-for-count (?counter 1 ?last) do
     (bind ?item (nth$ ?counter ?transportation-objects))
     ; Get a source location from source locations.
@@ -309,8 +309,8 @@
     (bind ?workstation-locations (delete-member$ ?workstation-locations ?location))
   )
   ; Randomly pick last source location from any height
-  (bind ?location (pick-random$ ?workstation-locations))
-  (bind ?destination-locations (create$ ?destination-locations ?location))
+  ;(bind ?location (pick-random$ ?workstation-locations))
+  ;(bind ?destination-locations (create$ ?destination-locations ?location))
 
   ; Shuffle list of source locations
   (bind ?destination-locations (randomize$ ?destination-locations))
@@ -330,7 +330,7 @@
                              (location-id ?source-location))
     )
     ; On the last iteration we add an extra item for the second container
-    (if (neq ?counter ?last)
+    (if (neq ?counter 1)
       then
         ; Task
         (slot-insert$ [task-info] tasks 1
@@ -368,13 +368,14 @@
               (quantity-requested 1)
               (destination-id ?destination-location)
               (source-id ?source-location)))))
+	(bind ?destination-locations (delete-member$ ?destination-locations ?destination-location))
     )
   )
-  ; One object must be placed on the rotating table
+  ; One object must be placed on the shelf
   (bind ?last (+ 1 ?last))
   (bind ?item (nth$ ?last ?transportation-objects))
   (bind ?source-location (nth$ (+ 1 (mod ?last (length ?source-locations))) ?source-locations))
-  (bind ?destination-location (pick-random$ ?rotating-table-locations))
+  (bind ?destination-location (pick-random$ ?shelf-locations))
   ; Inventory
   (slot-insert$ [inventory] items 1
     (make-instance of Item (object-id ?item)
