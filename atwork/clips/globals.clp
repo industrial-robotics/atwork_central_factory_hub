@@ -42,7 +42,7 @@
   ?*BMT-PREPARATION-TIME*  =  300
   ?*BMT-EXECUTION-TIME*    =  300
   ?*BTT-PREPARATION-TIME*  =  300
-  ?*BTT-EXECUTION-TIME*    =  300
+  ?*BTT-EXECUTION-TIME*    =  480
   ?*PPT-PREPARATION-TIME*  =  300
   ?*PPT-EXECUTION-TIME*    =  300
   ?*CBT-PREPARATION-TIME*  =  300
@@ -75,13 +75,13 @@
     [workstation-01] [workstation-07] [workstation-11]
   )
   ?*WORKSTATION-5CM-LOCATIONS* = (create$
-    [workstation-12] [workstation-08]
+    [workstation-09] [workstation-10] [workstation-12]
   )
   ?*WORKSTATION-10CM-LOCATIONS* = (create$
     [workstation-02] [workstation-03] [workstation-05] [workstation-06]
   )
   ?*WORKSTATION-15CM-LOCATIONS* = (create$
-    [workstation-04] [workstation-09] [workstation-10]
+    [workstation-04] [workstation-08]
   )
   ?*PRECISION-LOCATIONS* = (create$
     [precision-01]
