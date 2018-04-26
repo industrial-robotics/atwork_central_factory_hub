@@ -87,9 +87,9 @@
     [precision-01]
   )
   ?*CONVEYOR-LOCATIONS* = (create$
-    [conveyorbelt-01] [conveyorbelt-02]
+    [conveyorbelt-01]
   )
-  ?*ROTATING-TABLE-LOCATIONS* = (create$ [conveyorbelt-02] )
+  ?*ROTATING-TABLE-LOCATIONS* = (create$ [conveyorbelt-01] )
   ?*CONVEYOR-BELT-LOCATIONS* = (create$ [conveyorbelt-01] )
   ?*WAYPOINT-LOCATIONS* = (create$
     [waypoint-01] [waypoint-02] [waypoint-03] [waypoint-04] [waypoint-05]

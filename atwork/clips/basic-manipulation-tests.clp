@@ -68,9 +68,9 @@
   (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
   ; set static location for source
-  (bind ?source-location [workstation-05])
+  (bind ?source-location [workstation-06])
   ; set static location for destination
-  (bind ?destination-location [workstation-06])
+  (bind ?destination-location [workstation-07])
 
   ; 3 RoboCup objects
   (loop-for-count 3
