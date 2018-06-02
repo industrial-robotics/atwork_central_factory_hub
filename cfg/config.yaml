@@ -40,13 +40,13 @@ llsfrb:
     server-port: !tcp-port 5444
 
     public-peer:
-      host: !ipv4 192.168.255.255
+      host: !ipv4 192.168.1.255
       #port: !udp-port 5444
       send-port: !udp-port 5444
       recv-port: !udp-port 5445
 
     b-it-bots-peer:
-      host: !ipv4 192.168.255.255
+      host: !ipv4 192.168.1.255
       port: !udp-port 5446
       #send-port: !udp-port 5446
       #recv-port: !udp-port 5447

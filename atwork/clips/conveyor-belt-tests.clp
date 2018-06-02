@@ -63,7 +63,8 @@
 (defmessage-handler ConveyorBeltTest1 generate ()
   (printout t "Generating new ConveyorBeltTest1" crlf)
 
-  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
+  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
+  (bind ?decoy-objects          ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
   (bind ?source-location [conveyorbelt-01])
   (bind ?destination-location [robot])
 
@@ -71,10 +72,15 @@
   (loop-for-count 3
     (bind ?item (pick-random$ ?manipulation-objects))
     (bind ?manipulation-objects (delete-member$ ?manipulation-objects ?item))
+    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
 
     ; Inventory
     (slot-insert$ [inventory] items 1
       (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id (pick-random$ ?decoy-objects)) (location-id ?source-location))
     )
 
     ; Task
