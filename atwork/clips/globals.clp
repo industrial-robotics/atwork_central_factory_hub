@@ -72,22 +72,23 @@
     [shelf-01] [shelf-02]
   )
   ?*WORKSTATION-0CM-LOCATIONS* = (create$
-    [workstation-01] [workstation-04] [workstation-05]
+    [workstation-10] [workstation-02] [workstation-07]
   )
   ?*WORKSTATION-5CM-LOCATIONS* = (create$
-    [workstation-03] [workstation-10]
+    [workstation-01] [workstation-08]
   )
   ?*WORKSTATION-10CM-LOCATIONS* = (create$
-    [workstation-11] [workstation-07] [workstation-06]
+    [workstation-03] [workstation-05] [workstation-06]
   )
   ?*WORKSTATION-15CM-LOCATIONS* = (create$
-    [workstation-02] [workstation-08] [workstation-09]
+    [workstation-04] [workstation-09] [workstation-11]
   )
   ?*PRECISION-LOCATIONS* = (create$
     [precision-01]
   )
   ?*CONVEYOR-LOCATIONS* = (create$
     [conveyorbelt-01]
+
   )
   ?*ROTATING-TABLE-LOCATIONS* = (create$ [conveyorbelt-01] )
   ?*CONVEYOR-BELT-LOCATIONS* = (create$ [conveyorbelt-01] )
