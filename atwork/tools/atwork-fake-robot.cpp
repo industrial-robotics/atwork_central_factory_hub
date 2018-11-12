@@ -47,7 +47,7 @@
 //#include <msgs/DrillingMachine.pb.h>
 #include <msgs/ConveyorBelt.pb.h>
 //#include <msgs/Camera.pb.h>
-//#include <msgs/BenchmarkFeedback.pb.h>
+#include <msgs/BenchmarkFeedback.pb.h>
 //#include <msgs/RobotStatusReport.pb.h>
 #include <msgs/LoggingStatus.pb.h>
 
@@ -127,6 +127,7 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
       case BenchmarkScenario::CBT:  std::cout << "CBT"; break;
       case BenchmarkScenario::AWF:  std::cout << "AWF"; break;
       case BenchmarkScenario::IRL:  std::cout << "IRL"; break;
+      case BenchmarkScenario::FBM:  std::cout << "FBM"; break;
     }
     std::cout << " " << bs->scenario().type_id();
     if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";
@@ -243,6 +244,14 @@ handle_timer(const boost::system::error_code& error)
     peer_public_->send(cb_cmd);
     */
 
+    //Send benchmark feedback
+    BenchmarkFeedback bf;
+    bf.set_object_instance_name("AX-01");
+    bf.set_object_class_name("aluminium");
+    bf.set_grasp_notification(true);
+    bf.set_phase_to_terminate(current_benchmark_phase_);
+    peer_public_->send(bf);
+
     // Send if the robot is logging offline benchmarking data
     LoggingStatus logging;
     logging.set_is_logging(true);
@@ -272,6 +281,8 @@ main(int argc, char **argv)
 
   config_ = new llsfrb::YamlConfiguration(CONFDIR);
   config_->load("config.yaml");
+  std::cout << "config loaded " << std::endl;
+
 
   if (config_->exists("/llsfrb/comm/public-peer/send-port") &&
       config_->exists("/llsfrb/comm/public-peer/recv-port") )
@@ -291,6 +302,7 @@ main(int argc, char **argv)
   message_register.add_message_type<Inventory>();
   //message_register.add_message_type<OrderInfo>();
   message_register.add_message_type<TriggeredConveyorBeltStatus>();
+  message_register.add_message_type<BenchmarkFeedback>();
 
   std::string cfg_prefix =
     std::string("/llsfrb/comm/") + team_name_ + "-peer/";

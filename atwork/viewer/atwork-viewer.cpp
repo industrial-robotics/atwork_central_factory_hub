@@ -241,6 +241,10 @@ bool timeout_handler() {
       case atwork_pb_msgs::BenchmarkScenario::IRL:
           sstr_scenario << "Industrial Robotics League " << benchmark_state->scenario().type_id();
       break;
+
+      case atwork_pb_msgs::BenchmarkScenario::FBM:
+          sstr_scenario << "Functional Bechmarking " << benchmark_state->scenario().type_id();
+      break;
     }
     label_scenario->set_text(sstr_scenario.str());
   }

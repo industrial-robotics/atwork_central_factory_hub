@@ -51,6 +51,15 @@
   ?*AWF-EXECUTION-TIME*    =  600
   ?*IRL-PREPARATION-TIME*  =  300
   ?*IRL-EXECUTION-TIME*    =  300
+  ; ERL benchmark times;
+  ?*TBM-TIME*               =  600
+  ?*FBM1-TIME*              =  120  ; per run
+  ?*FBM2-PREPARATION-TIME*  =   30
+  ?*FBM2-EXECUTION-TIME*    =  210  ; per run
+  ?*FBM3-CALIBRATION-TIME*  =   60
+  ?*FBM3-PREPARATION-TIME*  =   60
+  ?*FBM3-EXECUTION-TIME*    =  120  ; per run
+
 
   ; Benchmark repetitions
   ?*BNT-COUNT*    =  1
@@ -60,6 +69,10 @@
   ?*CBT-COUNT*    =  1
   ?*AWF-COUNT*    =  1
   ?*IRL-COUNT*    =  1
+  ?*TBM-COUNT*    =  1
+  ?*FBM1-COUNT*   = 10
+  ?*FBM2-COUNT*   =  5
+  ?*FBM3-COUNT*   =  5
 
   ?*ROBOCUP-OBJECTS* = (create$
     [F20_20_B] [F20_20_G] [S40_40_B] [S40_40_G] [M20_100] [M20] [M30] [R20]

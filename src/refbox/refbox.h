@@ -45,7 +45,8 @@
 #include <protobuf_comm/server.h>
 
 #include <clipsmm.h>
-#ifdef HAVE_MONGODB
+#ifndef HAVE_MONGODB
+#elif HAVE_MONGODB == 1
 #  include <mongo/bson/bson.h>
 #endif
 
@@ -72,7 +73,8 @@ namespace fawkes {
 }
 #endif
 
-#ifdef HAVE_MONGODB
+#ifndef HAVE_MONGODB
+#elif HAVE_MONGODB == 1
 class MongoDBLogProtobuf;
 namespace mongo {
   class BSONObjBuilder;
@@ -114,7 +116,8 @@ class LLSFRefBox
   CLIPS::Values clips_get_clips_dirs();
   void          clips_load_config(std::string cfg_prefix);
 
-#ifdef HAVE_MONGODB
+#ifndef HAVE_MONGODB
+#elif HAVE_MONGODB == 1
   CLIPS::Value  clips_bson_create();
   CLIPS::Value  clips_bson_parse(std::string document);
   void          clips_bson_destroy(void *bson);
@@ -155,7 +158,8 @@ class LLSFRefBox
 
   std::string modify_directory_path(std::string dir);
 
-#ifdef HAVE_MONGODB
+#ifndef HAVE_MONGODB
+#elif HAVE_MONGODB == 1
   void add_comp_type(google::protobuf::Message &m, mongo::BSONObjBuilder *b);
 #endif
 
@@ -187,7 +191,8 @@ class LLSFRefBox
   fawkes::NetworkNameResolver  *nnresolver_;
 #endif
 
-#ifdef HAVE_MONGODB
+#ifndef HAVE_MONGODB
+#elif HAVE_MONGODB == 1
   bool                cfg_mongodb_enabled_;
   std::string         cfg_mongodb_hostport_;
   MongoDBLogProtobuf  *mongodb_protobuf_;

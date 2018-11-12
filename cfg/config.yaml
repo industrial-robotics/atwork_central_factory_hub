@@ -40,52 +40,28 @@ llsfrb:
     server-port: !tcp-port 4444
 
     public-peer:
-      host: !ipv4 192.168.1.255
+      host: !ipv4 localhost
       #port: !udp-port 4444
       send-port: !udp-port 4444
       recv-port: !udp-port 4445
 
     b-it-bots-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4446
-      #send-port: !udp-port 4446
-      #recv-port: !udp-port 4447
+      host: !ipv4 localhost
+      #port: !udp-port 4446
+      send-port: !udp-port 4446
+      recv-port: !udp-port 4447
 
-    smARTLab-peer:
-      host: !ipv4 192.168.1.255
+    b-it-bots-home-peer:
+      host: !ipv4 localhost
       port: !udp-port 4448
       #send-port: !udp-port 4448
       #recv-port: !udp-port 4449
 
-    SPQR-peer:
-      host: !ipv4 192.168.1.255
+    homer-peer:
+      host: !ipv4 localhost
       port: !udp-port 4450
       #send-port: !udp-port 4450
       #recv-port: !udp-port 4451
-
-    V-Climber-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4452
-      #send-port: !udp-port 4452
-      #recv-port: !udp-port 4453
-
-    LUHbots-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4454
-      #send-port: !udp-port 4454
-      #recv-port: !udp-port 4455
-
-    WF-Wolves-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4456
-      #send-port: !udp-port 4456
-      #recv-port: !udp-port 4457
-
-    AutonOHM-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4458
-      #send-port: !udp-port 4458
-      #recv-port: !udp-port 4459
 
     RobOTTO-peer:
       host: !ipv4 192.168.1.255
@@ -93,26 +69,8 @@ llsfrb:
       #send-port: !udp-port 4460
       #recv-port: !udp-port 4461
 
-    Ace-IAUK-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4462
-      #send-port: !udp-port 4462
-      #recv-port: !udp-port 4463
-
-    AMSTT-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4464
-      #send-port: !udp-port 4464
-      #recv-port: !udp-port 4465
-
-    Robo-Erectus-peer:
-      host: !ipv4 192.168.1.255
-      port: !udp-port 4466
-      #send-port: !udp-port 4466
-      #recv-port: !udp-port 4467
-
   mongodb:
-    enable: true
+    enable: false
     hostport: localhost
     collections:
       text-log: llsfrb.log
@@ -120,19 +78,12 @@ llsfrb:
       protobuf: llsfrb.protobuf
 
   game:
-    teams: [b-it-bots, smARTLab, SPQR, V-Climber, LUHbots, WF-Wolves, AutonOHM, RobOTTO, Ace-IAUK, AMSTT, Robo-Erectus]
+    teams: [b-it-bots, b-it-bots-home, homer, RobOTTO]
     crypto-keys:
       b-it-bots: randomkey
-      smARTLab: randomkey
-      SPQR: randomkey
-      V-Climber: randomkey
-      LUHbots: randomkey
-      WF-Wolves: randomkey
-      AutonOHM: randomkey
+      b-it-bots-home: randomkey
       RobOTTO: randomkey
-      Ace-IAUK: randomkey
-      AMSTT: randomkey
-      Robo-Erectus: randomkey
+      homer: randomkey
 
   shell:
     refbox-host: !ipv4 localhost

@@ -64,6 +64,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
       case atwork_pb_msgs::BenchmarkScenario::CBT:  std::cout << "CBT"; break;
       case atwork_pb_msgs::BenchmarkScenario::AWF:  std::cout << "AWF"; break;
       case atwork_pb_msgs::BenchmarkScenario::IRL:  std::cout << "IRL"; break;
+      case atwork_pb_msgs::BenchmarkScenario::FBM:  std::cout << "FBM"; break;
     }
     std::cout << s->scenario().type_id();
     if (s->scenario().has_description()) std::cout << " (" << s->scenario().description() << ")";
@@ -190,6 +191,15 @@ int main(int argc, char **argv)
       } else if (scenario == "irl1") {
         cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::IRL);
         cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "fbm1") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(1);
+      } else if (scenario == "fbm2") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(2);
+      } else if (scenario == "fbm3") {
+        cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
+        cmd.mutable_scenario()->set_type_id(3);
       } else if (scenario == "none") {
         cmd.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::NONE);
         cmd.mutable_scenario()->set_type_id(0);

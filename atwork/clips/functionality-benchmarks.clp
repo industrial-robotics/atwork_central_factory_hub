@@ -10,9 +10,10 @@
 
 (defmessage-handler FbmStoppedState on-enter (?prev-state)
   ; Select a random object to be handled by the robot
-  (bind ?objects (create$ [ax-01] [ax-02] [ax-03] [ax-09] [ax-16] [em-01] [em-02]))
+  ; (bind ?objects (create$ [ax-01] [ax-02] [ax-03] [em-01] [em-02]))
+  (bind ?robocup-objects ?*ROBOCUP-OBJECTS*)
 
-  (bind ?selected-object (pick-random$ ?objects))
+  (bind ?selected-object (pick-random$ ?robocup-objects))
 
   (bind ?description (nth$ 1 (send ?selected-object get-description)))
   (printout t "Place object " ?description " in front of the robot and start the benchmark" crlf)
@@ -111,8 +112,7 @@
 (defmessage-handler FunctionalityBenchmark1 handle-feedback (?pb-msg ?time ?name ?team)
   (if (and
        (pb-has-field ?pb-msg "object_class_name")
-       (pb-has-field ?pb-msg "object_instance_name")
-       (pb-has-field ?pb-msg "object_pose"))
+       (pb-has-field ?pb-msg "object_instance_name"))
    then
     (printout t "FBM: Robot " ?name "/" ?team
         " recognized object instance " (pb-field-value ?pb-msg "object_instance_name")
@@ -150,6 +150,7 @@
     (phase EXECUTION) (state-machine ?state-machine))
 
   (send [preparation-stopped-state]  add-transition START   [preparation-running-state])
+  (send [preparation-stopped-state]  add-transition FINISH  [preparation-stopped-state])
   (send [preparation-running-state]  add-transition PAUSE   [preparation-paused-state])
   (send [preparation-running-state]  add-transition STOP    [execution-stopped-state])
   (send [preparation-running-state]  add-transition TIMEOUT [execution-stopped-state])
@@ -180,20 +181,31 @@
 )
 
 (defmessage-handler FunctionalityBenchmark2 handle-feedback (?pb-msg ?time ?name ?team)
-  (if (and
-       (pb-has-field ?pb-msg "grasp_notification")
-       (pb-has-field ?pb-msg "object_class_name")
-       (pb-has-field ?pb-msg "object_instance_name")
-       (pb-has-field ?pb-msg "end_effector_pose"))
+
+  ; Identify which phase the peer wants to terminate
+  (bind ?phase-to-terminate (pb-field-value ?pb-msg "phase_to_terminate"))
+  ; Identify the currently active phase
+  (bind ?state-machine (send [benchmark] get-state-machine))
+  (bind ?current-state (send ?state-machine get-current-state))
+  (bind ?current-phase (send ?current-state to-robot-phase))
+  (bind ?robot-state   (send ?current-state to-robot-state))
+
+
+  (if (and (eq ?robot-state RUNNING)
+           (eq ?current-phase EXECUTION))
    then
-    (printout t "FBM: Robot " ?name "/" ?team
-        " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
-        " of class " (pb-field-value ?pb-msg "object_class_name") crlf)
-    (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
-        " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
-        " of class " (pb-field-value ?pb-msg "object_class_name")))))
-   else
-    (printout t "Benchmark feedback from " ?name "/" ?team " is invalid" crlf)
+    (if (pb-has-field ?pb-msg "grasp_notification")
+    then
+      (printout t "FBM: Robot " ?name "/" ?team
+          " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
+          " of class " (pb-field-value ?pb-msg "object_class_name") crlf)
+      (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
+          " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
+          " of class " (pb-field-value ?pb-msg "object_class_name")))))
+
+    else
+      (printout t "Benchmark feedback no grasp notification from " ?name "/" ?team " Which is invalid" crlf)
+    )
   )
 
   (return FINISH)

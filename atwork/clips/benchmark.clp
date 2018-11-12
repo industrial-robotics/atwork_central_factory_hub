@@ -13,7 +13,8 @@
   ; CBT:  Conveyor Belt Test
   ; AWF:  At Work Final
   ; IRL:  Industrial Robotics League Challenge
-  (slot type (type SYMBOL) (allowed-values NONE BNT BMT BTT PPT CBT AWF IRL) (default NONE))
+  ; FBM: functionality benchmark
+  (slot type (type SYMBOL) (allowed-values NONE BNT BMT BTT PPT CBT AWF IRL FBM) (default NONE))
   (slot type-id (type INTEGER) (default 0))
   (slot description (type STRING) (default ""))
 )

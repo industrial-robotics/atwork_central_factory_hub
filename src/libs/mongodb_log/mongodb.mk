@@ -25,7 +25,7 @@ endif
 
 ifneq ($(wildcard /usr/include/mongo/client/dbclient.h /usr/local/include/mongo/client/dbclient.h),)
   ifeq ($(call boost-have-libs,thread system filesystem)$(HAVE_LIBSSL),11)
-    HAVE_MONGODB = 1
+    HAVE_MONGODB = 0
 
     # Unfortunately, the MongoDB header files don't include a macro with the
     # version number. Therefore, we try to extract the version from the mongo
