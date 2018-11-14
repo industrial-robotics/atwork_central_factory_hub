@@ -294,9 +294,9 @@
   (init)
   ?bm <- (object (is-a Benchmark))
   =>
-  (make-instance [FBM1] of FunctionalityBenchmark1 (type FBM) (type-id 1) (description "Object Perception Functionality"))
-  (make-instance [FBM2] of FunctionalityBenchmark2 (type FBM) (type-id 2) (description "Manipulation Functionality"))
-  (make-instance [FBM3] of FunctionalityBenchmark3 (type FBM) (type-id 3) (description "Control Functionality"))
+  (make-instance [FBM1] of FunctionalityBenchmark2 (type FBM) (type-id 1) (description "Object Perception Functionality"))
+  (make-instance [FBM2] of FunctionalityBenchmark2 (type FBM) (type-id 2) (description "Manipulation Pick Functionality"))
+  (make-instance [FBM3] of FunctionalityBenchmark2 (type FBM) (type-id 3) (description "Manipulation Place Functionality"))
 
   (slot-insert$ ?bm registered-scenarios 1 [FBM1])
   (slot-insert$ ?bm registered-scenarios 1 [FBM2])
