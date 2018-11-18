@@ -22,6 +22,37 @@ message ObjectIdentifier {
     MOTOR         = 13; //
     CONTAINER_B   = 14; // A Container (Blue)
     CONTAINER_R   = 15; // A Container (Red)
+    PICKUP_BLACK_WHITE       = 16;
+    PICKUP_CHOCO_MILK        = 17;
+    DUPLO_WHITE              = 18;
+    DUPLO_CLASSIC            = 19;
+    TWIX_SPEKULATIUS         = 20;
+    TWIX_WHITE               = 21;
+    TWIX_CLASSIC             = 22;
+    TWIX_MINI                = 23;
+    MARS                     = 24;
+    MARS_MINI                = 25;
+    SNICKERS                 = 26;
+    SNICKERS_MINI            = 27;
+    KITKAT_CLASSIC           = 28;
+    KITKAT_WHITE             = 29;
+    KITKAT_CHUNKY_WHITE      = 30;
+    KITKAT_CHUNKY_CLASSIC    = 31;
+    KITKAT_MINI              = 32;
+    LION_CLASSIC             = 33;
+    LION_MINI                = 34;
+    M_M_CRIPSY               = 35;
+    M_M_PEANUT               = 36;
+    BOUNTY                   = 37;
+    BOUNTY_MINI              = 38;
+    MILKYWAY                 = 39;
+    MILKYWAY_MINI            = 40;
+    RITTERSPORT_NUGAT        = 41;
+    RITTERSPORT_KNUSPERKEKS  = 42;
+    RITTERSPORT_JOGHURT      = 43;
+    RITTERSPORT_KNUSPERFLAKES= 44;
+    RITTERSPORT_NUSS_SPLITTER= 45;
+    RITTERSPORT_MARZIPAN     = 46;
   }
 
   // The object class (e.g. "EM-01") consists of the type ("EM") and a type

@@ -45,6 +45,7 @@ message BenchmarkScenario {
     AWF  = 6; // At-Work Final
     IRL  = 7; // Industrial Robotics League Crossover Challenge
     FBM  = 8; // Functional Benchmarks
+    EPI  = 9; // Functional Benchmarks
   }
 
   // e.g. Basic Navigation Test: "BNT 1: Basic Navigation Test"

@@ -22,6 +22,7 @@
 (load* (resolve-file conveyor-belt-tests.clp))
 (load* (resolve-file at-work-finals.clp))
 (load* (resolve-file functionality-benchmarks.clp))
+(load* (resolve-file episode-serving-goodies.clp))
 ;(load* (resolve-file industrial-robotics-league-challenges.clp))
 (load* (resolve-file net.clp))
 (load* (resolve-file robots.clp))

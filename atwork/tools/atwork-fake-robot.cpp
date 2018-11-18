@@ -128,6 +128,7 @@ handle_message(boost::asio::ip::udp::endpoint &sender,
       case BenchmarkScenario::AWF:  std::cout << "AWF"; break;
       case BenchmarkScenario::IRL:  std::cout << "IRL"; break;
       case BenchmarkScenario::FBM:  std::cout << "FBM"; break;
+      case BenchmarkScenario::EPI:  std::cout << "EPISODE"; break;
     }
     std::cout << " " << bs->scenario().type_id();
     if (bs->scenario().has_description()) std::cout << " (" << bs->scenario().description() << ")";

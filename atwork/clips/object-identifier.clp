@@ -22,6 +22,38 @@
     MOTOR        ; //
     CONTAINER_B  ; // A Container (Blue)
     CONTAINER_R  ; // A Container (Red)
+    PICKUP_BLACK_WHITE       ;
+    PICKUP_CHOCO_MILK        ;
+    DUPLO_WHITE              ;
+    DUPLO_CLASSIC            ;
+    TWIX_SPEKULATIUS         ;
+    TWIX_WHITE               ;
+    TWIX_CLASSIC             ;
+    TWIX_MINI                ;
+    MARS                     ;
+    MARS_MINI                ;
+    SNICKERS                 ;
+    SNICKERS_MINI            ;
+    KITKAT_CLASSIC           ;
+    KITKAT_WHITE             ;
+    KITKAT_CHUNKY_WHITE      ;
+    KITKAT_CHUNKY_CLASSIC    ;
+    KITKAT_MINI              ;
+    LION_CLASSIC             ;
+    LION_MINI                ;
+    M_M_CRIPSY               ;
+    M_M_PEANUT               ;
+    BOUNTY                   ;
+    BOUNTY_MINI              ;
+    MILKYWAY                 ;
+    MILKYWAY_MINI            ;
+    RITTERSPORT_NUGAT        ;
+    RITTERSPORT_KNUSPERKEKS  ;
+    RITTERSPORT_JOGHURT      ;
+    RITTERSPORT_KNUSPERFLAKES;
+    RITTERSPORT_NUSS_SPLITTER;
+    RITTERSPORT_MARZIPAN     ;
+
   ))
   (slot type-id (type INTEGER))
 
@@ -69,4 +101,35 @@
   (make-instance [MOTOR]         of ObjectIdentifier (type MOTOR)         (type-id 1) (description "Motor"))
   (make-instance [CONTAINER_B]   of ObjectIdentifier (type CONTAINER_B)   (type-id 1) (description "Blue Container"))
   (make-instance [CONTAINER_R]   of ObjectIdentifier (type CONTAINER_R)   (type-id 1) (description "Red Container"))
+  (make-instance [PICKUP_BLACK_WHITE]        of ObjectIdentifier (type PICKUP_BLACK_WHITE)        (type-id 1) (description "PICKUP_BLACK_WHITE"))
+  (make-instance [PICKUP_CHOCO_MILK]         of ObjectIdentifier (type PICKUP_CHOCO_MILK)         (type-id 1) (description "PICKUP_CHOCO_MILK"))
+  (make-instance [DUPLO_WHITE]               of ObjectIdentifier (type DUPLO_WHITE)               (type-id 1) (description "DUPLO_WHITE"))
+  (make-instance [DUPLO_CLASSIC]             of ObjectIdentifier (type DUPLO_CLASSIC)             (type-id 1) (description "DUPLO_CLASSIC"))
+  (make-instance [TWIX_SPEKULATIUS]          of ObjectIdentifier (type TWIX_SPEKULATIUS)          (type-id 1) (description "TWIX_SPEKULATIUS"))
+  (make-instance [TWIX_WHITE]                of ObjectIdentifier (type TWIX_WHITE)                (type-id 1) (description "TWIX_WHITE"))
+  (make-instance [TWIX_CLASSIC]              of ObjectIdentifier (type TWIX_CLASSIC)              (type-id 1) (description "TWIX_CLASSIC"))
+  (make-instance [TWIX_MINI]                 of ObjectIdentifier (type TWIX_MINI)                 (type-id 1) (description "TWIX_MINI"))
+  (make-instance [MARS]                      of ObjectIdentifier (type MARS)                      (type-id 1) (description "MARS"))
+  (make-instance [MARS_MINI]                 of ObjectIdentifier (type MARS_MINI)                 (type-id 1) (description "MARS_MINI"))
+  (make-instance [SNICKERS]                  of ObjectIdentifier (type SNICKERS)                  (type-id 1) (description "SNICKERS"))
+  (make-instance [SNICKERS_MINI]             of ObjectIdentifier (type SNICKERS_MINI)             (type-id 1) (description "SNICKERS_MINI"))
+  (make-instance [KITKAT_CLASSIC]            of ObjectIdentifier (type KITKAT_CLASSIC)            (type-id 1) (description "KITKAT_CLASSIC"))
+  (make-instance [KITKAT_WHITE]              of ObjectIdentifier (type KITKAT_WHITE)              (type-id 1) (description "KITKAT_WHITE"))
+  (make-instance [KITKAT_CHUNKY_WHITE]       of ObjectIdentifier (type KITKAT_CHUNKY_WHITE)       (type-id 1) (description "KITKAT_CHUNKY_WHITE"))
+  (make-instance [KITKAT_CHUNKY_CLASSIC]     of ObjectIdentifier (type KITKAT_CHUNKY_CLASSIC)     (type-id 1) (description "KITKAT_CHUNKY_CLASSIC"))
+  (make-instance [KITKAT_MINI]               of ObjectIdentifier (type KITKAT_MINI)               (type-id 1) (description "KITKAT_MINI"))
+  (make-instance [LION_CLASSIC]              of ObjectIdentifier (type LION_CLASSIC)              (type-id 1) (description "LION_CLASSIC"))
+  (make-instance [LION_MINI]                 of ObjectIdentifier (type LION_MINI)                 (type-id 1) (description "LION_MINI"))
+  (make-instance [M_M_CRIPSY]                of ObjectIdentifier (type M_M_CRIPSY)                (type-id 1) (description "M_M_CRIPSY"))
+  (make-instance [M_M_PEANUT]                of ObjectIdentifier (type M_M_PEANUT)                (type-id 1) (description "M_M_PEANUT"))
+  (make-instance [BOUNTY]                    of ObjectIdentifier (type BOUNTY)                    (type-id 1) (description "BOUNTY"))
+  (make-instance [BOUNTY_MINI]               of ObjectIdentifier (type BOUNTY_MINI)               (type-id 1) (description "BOUNTY_MINI"))
+  (make-instance [MILKYWAY]                  of ObjectIdentifier (type MILKYWAY)                  (type-id 1) (description "MILKYWAY"))
+  (make-instance [MILKYWAY_MINI]             of ObjectIdentifier (type MILKYWAY_MINI)             (type-id 1) (description "MILKYWAY_MINI"))
+  (make-instance [RITTERSPORT_NUGAT]         of ObjectIdentifier (type RITTERSPORT_NUGAT)         (type-id 1) (description "RITTERSPORT_NUGAT"))
+  (make-instance [RITTERSPORT_KNUSPERKEKS]   of ObjectIdentifier (type RITTERSPORT_KNUSPERKEKS)   (type-id 1) (description "RITTERSPORT_KNUSPERKEKS"))
+  (make-instance [RITTERSPORT_JOGHURT]       of ObjectIdentifier (type RITTERSPORT_JOGHURT)       (type-id 1) (description "RITTERSPORT_JOGHURT"))
+  (make-instance [RITTERSPORT_KNUSPERFLAKES] of ObjectIdentifier (type RITTERSPORT_KNUSPERFLAKES) (type-id 1) (description "RITTERSPORT_KNUSPERFLAKES"))
+  (make-instance [RITTERSPORT_NUSS_SPLITTER] of ObjectIdentifier (type RITTERSPORT_NUSS_SPLITTER) (type-id 1) (description "RITTERSPORT_NUSS_SPLITTER"))
+  (make-instance [RITTERSPORT_MARZIPAN]      of ObjectIdentifier (type RITTERSPORT_MARZIPAN)      (type-id 1) (description "RITTERSPORT_MARZIPAN"))
 )

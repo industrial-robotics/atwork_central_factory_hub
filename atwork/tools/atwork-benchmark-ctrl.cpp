@@ -65,6 +65,7 @@ void handle_message(uint16_t comp_id, uint16_t msg_type,
       case atwork_pb_msgs::BenchmarkScenario::AWF:  std::cout << "AWF"; break;
       case atwork_pb_msgs::BenchmarkScenario::IRL:  std::cout << "IRL"; break;
       case atwork_pb_msgs::BenchmarkScenario::FBM:  std::cout << "FBM"; break;
+      case atwork_pb_msgs::BenchmarkScenario::EPI:  std::cout << "Episode"; break;
     }
     std::cout << s->scenario().type_id();
     if (s->scenario().has_description()) std::cout << " (" << s->scenario().description() << ")";

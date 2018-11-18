@@ -207,6 +207,9 @@ void on_reset_click()
   } else if (benchmark == "FBM3") {
     cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::FBM);
     cmd_scenario.mutable_scenario()->set_type_id(3);
+  } else if (benchmark == "EPISODE") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::EPI);
+    cmd_scenario.mutable_scenario()->set_type_id(1);
   } else if (benchmark == "None") {
     cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::NONE);
     cmd_scenario.mutable_scenario()->set_type_id(0);
