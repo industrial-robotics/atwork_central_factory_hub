@@ -63,7 +63,7 @@
 (defmessage-handler EpisodeServingGoodies generate ()
   (printout t "Generating new EpisodeServingGoodies" crlf)
 
-  (bind ?manipulation-chocolate-objects (create$ ?*CHOCOLATE_OBJECTS*))
+  (bind ?manipulation-chocolate-objects (create$ ?*CHOCOLATE-OBJECTS*))
 
   ; set static location for source
   (bind ?source-location [workstation-01])

@@ -11,9 +11,11 @@
 (defmessage-handler FbmStoppedState on-enter (?prev-state)
   ; Select a random object to be handled by the robot
   ; (bind ?objects (create$ [ax-01] [ax-02] [ax-03] [em-01] [em-02]))
-  (bind ?chocolate_objects ?*CHOCOLATE_OBJECTS* ?*RITTERSPORT_OBJECTS*)
+  (bind ?chocolate_objects ?*CHOCOLATE-OBJECTS* ?*RITTERSPORT-OBJECTS*)
+  (bind ?work_objects ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
 
-  (bind ?selected-object (pick-random$ ?chocolate_objects))
+  ;(bind ?selected-object (pick-random$ ?chocolate_objects))
+  (bind ?selected-object (pick-random$ ?work_objects))
 
   (bind ?description (nth$ 1 (send ?selected-object get-description)))
   (printout t "Place object " ?description " in front of the robot and start the benchmark" crlf)
