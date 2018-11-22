@@ -87,6 +87,7 @@
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
           (object-id ?item)
+          (container-id [CONTAINER_B])
           (quantity-requested 1)
           (destination-id ?destination-location)
           (source-id ?source-location)))
@@ -94,18 +95,7 @@
     )
   )
 
-  ; 2 decoy chocolates on flat surface
-  (loop-for-count 2
-    ; Pick random RoboCup object
-    (bind ?item (pick-random$ ?manipulation-chocolate-objects))
-    (bind ?manipulation-chocolate-objects (delete-member$ ?manipulation-chocolate-objects ?item))
 
-    ; Add to inventory
-    (slot-insert$ [inventory] items 1
-      (make-instance of Item (object-id ?item) (location-id ?source-location))
-    )
-
-  )
   ; 2 chocolates on shelf surface
   (loop-for-count 2
     ; Pick random chocolate object
@@ -123,22 +113,17 @@
         (transportation-task (make-instance of TransportationTask
           (object-id ?item)
           (quantity-requested 1)
+          (container-id [CONTAINER_B])
           (destination-id ?destination-location)
           (source-id ?source-location)))
       )
     )
   )
-  ; 3 decoy chocolates on shelf surface
-  (loop-for-count 2
-    ; Pick random chocolate object
-    (bind ?item (pick-random$ ?manipulation-chocolate-objects))
-    (bind ?manipulation-chocolate-objects (delete-member$ ?manipulation-chocolate-objects ?item))
 
-    ; Add to inventory
-    (slot-insert$ [inventory] items 1
-      (make-instance of Item (object-id ?item) (location-id ?shelf-location))
-    )
 
+  ; Add to container to inventory
+  (slot-insert$ [inventory] items 1
+    (make-instance of Item (object-id [CONTAINER_B]) (location-id ?destination-location))
   )
 )
 
