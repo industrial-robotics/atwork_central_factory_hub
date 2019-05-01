@@ -40,25 +40,29 @@ llsfrb:
     server-port: !tcp-port 4444
 
     public-peer:
-      host: !ipv4 localhost
-      #port: !udp-port 4444
-      send-port: !udp-port 4444
-      recv-port: !udp-port 4445
+      #host: !ipv4 localhost
+      host: !ipv4 192.168.1.255
+      port: !udp-port 4444
+      #send-port: !udp-port 4444
+      #recv-port: !udp-port 4445
 
     b-it-bots-peer:
-      host: !ipv4 localhost
-      #port: !udp-port 4446
-      send-port: !udp-port 4446
-      recv-port: !udp-port 4447
+      #host: !ipv4 localhost
+      host: !ipv4 192.168.1.255
+      port: !udp-port 4446
+      #send-port: !udp-port 4446
+      #recv-port: !udp-port 4447
 
     b-it-bots-home-peer:
-      host: !ipv4 localhost
+      #host: !ipv4 localhost
+      host: !ipv4 192.168.1.255
       port: !udp-port 4448
       #send-port: !udp-port 4448
       #recv-port: !udp-port 4449
 
     homer-peer:
-      host: !ipv4 localhost
+      #host: !ipv4 localhost
+      host: !ipv4 192.168.1.255
       port: !udp-port 4450
       #send-port: !udp-port 4450
       #recv-port: !udp-port 4451

@@ -14,8 +14,9 @@
   (bind ?chocolate_objects ?*CHOCOLATE-OBJECTS* ?*RITTERSPORT-OBJECTS*)
   (bind ?work_objects ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
 
-  ;(bind ?selected-object (pick-random$ ?chocolate_objects))
-  (bind ?selected-object (pick-random$ ?work_objects))
+  ;(bind ?selected-object (pick-random$ ?*REDUCED-CHOCOLATE-OBJECTS*))
+  (bind ?selected-object (pick-random$ ?chocolate_objects))
+  ;(bind ?selected-object (pick-random$ ?work_objects))
 
   (bind ?description (nth$ 1 (send ?selected-object get-description)))
   (printout t "Place object " ?description " in front of the robot and start the benchmark" crlf)
@@ -83,31 +84,52 @@
 (defclass FunctionalityBenchmark3 (is-a BenchmarkScenario) (role concrete))
 
 (defmessage-handler FunctionalityBenchmark1 setup (?time ?state-machine)
-  (make-instance [stopped-state] of FbmStoppedState
+  (make-instance [preparation-stopped-state] of StoppedState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time))
+  (make-instance [preparation-running-state] of RunningState
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-PREPARATION-TIME*))
+  (make-instance [preparation-paused-state] of PausedState
+    (phase PREPARATION) (state-machine ?state-machine))
+
+  (make-instance [execution-stopped-state] of FbmStoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
-  (make-instance [running-state] of FbmRunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM1-TIME*))
-  (make-instance [paused-state] of PausedState
+  (make-instance [execution-running-state] of FbmRunningState
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*FBM2-EXECUTION-TIME*))
+  (make-instance [execution-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
-  (make-instance [check-runs-state] of CheckRunsState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-runs ?*FBM1-COUNT*))
-  (make-instance [finished-state] of FinishedState
+  (make-instance [execution-check-runs-state] of CheckRunsState
+    (phase EXECUTION) (state-machine ?state-machine)(time ?time) (max-runs ?*FBM1-COUNT*))
+  (make-instance [execution-finished-state] of FinishedState
     (phase EXECUTION) (state-machine ?state-machine))
 
-  (send [stopped-state]    add-transition START           [running-state])
-  (send [running-state]    add-transition STOP            [check-runs-state])
-  (send [running-state]    add-transition PAUSE           [paused-state])
-  (send [running-state]    add-transition TIMEOUT         [check-runs-state])
-  (send [running-state]    add-transition FINISH          [check-runs-state])
-  (send [paused-state]     add-transition START           [running-state])
-  (send [paused-state]     add-transition STOP            [stopped-state])
-  (send [check-runs-state] add-transition REPEAT          [stopped-state])
-  (send [check-runs-state] add-transition FINISH          [finished-state])
+  (send [preparation-stopped-state]  add-transition START   [preparation-running-state])
+  (send [preparation-stopped-state]  add-transition FINISH  [preparation-stopped-state])
+  (send [preparation-running-state]  add-transition PAUSE   [preparation-paused-state])
+  (send [preparation-running-state]  add-transition STOP    [execution-stopped-state])
+  (send [preparation-running-state]  add-transition TIMEOUT [execution-stopped-state])
+  (send [preparation-running-state]  add-transition FINISH  [execution-stopped-state])
+  (send [preparation-paused-state]   add-transition START   [preparation-running-state])
+  (send [preparation-paused-state]   add-transition STOP    [execution-stopped-state])
 
+  (send [execution-stopped-state]    add-transition START   [execution-running-state])
+  (send [execution-running-state]    add-transition STOP    [execution-check-runs-state])
+  (send [execution-running-state]    add-transition PAUSE   [execution-paused-state])
+  (send [execution-running-state]    add-transition TIMEOUT [execution-check-runs-state])
+  (send [execution-running-state]    add-transition FINISH  [execution-check-runs-state])
+  (send [execution-paused-state]     add-transition START   [execution-running-state])
+  (send [execution-paused-state]     add-transition STOP    [execution-stopped-state])
+  (send [execution-check-runs-state] add-transition REPEAT  [preparation-running-state])
+  (send [execution-check-runs-state] add-transition FINISH  [execution-finished-state])
 
   (make-instance ?state-machine of StateMachine
-    (current-state [stopped-state])
-    (states [stopped-state] [running-state] [paused-state] [check-runs-state] [finished-state])
+    (current-state [preparation-stopped-state])
+    (states
+      [preparation-stopped-state] [preparation-running-state]
+      [preparation-paused-state] [preparation-finished-state]
+      [execution-stopped-state] [execution-running-state]
+      [execution-paused-state] [execution-check-runs-state]
+      [execution-finished-state]
+    )
   )
 )
 
@@ -199,11 +221,9 @@
     (if (pb-has-field ?pb-msg "grasp_notification")
     then
       (printout t "FBM: Robot " ?name "/" ?team
-          " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
-          " of class " (pb-field-value ?pb-msg "object_class_name") crlf)
+          " replied grasp value " (pb-field-value ?pb-msg "grasp_notfiation") crlf)
       (assert (attention-message (text (str-cat "FBM: Robot " ?name "/" ?team
-          " lifted object instance " (pb-field-value ?pb-msg "object_instance_name")
-          " of class " (pb-field-value ?pb-msg "object_class_name")))))
+          " replied grasp notification " (pb-field-value ?pb-msg "grasp_notification")))))
 
     else
       (printout t "Benchmark feedback no grasp notification from " ?name "/" ?team " Which is invalid" crlf)
@@ -296,7 +316,7 @@
   (init)
   ?bm <- (object (is-a Benchmark))
   =>
-  (make-instance [FBM1] of FunctionalityBenchmark2 (type FBM) (type-id 1) (description "Object Perception Functionality"))
+  (make-instance [FBM1] of FunctionalityBenchmark1 (type FBM) (type-id 1) (description "Object Perception Functionality"))
   (make-instance [FBM2] of FunctionalityBenchmark2 (type FBM) (type-id 2) (description "Manipulation Pick Functionality"))
   (make-instance [FBM3] of FunctionalityBenchmark2 (type FBM) (type-id 3) (description "Manipulation Place Functionality"))
 
