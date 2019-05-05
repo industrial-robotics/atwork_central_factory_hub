@@ -63,58 +63,58 @@
 (defmessage-handler BasicManipulationTest1 generate ()
   (printout t "Generating new BasicManipulationTest1" crlf)
 
-  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
+  ;(bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   
-  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
+  ;(bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
   ; set static location for source
-  (bind ?source-location [workstation-05])
+  (bind ?source-location [workstation-07])
   ; set static location for destination
   (bind ?destination-location [workstation-06])
 
   ; 3 RoboCup objects
-  (loop-for-count 3
+  ;(loop-for-count 3
     ; Pick random RoboCup object
-    (bind ?item (pick-random$ ?manipulation-robocup-objects))
+ ;   (bind ?item (pick-random$ ?manipulation-robocup-objects))
 
     ; Add to inventory
-    (slot-insert$ [inventory] items 1
-      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    (slot-insert$ [inventory] items 8
+      (make-instance of Item (object-id [M20_100]) (location-id [workstation-07]))
+      (make-instance of Item (object-id [F20_20_B])    (location-id [workstation-07]))
+      (make-instance of Item (object-id [R20])      (location-id [workstation-07]))
+      (make-instance of Item (object-id [M30]) (location-id [workstation-07]))
+      (make-instance of Item (object-id [BEARING]) (location-id [workstation-07]))
+      (make-instance of Item (object-id [BEARING_BOX]) (location-id [workstation-07]))
+      (make-instance of Item (object-id [S40_40_G]) (location-id [workstation-07]))
+      (make-instance of Item (object-id [AXIS]) (location-id [workstation-07]))
     )
 
     ; Manipulation Task
-    (slot-insert$ [task-info] tasks 1
+    (slot-insert$ [task-info] tasks 3
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id ?item)
+          (object-id [S40_40_G])
           (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
+          (destination-id [workstation-06])
+          (source-id [workstation-07])))
       )
-    )
-  )
-
-  ; 2 RoCKIn objects (TODO: Selected by team)
-  (loop-for-count 2
-    ; Pick random RoboCup object
-    (bind ?item (pick-random$ ?manipulation-rockin-objects))
-
-    ; Add to inventory
-    (slot-insert$ [inventory] items 1
-      (make-instance of Item (object-id ?item) (location-id ?source-location))
-    )
-
-    ; Manipulation Task
-    (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id ?item)
+          (object-id [F20_20_B])
           (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
+          (destination-id [workstation-06])
+          (source-id [workstation-07])))
+      )
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id [M30])
+          (quantity-requested 1)
+          (destination-id [workstation-06])
+          (source-id [workstation-07])))
       )
     )
-  )
+  ;)
+
 )
 
 

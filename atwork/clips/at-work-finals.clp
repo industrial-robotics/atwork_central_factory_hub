@@ -233,9 +233,9 @@
 
     ; One decoy for each source location
     (make-instance of Item (object-id ?decoy-1) (location-id ?source-location-1))
-    (make-instance of Item (object-id ?decoy-2) (location-id ?source-location-2))
-    (make-instance of Item (object-id ?decoy-3) (location-id ?source-location-3))
-    (make-instance of Item (object-id ?decoy-4) (location-id ?source-location-4))
+    (make-instance of Item (object-id ?decoy-2) (location-id ?source-location-1))
+    (make-instance of Item (object-id ?decoy-3) (location-id ?source-location-2))
+    (make-instance of Item (object-id ?decoy-4) (location-id ?source-location-2))
     (make-instance of Item (object-id ?decoy-5) (location-id ?source-rotating))
 
     ; Containers for two Tables
@@ -252,9 +252,9 @@
     ; Two Picks from shelf
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
-        (object-id ?item-1)
+        (object-id ?item-9)
         (quantity-requested 1)
-        (destination-id ?destination-location-3)
+        (destination-id ?destination-location-2)
         (source-id ?source-shelf)
     )))
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
@@ -288,7 +288,7 @@
       (transportation-task (make-instance of TransportationTask
         (object-id ?item-5)
         (quantity-requested 1)
-        (container-id [CONTAINER_R])
+        (container-id [CONTAINER_B])
         (destination-id ?destination-location-1)
         (source-id ?source-location-2)
     )))
@@ -296,7 +296,7 @@
       (transportation-task (make-instance of TransportationTask
         (object-id ?item-6)
         (quantity-requested 1)
-        (container-id [CONTAINER_B])
+        (container-id [CONTAINER_R])
         (destination-id ?destination-location-2)
         (source-id ?source-location-3)
     )))
@@ -322,7 +322,7 @@
     ; One PPT
     (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
       (transportation-task (make-instance of TransportationTask
-        (object-id ?item-9)
+        (object-id ?item-1)
         (quantity-requested 1)
         (destination-id ?destination-ppt)
         (source-id ?source-location-2)
