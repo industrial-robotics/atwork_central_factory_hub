@@ -1,26 +1,25 @@
 ;---------------------------------------------------------------------------
-;  basic-navigation-tests.clp - AtWork RefBox CLIPS - BNTs
+;  basic-manipulation-tests.clp - AtWork RefBox CLIPS - BMTs
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-;; Generic BNT
-(defclass BasicNavigationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
+(defclass BasicManipulationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler BasicNavigationTest setup (?time ?state-machine)
+(defmessage-handler BasicManipulationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BNT-PREPARATION-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BMT-PREPARATION-TIME*))
   (make-instance [prep-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [exec-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BNT-EXECUTION-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BMT-EXECUTION-TIME*))
   (make-instance [exec-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [exec-finished-state] of FinishedState
@@ -53,50 +52,77 @@
   )
 )
 
-(defmessage-handler BasicNavigationTest handle-feedback (?pb-msg ?time ?name ?team)
+(defmessage-handler BasicManipulationTest handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
-;; BNT 1
+;; BMT 1
 
-(defclass BasicNavigationTest1 (is-a BasicNavigationTest) (role concrete))
+(defclass BasicManipulationTest1 (is-a BasicManipulationTest) (role concrete))
 
-(defmessage-handler BasicNavigationTest1 generate ()
-  (printout t "Generating new BasicNavigationTest1" crlf)
+(defmessage-handler BasicManipulationTest1 generate ()
+  (printout t "Generating new BasicManipulationTest1" crlf)
 
-  (bind ?navigation-locations (create$
-        ?*WORKSTATION-0CM-LOCATIONS* ?*WORKSTATION-5CM-LOCATIONS*
-        ?*WORKSTATION-10CM-LOCATIONS* ?*WORKSTATION-15CM-LOCATIONS*
-        ?*SHELF-LOCATIONS* ?*ROTATING-TABLE-LOCATIONS*
-        ?*PRECISION-LOCATIONS*
-  ))
-  (bind ?navigation-directions (create$
-        NORTH EAST SOUTH WEST
-  ))
+  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
+  
+  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
-  (loop-for-count 9
-    ; Pick random location and remove from location pool
-    (bind ?location (pick-random$ ?navigation-locations))
-    (bind ?navigation-locations (delete-member$ ?navigation-locations ?location))
+  ; set static location for source
+  (bind ?source-location [workstation-07])
+  ; set static location for destination
+  (bind ?destination-location [workstation-06])
 
-    ; Task
+  ; 3 RoboCup objects
+  (loop-for-count 3
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-robocup-objects))
+
+    ; Add to inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    ; Manipulation Task
     (slot-insert$ [task-info] tasks 1
-      (make-instance of Task (status OFFERED) (task-type NAVIGATION)
-        (navigation-task (make-instance of NavigationTask
-          (location-id ?location)
-          (wait-time 3)
-          (orientation (pick-random$ ?navigation-directions))))
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id ?destination-location)
+          (source-id ?source-location)))
+      )
+    )
+  )
+
+  ; 2 RoCKIn objects (TODO: Selected by team)
+  (loop-for-count 2
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-rockin-objects))
+
+    ; Add to inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    ; Manipulation Task
+    (slot-insert$ [task-info] tasks 1
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id ?item)
+          (quantity-requested 1)
+          (destination-id ?destination-location)
+          (source-id ?source-location)))
       )
     )
   )
 )
 
 
-(defrule init-bnt
+(defrule init-bmt
   (init)
-  ?bnt <- (object (is-a Benchmark))
+  ?bmt <- (object (is-a Benchmark))
   =>
-  (make-instance [BNT1] of BasicNavigationTest1 (type BNT) (type-id 1) (description "Basic Navigation Test 1"))
+  (make-instance [BMT1] of BasicManipulationTest1 (type BMT) (type-id 1) (description "Basic Manipulation Test 1"))
 
-  (slot-insert$ ?bnt registered-scenarios 1 [BNT1])
+  (slot-insert$ ?bmt registered-scenarios 1 [BMT1])
 )
