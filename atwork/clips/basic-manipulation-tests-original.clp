@@ -1,25 +1,25 @@
 ;---------------------------------------------------------------------------
-;  conveyor-belt-tests.clp - AtWork RefBox CLIPS - CBTs
+;  basic-manipulation-tests.clp - AtWork RefBox CLIPS - BMTs
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass ConveyorBeltTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
+(defclass BasicManipulationTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler ConveyorBeltTest setup (?time ?state-machine)
+(defmessage-handler BasicManipulationTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*CBT-PREPARATION-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BMT-PREPARATION-TIME*))
   (make-instance [prep-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [exec-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*CBT-EXECUTION-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BMT-EXECUTION-TIME*))
   (make-instance [exec-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [exec-finished-state] of FinishedState
@@ -52,90 +52,77 @@
   )
 )
 
-(defmessage-handler ConveyorBeltTest handle-feedback (?pb-msg ?time ?name ?team)
+(defmessage-handler BasicManipulationTest handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
-;; CBT 1
+;; BMT 1
 
-(defclass ConveyorBeltTest1 (is-a ConveyorBeltTest) (role concrete))
+(defclass BasicManipulationTest1 (is-a BasicManipulationTest) (role concrete))
 
-(defmessage-handler ConveyorBeltTest1 generate ()
-  (printout t "Generating new ConveyorBeltTest1" crlf)
+(defmessage-handler BasicManipulationTest1 generate ()
+  (printout t "Generating new BasicManipulationTest1" crlf)
 
-  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
-  (bind ?decoy-objects          ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
-  (bind ?source-location [conveyorbelt-01])
-  (bind ?destination-location [robot])
+  (bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
+  
+  (bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
-  ; Create 3 items on the conveyor belt to be grasped
+  ; set static location for source
+  (bind ?source-location [workstation-07])
+  ; set static location for destination
+  (bind ?destination-location [workstation-06])
+
+  ; 3 RoboCup objects
   (loop-for-count 3
-    (bind ?item (pick-random$ ?manipulation-objects))
-    (bind ?manipulation-objects (delete-member$ ?manipulation-objects ?item))
-    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-robocup-objects))
 
-    ; Inventory
+    ; Add to inventory
     (slot-insert$ [inventory] items 1
       (make-instance of Item (object-id ?item) (location-id ?source-location))
     )
 
-    (slot-insert$ [inventory] items 1
-      (make-instance of Item (object-id (pick-random$ ?decoy-objects)) (location-id ?source-location))
-    )
-
-    ; Task
+    ; Manipulation Task
     (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
           (object-id ?item)
           (quantity-requested 1)
           (destination-id ?destination-location)
-          (source-id ?source-location))))
+          (source-id ?source-location)))
+      )
     )
   )
-)
 
-;; CBT 2
+  ; 2 RoCKIn objects (TODO: Selected by team)
+  (loop-for-count 2
+    ; Pick random RoboCup object
+    (bind ?item (pick-random$ ?manipulation-rockin-objects))
 
-(defclass ConveyorBeltTest2 (is-a ConveyorBeltTest) (role concrete))
-
-(defmessage-handler ConveyorBeltTest2 generate ()
-  (printout t "Generating new ConveyorBeltTest2" crlf)
-
-  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
-  (bind ?source-location [conveyorbelt-02])
-  (bind ?destination-location [robot])
-
-  ; Create 3 items on the conveyor belt to be grasped
-  (loop-for-count 3
-    (bind ?item (pick-random$ ?manipulation-objects))
-    (bind ?manipulation-objects (delete-member$ ?manipulation-objects ?item))
-
-    ; Inventory
+    ; Add to inventory
     (slot-insert$ [inventory] items 1
       (make-instance of Item (object-id ?item) (location-id ?source-location))
     )
 
-    ; Task
+    ; Manipulation Task
     (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
           (object-id ?item)
           (quantity-requested 1)
           (destination-id ?destination-location)
-          (source-id ?source-location))))
+          (source-id ?source-location)))
+      )
     )
   )
 )
 
 
-(defrule init-cbt
+(defrule init-bmt
   (init)
-  ?cbt <- (object (is-a Benchmark))
+  ?bmt <- (object (is-a Benchmark))
   =>
-  (make-instance [CBT1] of ConveyorBeltTest1 (type CBT) (type-id 1) (description "Conveyor Belt Test 1"))
-  (make-instance [CBT2] of ConveyorBeltTest2 (type CBT) (type-id 2) (description "Conveyor Belt Test 2"))
+  (make-instance [BMT1] of BasicManipulationTest1 (type BMT) (type-id 1) (description "Basic Manipulation Test 1"))
 
-  (slot-insert$ ?cbt registered-scenarios 1 [CBT1])
-  (slot-insert$ ?cbt registered-scenarios 1 [CBT2])
+  (slot-insert$ ?bmt registered-scenarios 1 [BMT1])
 )

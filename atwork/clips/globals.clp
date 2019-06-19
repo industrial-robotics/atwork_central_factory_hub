@@ -37,19 +37,19 @@
   ?*BC-VERSIONINFO-COUNT* = 10
 
   ; Benchmark times; seconds
-  ?*BNT-PREPARATION-TIME*  =  300
+  ?*BNT-PREPARATION-TIME*  =  180
   ?*BNT-EXECUTION-TIME*    =  300
-  ?*BMT-PREPARATION-TIME*  =  300
+  ?*BMT-PREPARATION-TIME*  =  180
   ?*BMT-EXECUTION-TIME*    =  300
-  ?*BTT-PREPARATION-TIME*  =  300
+  ?*BTT-PREPARATION-TIME*  =  180
   ?*BTT-EXECUTION-TIME*    =  300
-  ?*PPT-PREPARATION-TIME*  =  300
+  ?*PPT-PREPARATION-TIME*  =  180
   ?*PPT-EXECUTION-TIME*    =  300
-  ?*CBT-PREPARATION-TIME*  =  300
+  ?*CBT-PREPARATION-TIME*  =  180
   ?*CBT-EXECUTION-TIME*    =  300
-  ?*AWF-PREPARATION-TIME*  =  300
-  ?*AWF-EXECUTION-TIME*    =  600
-  ?*IRL-PREPARATION-TIME*  =  300
+  ?*AWF-PREPARATION-TIME*  =  180
+  ?*AWF-EXECUTION-TIME*    =  780
+  ?*IRL-PREPARATION-TIME*  =  180
   ?*IRL-EXECUTION-TIME*    =  300
 
   ; Benchmark repetitions
@@ -72,22 +72,24 @@
     [shelf-01] [shelf-02]
   )
   ?*WORKSTATION-0CM-LOCATIONS* = (create$
-    [workstation-01] [workstation-07] [workstation-11]
+    [workstation-01] [workstation-04] [workstation-05]
   )
   ?*WORKSTATION-5CM-LOCATIONS* = (create$
-    [workstation-12] [workstation-08]
+    [workstation-10] [workstation-03] 
   )
   ?*WORKSTATION-10CM-LOCATIONS* = (create$
-    [workstation-02] [workstation-03] [workstation-05] [workstation-06]
+    [workstation-06] [workstation-07] [workstation-11]
   )
   ?*WORKSTATION-15CM-LOCATIONS* = (create$
-    [workstation-04] [workstation-09] [workstation-10]
+    [workstation-02] [workstation-09]
   )
   ?*PRECISION-LOCATIONS* = (create$
     [precision-01]
   )
-  ?*CONVEYOR-LOCATIONS* = (create$
-    [conveyorbelt-01] [conveyorbelt-02]
+  ?*ROTATING-TABLE-LOCATIONS* = (create$
+    [conveyorbelt-01]
+
+  )
   )
   ?*ROTATING-TABLE-LOCATIONS* = (create$ [conveyorbelt-02] )
   ?*CONVEYOR-BELT-LOCATIONS* = (create$ [conveyorbelt-01] )

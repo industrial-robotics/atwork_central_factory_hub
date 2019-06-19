@@ -195,9 +195,9 @@ void on_reset_click()
   } else if (benchmark == "AWF1") {
     cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::AWF);
     cmd_scenario.mutable_scenario()->set_type_id(1);
-  } else if (benchmark == "IRL1") {
-    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::IRL);
-    cmd_scenario.mutable_scenario()->set_type_id(1);
+  } else if (benchmark == "AST") {
+    cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::BTT);
+    cmd_scenario.mutable_scenario()->set_type_id(4);
   } else if (benchmark == "None") {
     cmd_scenario.mutable_scenario()->set_type(atwork_pb_msgs::BenchmarkScenario::NONE);
     cmd_scenario.mutable_scenario()->set_type_id(0);
