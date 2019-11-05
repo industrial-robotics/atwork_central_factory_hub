@@ -93,7 +93,7 @@ llsfrb:
       #send-port: !udp-port 5460
       #recv-port: !udp-port 5461
 
-    Ace-IAUK-peer:
+    MRL-peer:
       host: !ipv4 192.168.255.255
       port: !udp-port 5462
       #send-port: !udp-port 5462
@@ -126,7 +126,7 @@ llsfrb:
       protobuf: llsfrb.protobuf
 
   game:
-    teams: [b-it-bots, smARTLab, SPQR, V-Climber, LUHbots, WF-Wolves, AutonOHM, RobOTTO, Ace-IAUK, AMSTT, Robo-Erectus, Fontys]
+    teams: [b-it-bots, smARTLab, SPQR, V-Climber, LUHbots, WF-Wolves, AutonOHM, RobOTTO, MRL, AMSTT, Robo-Erectus, Fontys]
     crypto-keys:
       b-it-bots: randomkey
       smARTLab: randomkey
@@ -136,7 +136,7 @@ llsfrb:
       WF-Wolves: randomkey
       AutonOHM: randomkey
       RobOTTO: randomkey
-      Ace-IAUK: randomkey
+      MRL: randomkey
       AMSTT: randomkey
       Robo-Erectus: randomkey
       Fontys: randomkey

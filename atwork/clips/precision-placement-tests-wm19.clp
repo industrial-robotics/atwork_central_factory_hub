@@ -1,5 +1,5 @@
 ;---------------------------------------------------------------------------
-;  basic-manipulation-tests.clp - AtWork RefBox CLIPS - BMTs
+;  precision-placement-tests.clp - AtWork RefBox CLIPS - PPTs
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
@@ -56,57 +56,44 @@
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
+;; PPT 1
+
 (defclass PrecisionPlacementTest1 (is-a PrecisionPlacementTest) (role concrete))
 
 (defmessage-handler PrecisionPlacementTest1 generate ()
-  (printout t "Generating Replay Precision Placement Test: WM 2019 Sydney" crlf)
+  (printout t "Generating new PrecisionPlacementTest1" crlf)
 
-  ;(bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
-  
-  ;(bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
+  (bind ?precision-objects ?*ROBOCUP-OBJECTS*)
+  (bind ?source-locations ?*WORKSTATION-10CM-LOCATIONS*)
+  (bind ?destination-locations ?*PRECISION-LOCATIONS*)
 
-  ; set static location for source
-  (bind ?source-location [workstation-13])
-  ; set static location for destination
-  (bind ?destination-location ?*PRECISION-LOCATIONS*)
+  ; Randomize a location for source
+  ;(bind ?source-location (pick-random$ ?source-locations))
+   ; set static location for source
+  (bind ?source-location [workstation-15])
 
-  ; 3 RoboCup objects
-  ;(loop-for-count 3
-    ; Pick random RoboCup object
- ;   (bind ?item (pick-random$ ?manipulation-robocup-objects))
 
-    ; Add to inventory
-    (slot-insert$ [inventory] items 3
-      (make-instance of Item (object-id [S40_40_B]) (location-id ?source-location))
-      (make-instance of Item (object-id [R20])       (location-id ?source-location))
-      (make-instance of Item (object-id [F20_20_G])   (location-id ?source-location))
+  ; Randomize a location for destination
+  (bind ?destination-location (pick-random$ ?destination-locations))
+
+  (loop-for-count 3
+    (bind ?item (pick-random$ ?precision-objects))
+    (bind ?precision-objects (delete-member$ ?precision-objects ?item))
+
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
     )
-
-    ; Manipulation Task
-    (slot-insert$ [task-info] tasks 3
+    ; Tasks
+    (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id [S40_40_B])
+          (object-id ?item)
           (quantity-requested 1)
           (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
-      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-        (transportation-task (make-instance of TransportationTask
-          (object-id [R20])
-          (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
-      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-        (transportation-task (make-instance of TransportationTask
-          (object-id [F20_20_G])
-          (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
-     )
-  ;)
+          (source-id ?source-location))))
+    )
+  )
 )
 
 

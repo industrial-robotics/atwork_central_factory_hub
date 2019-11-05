@@ -4,22 +4,22 @@
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass PrecisionPlacementTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
+(defclass BasicTransportationTestShort (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler PrecisionPlacementTest setup (?time ?state-machine)
+(defmessage-handler BasicTransportationTestShort setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*PPT-PREPARATION-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT-PREPARATION-TIME*))
   (make-instance [prep-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [exec-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*PPT-EXECUTION-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*BTT1-EXECUTION-TIME*))
   (make-instance [exec-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [exec-finished-state] of FinishedState
@@ -52,23 +52,23 @@
   )
 )
 
-(defmessage-handler PrecisionPlacementTest handle-feedback (?pb-msg ?time ?name ?team)
+(defmessage-handler BasicTransportationTestShort handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
-(defclass PrecisionPlacementTest1 (is-a PrecisionPlacementTest) (role concrete))
+(defclass BasicTransportationTest1 (is-a BasicTransportationTestShort) (role concrete))
 
-(defmessage-handler PrecisionPlacementTest1 generate ()
-  (printout t "Generating Replay Precision Placement Test: WM 2019 Sydney" crlf)
+(defmessage-handler BasicTransportationTest1 generate ()
+  (printout t "Generating Replay Basic Transportation Test 1: WM 2019 Sydney" crlf)
 
   ;(bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
   
   ;(bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
 
   ; set static location for source
-  (bind ?source-location [workstation-13])
+  (bind ?source-location [workstation-15])
   ; set static location for destination
-  (bind ?destination-location ?*PRECISION-LOCATIONS*)
+  (bind ?destination-location [workstation-16])
 
   ; 3 RoboCup objects
   ;(loop-for-count 3
@@ -76,45 +76,60 @@
  ;   (bind ?item (pick-random$ ?manipulation-robocup-objects))
 
     ; Add to inventory
-    (slot-insert$ [inventory] items 3
-      (make-instance of Item (object-id [S40_40_B]) (location-id ?source-location))
-      (make-instance of Item (object-id [R20])       (location-id ?source-location))
-      (make-instance of Item (object-id [F20_20_G])   (location-id ?source-location))
+    (slot-insert$ [inventory] items 5
+      (make-instance of Item (object-id [MOTOR])     (location-id [workstation-03]))
+      (make-instance of Item (object-id [M20])       (location-id [workstation-05]))
+      (make-instance of Item (object-id [F20_20_G])  (location-id [workstation-05]))
+      (make-instance of Item (object-id [F20_20_B]) (location-id [workstation-06]))
+      (make-instance of Item (object-id [M20_100])   (location-id [workstation-06]))
     )
 
     ; Manipulation Task
-    (slot-insert$ [task-info] tasks 3
+    (slot-insert$ [task-info] tasks 5
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id [S40_40_B])
+          (object-id [MOTOR])
           (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
+          (destination-id [workstation-16])
+          (source-id [workstation-03])))
       )
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id [R20])
+          (object-id [M20])
           (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
+          (destination-id [workstation-16])
+          (source-id [workstation-05])))
       )
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
           (object-id [F20_20_G])
           (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
+          (destination-id [workstation-15])
+          (source-id [workstation-05])))
+      )
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id [F20_20_B])
+          (quantity-requested 1)
+          (destination-id [workstation-16])
+          (source-id [workstation-06])))
+      )
+      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
+        (transportation-task (make-instance of TransportationTask
+          (object-id [M20_100])
+          (quantity-requested 1)
+          (destination-id [workstation-05])
+          (source-id [workstation-06])))
       )
      )
   ;)
 )
 
-
-(defrule init-ppt
+(defrule init-btt
   (init)
-  ?ppt <- (object (is-a Benchmark))
+  ?btt <- (object (is-a Benchmark))
   =>
-  (make-instance [PPT1] of PrecisionPlacementTest1 (type PPT) (type-id 1) (description "Precision Placement Test 1"))
+  (make-instance [BTT1] of BasicTransportationTest1 (type BTT) (type-id 1) (description "Basic Transportation Test 1"))
 
-  (slot-insert$ ?ppt registered-scenarios 1 [PPT1])
+  (slot-insert$ ?btt registered-scenarios 1 [BTT1])
 )

@@ -1,25 +1,25 @@
 ;---------------------------------------------------------------------------
-;  basic-manipulation-tests.clp - AtWork RefBox CLIPS - BMTs
+;  conveyor-belt-tests.clp - AtWork RefBox CLIPS - CBTs
 ;
 ;  Licensed under BSD license, cf. LICENSE file
 ;---------------------------------------------------------------------------
 
-(defclass PrecisionPlacementTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
+(defclass ConveyorBeltTest (is-a BenchmarkScenario) (role abstract) (pattern-match non-reactive))
 
-(defmessage-handler PrecisionPlacementTest setup (?time ?state-machine)
+(defmessage-handler ConveyorBeltTest setup (?time ?state-machine)
   (make-instance [prep-timeup-state] of TimeoutState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-stopped-state] of StoppedState
     (phase PREPARATION) (state-machine ?state-machine) (time ?time))
   (make-instance [prep-running-state] of RunningState
-    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*PPT-PREPARATION-TIME*))
+    (phase PREPARATION) (state-machine ?state-machine) (time ?time) (max-time ?*CBT-PREPARATION-TIME*))
   (make-instance [prep-paused-state] of PausedState
     (phase PREPARATION) (state-machine ?state-machine))
 
   (make-instance [exec-stopped-state] of StoppedState
     (phase EXECUTION) (state-machine ?state-machine) (time ?time))
   (make-instance [exec-running-state] of RunningState
-    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*PPT-EXECUTION-TIME*))
+    (phase EXECUTION) (state-machine ?state-machine) (time ?time) (max-time ?*CBT-EXECUTION-TIME*))
   (make-instance [exec-paused-state] of PausedState
     (phase EXECUTION) (state-machine ?state-machine))
   (make-instance [exec-finished-state] of FinishedState
@@ -52,69 +52,90 @@
   )
 )
 
-(defmessage-handler PrecisionPlacementTest handle-feedback (?pb-msg ?time ?name ?team)
+(defmessage-handler ConveyorBeltTest handle-feedback (?pb-msg ?time ?name ?team)
   (return FINISH)     ; Always finish the benchmark on feedback
 )
 
-(defclass PrecisionPlacementTest1 (is-a PrecisionPlacementTest) (role concrete))
+;; CBT 1
 
-(defmessage-handler PrecisionPlacementTest1 generate ()
-  (printout t "Generating Replay Precision Placement Test: WM 2019 Sydney" crlf)
+(defclass ConveyorBeltTest1 (is-a ConveyorBeltTest) (role concrete))
 
-  ;(bind ?manipulation-robocup-objects ?*ROBOCUP-OBJECTS*)
-  
-  ;(bind ?manipulation-rockin-objects ?*ROCKIN-OBJECTS*)
+(defmessage-handler ConveyorBeltTest1 generate ()
+  (printout t "Generating new ConveyorBeltTest1" crlf)
 
-  ; set static location for source
-  (bind ?source-location [workstation-13])
-  ; set static location for destination
-  (bind ?destination-location ?*PRECISION-LOCATIONS*)
+  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
+  (bind ?decoy-objects          ?*ROBOCUP-OBJECTS* ?*ROCKIN-OBJECTS*)
+  (bind ?source-location [conveyorbelt-01])
+  (bind ?destination-location [robot])
 
-  ; 3 RoboCup objects
-  ;(loop-for-count 3
-    ; Pick random RoboCup object
- ;   (bind ?item (pick-random$ ?manipulation-robocup-objects))
+  ; Create 3 items on the conveyor belt to be grasped
+  (loop-for-count 3
+    (bind ?item (pick-random$ ?manipulation-objects))
+    (bind ?manipulation-objects (delete-member$ ?manipulation-objects ?item))
+    (bind ?decoy-objects (delete-member$ ?decoy-objects ?item))
 
-    ; Add to inventory
-    (slot-insert$ [inventory] items 3
-      (make-instance of Item (object-id [S40_40_B]) (location-id ?source-location))
-      (make-instance of Item (object-id [R20])       (location-id ?source-location))
-      (make-instance of Item (object-id [F20_20_G])   (location-id ?source-location))
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
     )
 
-    ; Manipulation Task
-    (slot-insert$ [task-info] tasks 3
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id (pick-random$ ?decoy-objects)) (location-id ?source-location))
+    )
+
+    ; Task
+    (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id [S40_40_B])
+          (object-id ?item)
           (quantity-requested 1)
           (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
+          (source-id ?source-location))))
+    )
+  )
+)
+
+;; CBT 2
+
+(defclass ConveyorBeltTest2 (is-a ConveyorBeltTest) (role concrete))
+
+(defmessage-handler ConveyorBeltTest2 generate ()
+  (printout t "Generating new ConveyorBeltTest2" crlf)
+
+  (bind ?manipulation-objects ?*ROBOCUP-OBJECTS*)
+  (bind ?source-location [conveyorbelt-02])
+  (bind ?destination-location [robot])
+
+  ; Create 3 items on the conveyor belt to be grasped
+  (loop-for-count 3
+    (bind ?item (pick-random$ ?manipulation-objects))
+    (bind ?manipulation-objects (delete-member$ ?manipulation-objects ?item))
+
+    ; Inventory
+    (slot-insert$ [inventory] items 1
+      (make-instance of Item (object-id ?item) (location-id ?source-location))
+    )
+
+    ; Task
+    (slot-insert$ [task-info] tasks 1
       (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
         (transportation-task (make-instance of TransportationTask
-          (object-id [R20])
+          (object-id ?item)
           (quantity-requested 1)
           (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
-      (make-instance of Task (status OFFERED) (task-type TRANSPORTATION)
-        (transportation-task (make-instance of TransportationTask
-          (object-id [F20_20_G])
-          (quantity-requested 1)
-          (destination-id ?destination-location)
-          (source-id ?source-location)))
-      )
-     )
-  ;)
+          (source-id ?source-location))))
+    )
+  )
 )
 
 
-(defrule init-ppt
+(defrule init-cbt
   (init)
-  ?ppt <- (object (is-a Benchmark))
+  ?cbt <- (object (is-a Benchmark))
   =>
-  (make-instance [PPT1] of PrecisionPlacementTest1 (type PPT) (type-id 1) (description "Precision Placement Test 1"))
+  (make-instance [CBT1] of ConveyorBeltTest1 (type CBT) (type-id 1) (description "Conveyor Belt Test 1"))
+  (make-instance [CBT2] of ConveyorBeltTest2 (type CBT) (type-id 2) (description "Conveyor Belt Test 2"))
 
-  (slot-insert$ ?ppt registered-scenarios 1 [PPT1])
+  (slot-insert$ ?cbt registered-scenarios 1 [CBT1])
+  (slot-insert$ ?cbt registered-scenarios 1 [CBT2])
 )

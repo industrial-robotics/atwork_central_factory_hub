@@ -42,11 +42,13 @@
   ?*BMT-PREPARATION-TIME*  =  180
   ?*BMT-EXECUTION-TIME*    =  300
   ?*BTT-PREPARATION-TIME*  =  180
-  ?*BTT-EXECUTION-TIME*    =  300
+  ?*BTT1-EXECUTION-TIME*   =  360
+  ?*BTT2-EXECUTION-TIME*   =  600
+  ?*BTT3-EXECUTION-TIME*   =  600
   ?*PPT-PREPARATION-TIME*  =  180
-  ?*PPT-EXECUTION-TIME*    =  300
+  ?*PPT-EXECUTION-TIME*    =  240
   ?*CBT-PREPARATION-TIME*  =  180
-  ?*CBT-EXECUTION-TIME*    =  300
+  ?*CBT-EXECUTION-TIME*    =  240
   ?*AWF-PREPARATION-TIME*  =  180
   ?*AWF-EXECUTION-TIME*    =  780
   ?*IRL-PREPARATION-TIME*  =  180
@@ -72,16 +74,16 @@
     [shelf-01] [shelf-02]
   )
   ?*WORKSTATION-0CM-LOCATIONS* = (create$
-    [workstation-01] [workstation-04] [workstation-05]
+    [workstation-01] [workstation-07] [workstation-14] [workstation-11]
   )
   ?*WORKSTATION-5CM-LOCATIONS* = (create$
-    [workstation-10] [workstation-03] 
+    [workstation-12] [workstation-08] 
   )
   ?*WORKSTATION-10CM-LOCATIONS* = (create$
-    [workstation-06] [workstation-07] [workstation-11]
+    [workstation-02] [workstation-03] [workstation-05] [workstation-06] [workstation-15] [workstation-16] [workstation-13]
   )
   ?*WORKSTATION-15CM-LOCATIONS* = (create$
-    [workstation-02] [workstation-09]
+    [workstation-04] [workstation-09] [workstation-10] 
   )
   ?*PRECISION-LOCATIONS* = (create$
     [precision-01]
