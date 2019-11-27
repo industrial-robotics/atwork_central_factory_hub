@@ -31,7 +31,7 @@ The RoboCup@Work Central Factory Hub (CFH) can be installed on most Linux distri
 1. Add [Tim Niemueller's PPA](https://launchpad.net/~timn/+archive/ubuntu/clips):
       
         sudo add-apt-repository ppa:timn/clips
-    (Note: This PPA currently only works for Ubuntu 12.04, 12.10 and 14.04.)
+    (Note: This PPA currently only works for Ubuntu 14.04., 16.04 and 18.04)
     
 2. Install the dependencies for both LLSFRB and CFH:
         
@@ -45,6 +45,7 @@ The RoboCup@Work Central Factory Hub (CFH) can be installed on most Linux distri
                              mongodb libzmq3-dev
 
      (Note: Boost 1.54 is specified to avoid causing apt-get broken package problems with ROS. If you are using another version of Boost see Alternative Setup.)
+     (Note: It's also possible to use the package: libboost-all-dev with no broken packages with ROS [at least this holds for Ubuntu Bionic 18.04])
 
 3. Clone this repository:
         

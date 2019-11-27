@@ -31,9 +31,9 @@ ifneq ($(wildcard /usr/include/mongo/client/dbclient.h /usr/local/include/mongo/
     # version number. Therefore, we try to extract the version from the mongo
     # binary and hope for the best.
     ifneq ($(wildcard /usr/bin/mongo /usr/local/bin/mongo),)
-      MONGODB_VERSION_MAJOR = $(shell mongo --version | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f1 -d\.)
-      MONGODB_VERSION_MINOR = $(shell mongo --version | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f2 -d\.)
-      MONGODB_VERSION_PATCH = $(shell mongo --version | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f3 -d\.)
+      MONGODB_VERSION_MAJOR = $(shell mongo --version | grep -vi ssl | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f1 -d\.)
+      MONGODB_VERSION_MINOR = $(shell mongo --version | grep -vi ssl | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f2 -d\.)
+      MONGODB_VERSION_PATCH = $(shell mongo --version | grep -vi ssl | grep -o "[0-9]\.[0-9]\.[0-9]" | cut -f3 -d\.)
     endif
 
     CFLAGS_MONGODB  = -DHAVE_MONGODB \

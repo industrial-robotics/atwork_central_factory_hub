@@ -27,6 +27,7 @@
  */
 
 #include <algorithm>
+#include <iostream>
 
 #include <config/yaml.h>
 #include <utils/system/argparser.h>
