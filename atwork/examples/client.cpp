@@ -26,6 +26,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <iostream>
 #include <protobuf_comm/client.h>
 #include <msgs/AttentionMessage.pb.h>
 

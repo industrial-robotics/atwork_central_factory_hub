@@ -35,6 +35,7 @@
 #define BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
 
 #include <config/yaml.h>
+#include <iostream>
 
 #include <protobuf_comm/client.h>
 #include <utils/system/argparser.h>

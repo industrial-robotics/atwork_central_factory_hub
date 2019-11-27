@@ -23,7 +23,7 @@ include $(BUILDCONFDIR)/llsf_sps/llsf_sps.mk
 include $(BUILDCONFDIR)/mongodb_log/mongodb.mk
 include $(BUILDCONFDIR)/netcomm/netcomm.mk
 
-CFLAGS += $(CFLAGS_CPP11)
+CFLAGS += $(CFLAGS_CPP11) -lpthread
 
 REQ_BOOST_LIBS = thread asio system signals2
 HAVE_BOOST_LIBS = $(call boost-have-libs,$(REQ_BOOST_LIBS))
@@ -50,6 +50,7 @@ ifeq ($(HAVE_PROTOBUF)$(HAVE_LIBMODBUS)$(HAVE_CLIPS)$(HAVE_BOOST_LIBS),1111)
 
   ifeq ($(HAVE_MONGODB),1)
     LIBS_refbox += llsf_mongodb_log
+    LIBS_refbox += mongoclient
   endif
 else
   ifneq ($(HAVE_PROTOBUF),1)
